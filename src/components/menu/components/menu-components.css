@@ -17,31 +17,37 @@
     height: 48px;
 }
 
+.pinIcon {
+    transform: rotate(90deg);
+    transition: all 1s linear;
+}
+
 .pinIcon-enter {
-    transform: rotate(0deg);
-    opacity: 0.2;
+    transform: rotate(90deg);
+    transition: all 1s linear;
 }
 
 .pinIcon-enter-active {
-    transform: rotate(45deg);
-    transition: all 300ms linear;
+    transform: rotate(90deg);
+    transition: all 1s linear;
 }
 
 .pinIcon-enter-done {
     transform: rotate(0deg);
-    opacity: 1;
+    transition: all 1s linear;
 }
 
 .pinIcon-exit {
     transform: rotate(0deg);
+    transition: all 1s linear;
 }
 
 .pinIcon-exit-active {
-    transform: rotate(45deg);
+    transform: rotate(0deg);
     transition: all 1s linear;
 }
 
 .pinIcon-exit-done {
     transform: rotate(90deg);
-    opacity: 0.2;
+    transition: all 1s linear;
 }
