@@ -1,7 +1,7 @@
 .myMenuPanel {
     position: absolute;
     width: 30vw;
-    height: 100vh;
+    height: 100%;
     background-color: white;
     transition: opacity 1s;
 }

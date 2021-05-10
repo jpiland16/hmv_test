@@ -17,37 +17,24 @@
     height: 48px;
 }
 
-.pinIcon {
-    transform: rotate(90deg);
-    transition: all 1s linear;
+.pinIconDiv {
+    height: 100%;
+    width: 48px;
+    position: absolute;
+    right: 0px;
+    top: 0px;
+    z-index: 2;
 }
 
-.pinIcon-enter {
-    transform: rotate(90deg);
-    transition: all 1s linear;
+.searchBar {
+    position: absolute;
+    left: 48px;
+    top: 0px;
+    height: 48px;
+    width: calc(100% - 48px);
 }
 
-.pinIcon-enter-active {
-    transform: rotate(90deg);
-    transition: all 1s linear;
-}
-
-.pinIcon-enter-done {
-    transform: rotate(0deg);
-    transition: all 1s linear;
-}
-
-.pinIcon-exit {
-    transform: rotate(0deg);
-    transition: all 1s linear;
-}
-
-.pinIcon-exit-active {
-    transform: rotate(0deg);
-    transition: all 1s linear;
-}
-
-.pinIcon-exit-done {
-    transform: rotate(90deg);
-    transition: all 1s linear;
+.searchBarInput {
+    height: 36px;
+    width: calc(100% - 52px);
 }
