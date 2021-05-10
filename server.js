@@ -9,6 +9,7 @@ app.get("/api/*", (req, res) => {
 
 app.use('/files', serveIndex(__dirname + '/files', {
     stylesheet: "directory-style.css",
+    template: "directory-template.html",
     icons: true
 }));
 
