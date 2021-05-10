@@ -1,0 +1,22 @@
+.myMenuPanel {
+    position: absolute;
+    width: 30vw;
+    height: 100vh;
+    background-color: white;
+    transition: opacity 1s;
+}
+
+.menu-below-all {
+    position: absolute;
+    top: 48px;
+    width: 100%;
+    height: calc(100% - 96px);
+    z-index: 1;
+}
+
+/*mobile*/
+@media (max-width: 768px) {
+    .myMenuPanel {
+        width: 100vw;
+    }
+}

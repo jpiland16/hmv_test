@@ -1,0 +1,47 @@
+.sidebar {
+    float: left;
+    width: 48px;
+    height: 100%;
+}
+
+.interactionPanel {
+    float: left;
+    width: calc(100% - 48px);
+    height: 100%;
+}
+
+.bottomBar {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 48px;
+}
+
+.pinIcon-enter {
+    transform: rotate(0deg);
+    opacity: 0.2;
+}
+
+.pinIcon-enter-active {
+    transform: rotate(45deg);
+    transition: all 300ms linear;
+}
+
+.pinIcon-enter-done {
+    transform: rotate(0deg);
+    opacity: 1;
+}
+
+.pinIcon-exit {
+    transform: rotate(0deg);
+}
+
+.pinIcon-exit-active {
+    transform: rotate(45deg);
+    transition: all 1s linear;
+}
+
+.pinIcon-exit-done {
+    transform: rotate(90deg);
+    opacity: 0.2;
+}
