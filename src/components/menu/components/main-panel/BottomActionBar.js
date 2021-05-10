@@ -50,14 +50,14 @@ const SpinPin = (props) => (
 export default function BottomActionBar(props) {
     return (
         <div className="bottomBar">
-            <Button color="default" style={{
+            {/* <Button color="default" style={{
                 opacity: 0.7,
                 marginTop: "6px"
             }}>
                 Test model <TuneIcon style={{
                     marginLeft: "6px"
                 }} /> 
-            </Button>
+            </Button> */}
             <SpinPin in={props.pinActive} onClick={props.onClick}/>
         </div>
     );
