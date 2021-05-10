@@ -1,6 +1,6 @@
 import Input from '@material-ui/core/Input';
 import SearchIcon from '@material-ui/icons/Search';
-import './menu-components.css';
+import './main-panel.css';
 import { IconButton } from '@material-ui/core';
 
 export default function SearchBar() {

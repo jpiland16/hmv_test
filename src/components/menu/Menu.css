@@ -8,10 +8,10 @@
 
 .menu-below-all {
     position: absolute;
-    top: 48px;
+    top: 0px;
     width: 100%;
-    height: calc(100% - 96px);
-    z-index: 1;
+    height: 100%;
+    z-index: 0;
 }
 
 /*mobile*/

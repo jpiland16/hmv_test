@@ -1,8 +1,7 @@
-import './menu-components.css';
+import './main-panel.css';
 import Button from '@material-ui/core/Button'
 import IconButton from '@material-ui/core/IconButton'
 import TuneIcon from '@material-ui/icons/Tune'
-import InfoIcon from '@material-ui/icons/Info'
 import Tooltip from '@material-ui/core/Tooltip'
 import { Transition } from 'react-transition-group'
 
@@ -51,13 +50,9 @@ const SpinPin = (props) => (
 export default function BottomActionBar(props) {
     return (
         <div className="bottomBar">
-            <Tooltip title="About">
-                <IconButton>
-                    <InfoIcon />
-                </IconButton>
-            </Tooltip>
             <Button color="default" style={{
-                opacity: 0.7
+                opacity: 0.7,
+                marginTop: "6px"
             }}>
                 Test model <TuneIcon style={{
                     marginLeft: "6px"

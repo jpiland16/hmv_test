@@ -1,0 +1,28 @@
+.bottomBar {
+    width: 100%;
+    height: 48px;
+}
+
+.pinIconDiv {
+    height: 48px;
+    width: 48px;
+    position: absolute;
+    right: 0px;
+    bottom: 0px;
+    z-index: 2;
+}
+
+.interactionPanel {
+    height: calc(100% - 96px);
+    width: 100%;
+}
+
+.searchBar {
+    height: 48px;
+    width: 100%;
+}
+
+.searchBarInput {
+    height: 36px;
+    width: calc(100% - 52px);
+}
