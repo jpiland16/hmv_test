@@ -10,71 +10,10 @@ import FileCopyIcon from '@material-ui/icons/FileCopy';
 import TuneIcon from '@material-ui/icons/Tune';
 
 
-// const incrementalDelay = 50;
-
-// const sidebarActions =
-//     [
-//         {
-//             icon: <FileCopyIcon />,
-//             clickAction: () => {},
-//             tooltip: "Choose files"
-//         },
-//         {
-//             icon: <FolderIcon />,
-//             clickAction: () => () => { window.location.href = "/files"},
-//             tooltip: "View data folder"
-//         },
-//         {
-//             icon: <TuneIcon />,
-//             clickAction: () => {},
-//             tooltip: "Test model"
-//         },
-//         {
-//             icon: <AccountCircleIcon />,
-//             clickAction: () => {},
-//             tooltip: "My account"
-//         },
-//         {
-//             icon: <SettingsIcon />,
-//             clickAction: () => {},
-//             tooltip: "Settings"
-//         },
-//         {
-//             icon: <InfoIcon />,
-//             clickAction: () => {},
-//             tooltip: "About"
-//         }
-//     ]
-
-// function renderIcon(i, props) {
-//     let action = sidebarActions[i];
-//     return (
-//         <Tooltip title={action.tooltip} placement="right">
-//             <IconButton onClick={action.clickAction} style={
-//                 i == 0 ? { marginTop: "48px" } : {}
-//                     //i == (sidebarActions.length - 1) ? { position: "absolute", bottom: "0px" } : {}
-//             }>
-//                 {action.icon}
-//             </IconButton>
-//         </Tooltip>)
-// }
 
 export default function SideActionBar(props) {
     return (
-        <div className="sidebar"> 
-        
-{/* //             <Zoom in={props.visible} style={{ transitionDelay: props.visible ? `500ms` : '0ms' }}>
-//                 <div>
-//                 {
-                
-                [0, 1, 2, 3, 4, 5].map ( (n) => {
-                    return renderIcon(n, props)
-                })
-            
-                }
-</div>
-            </Zoom> */}
-            
+        <div className="sidebar">             
             <Zoom in={props.visible} style={{ transitionDelay: props.visible ? '50ms' : '0ms' }}>
                 <Tooltip title="Choose files" placement="right">
                     <IconButton style={{
