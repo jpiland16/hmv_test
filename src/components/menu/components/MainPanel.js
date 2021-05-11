@@ -7,7 +7,7 @@ export default function MainPanel(props) {
     return (
         <div className="mainPanel">
             <SearchBar />
-            <InteractionPanel />
+            <InteractionPanel {...props}/>
             <BottomActionBar {...props} />
         </div>
     );

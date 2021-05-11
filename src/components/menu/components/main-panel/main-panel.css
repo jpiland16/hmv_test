@@ -15,6 +15,7 @@
 .interactionPanel {
     height: calc(100% - 96px);
     width: 100%;
+    overflow: scroll;
 }
 
 .searchBar {
