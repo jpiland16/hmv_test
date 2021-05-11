@@ -17,6 +17,7 @@ const data = {
     children: [],
   };
 
+
 async function doXHR(method, url) {
     return new Promise(function(myResolve, myReject) {
         let x = new XMLHttpRequest();
@@ -33,13 +34,21 @@ async function getFileList() {
     doXHR("GET", "/api/get-file-list").then(
         (xhrr) => {
             try {
-                let fileList = JSON.parse(xhrr.responseText);
-                data.children = fileList;
+                data.children = JSON.parse(xhrr.responseText);
             } catch (e) {
+                console.warn("Error in processing files...");
+                console.error(e);
                 data.children = [{
                     id: 'root2',
                     name: 'We apologize, but the files could not be loaded due to a JSON error. So, we capitalized upon this to create a very longer folder name for testing.',
-                    children: [],
+                    children: [{
+                      id: 'test1',
+                      name: 'test1',
+                      children: [{
+                        id: 'test2',
+                        name: 'test2'
+                      }]
+                    }],
                 }]
             }
         },
@@ -143,6 +152,16 @@ export default function CustomizedTreeView(props) {
     handleClose();
   }
 
+  const getAllIds = function(root) {
+    if (!root.children || root.children.length == 0) return [];
+    let fileIdList = [ root.id ];
+    for (let i = 0; i < root.children.length; i++) {
+      fileIdList = fileIdList.concat(getAllIds(root.children[i]));
+    }
+    console.log(fileIdList);
+    return fileIdList;
+  }
+
   const renderTree = function (nodes) {
     const isFolder = !(!nodes.children || nodes.children.length == 0);
     const thisNode = <StyledTreeItem 
@@ -151,7 +170,6 @@ export default function CustomizedTreeView(props) {
           label={nodes.name} 
           onContextMenu={ (event) => handleContextMenu(event, nodes.id, isFolder) } 
           onClick={ (event) => { 
-            isFolder && props.updateExpanded(nodes.id); 
             props.setSelectedFile(nodes.id) 
           } }
           style={{
@@ -161,13 +179,14 @@ export default function CustomizedTreeView(props) {
               WebkitUserSelect: "none",
               MozUserSelect: "none",
               msUserSelect: "none",
-              userSelect: "none"
+              userSelect: "none",
+              color: props.searchFileText != "" && nodes.name.toLowerCase().search(props.searchFileText.toLowerCase()) >= 0 ? "blue" : "black" 
             }}
           >
         {Array.isArray(nodes.children) ? nodes.children.map((node) => renderTree(node)) : null}
       </StyledTreeItem>
     return (props.searchFileText == "" || 
-    nodes.name.search(props.searchFileText) >= 0 || isFolder) && thisNode;
+    nodes.name.toLowerCase().search(props.searchFileText.toLowerCase()) >= 0 || isFolder) && thisNode;
   };
 
   return (
@@ -186,10 +205,11 @@ export default function CustomizedTreeView(props) {
           </Typography>
         <TreeView
           className={classes.root}
-          defaultExpanded={props.expandedItems}
+          expanded={props.searchFileText == "" ? props.expandedItems : getAllIds(data)}
           defaultCollapseIcon={<MinusSquare />}
           defaultExpandIcon={<PlusSquare />}
           defaultEndIcon={<CloseSquare />}
+          onNodeToggle={(event, nodeIds) => props.setExpandedItems(nodeIds)}
         >
           {renderTree(data)}
         </TreeView>
