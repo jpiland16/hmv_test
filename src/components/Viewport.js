@@ -9,13 +9,6 @@ function Viewport() {
     const [expandedItems, setExpandedItems] = React.useState(["/"]);
     const [selectedFile, setSelectedFile] = React.useState("");
     const [searchFileText, setSearchFileText] = React.useState("");
-  
-    const updateExpanded = (nodeId) => {
-        console.log(nodeId)
-        const index = expandedItems.indexOf(nodeId);
-        index >= 0 ? expandedItems.splice(index, 1) : expandedItems.unshift(nodeId);
-        console.log(expandedItems)
-    }
 
     function getWindowDimensions() {
         const { innerWidth: width, innerHeight: height } = window;
@@ -44,7 +37,7 @@ function Viewport() {
     return (
         <div className="myView">
             <Menu expandedItems={expandedItems} 
-                updateExpanded={updateExpanded} 
+                setExpandedItems={setExpandedItems} 
                 selectedFile={selectedFile}
                 setSelectedFile={setSelectedFile}
                 getWindowDimensions={useWindowDimensions}
