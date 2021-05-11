@@ -88,7 +88,6 @@ app.get('/files/*', (req, res) => {
 app.use(express.static(`${__dirname}/build`));
 
 app.use('*',  (req, res)=> {
-    console.log(req.url)
     res.sendFile("/build/index.html", {
         "root": __dirname
     });
