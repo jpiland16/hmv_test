@@ -9,7 +9,7 @@ export default function InteractionPanel(props) {
     return (
         <div className="interactionPanel">
             {
-                [<ChooseFiles />, <TestModel />, <MyAccount />, <Settings />, <About />][props.selectedPanel]
+                [<ChooseFiles {...props}/>, <TestModel />, <MyAccount />, <Settings />, <About />][props.selectedPanel]
             }
         </div>
     );

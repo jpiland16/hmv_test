@@ -76,7 +76,7 @@ app.use('/files', serveIndex(__dirname + '/files', {
 }));
 
 app.get('/files/*', (req, res) => {
-    let path = req.url.substr(7);
+    let path = decodeURI(req.url.substr(7));
     let fileRoot = `${__dirname}/files`;
     if (fs.existsSync(fileRoot + "/" + path)) {
         res.sendFile(path, {root: fileRoot});
