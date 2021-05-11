@@ -50,7 +50,9 @@ const SpinPin = (props) => (
 export default function BottomActionBar(props) {
     return (
         <div className="bottomBar">
-            <SpinPin in={props.pinActive} onClick={props.onClick}/>
+            {  
+                props.getWindowDimensions()[0] >= 768 && <SpinPin in={props.pinActive} onClick={props.onClick}/> 
+            }
         </div>
     );
 }

@@ -6,7 +6,7 @@ import InteractionPanel from './main-panel/InteractionPanel';
 export default function MainPanel(props) {
     return (
         <div className="mainPanel">
-            <SearchBar />
+            <SearchBar {...props}/>
             <InteractionPanel {...props}/>
             <BottomActionBar {...props} />
         </div>

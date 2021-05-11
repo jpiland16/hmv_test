@@ -9,6 +9,7 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import { useSpring, animated } from 'react-spring/web.cjs'; // web.cjs is required for IE 11 support
 import './ChooseFiles.css'
+import { Typography } from '@material-ui/core';
 
 const data = {
     id: '/',
@@ -32,7 +33,8 @@ async function getFileList() {
     doXHR("GET", "/api/get-file-list").then(
         (xhrr) => {
             try {
-                data.children = JSON.parse(xhrr.responseText);
+                let fileList = JSON.parse(xhrr.responseText);
+                data.children = fileList;
             } catch (e) {
                 data.children = [{
                     id: 'root2',
@@ -124,7 +126,7 @@ export default function CustomizedTreeView(props) {
   const [filePath, setFilePath] = React.useState(""); // For download menu
   const [selectedIsFolder, setSelectedIsFolder] = React.useState(false); // For download menu
 
-  const handleClick = (event, path, isFolder) => {
+  const handleContextMenu = (event, path, isFolder) => {
     setSelectedIsFolder(isFolder);
     event.preventDefault();
     event.stopPropagation();
@@ -143,34 +145,53 @@ export default function CustomizedTreeView(props) {
 
   const renderTree = function (nodes) {
     const isFolder = !(!nodes.children || nodes.children.length == 0);
-    return <StyledTreeItem 
-        key={nodes.id} 
-        nodeId={nodes.id} 
-        label={nodes.name} 
-        onContextMenu={ (event) => handleClick(event, nodes.id, isFolder) } 
-        onClick={ (event) => isFolder && props.updateexpanded(nodes.id) }
-        style={{
-            whiteSpace: "nowrap",
-            opacity: nodes.name.substr(-4) == ".dat" || isFolder ? 1 : 0.5,
-            WebkitTouchCallout: "none",
-            WebkitUserSelect: "none",
-            MozUserSelect: "none",
-            msUserSelect: "none",
-            userSelect: "none"}}
-        >
-      {Array.isArray(nodes.children) ? nodes.children.map((node) => renderTree(node)) : null}
-    </StyledTreeItem>
+    const thisNode = <StyledTreeItem 
+          key={nodes.id} 
+          nodeId={nodes.id} 
+          label={nodes.name} 
+          onContextMenu={ (event) => handleContextMenu(event, nodes.id, isFolder) } 
+          onClick={ (event) => { 
+            isFolder && props.updateExpanded(nodes.id); 
+            props.setSelectedFile(nodes.id) 
+          } }
+          style={{
+              whiteSpace: "nowrap",
+              opacity: nodes.name.substr(-4) == ".dat" || isFolder ? 1 : 0.5,
+              WebkitTouchCallout: "none",
+              WebkitUserSelect: "none",
+              MozUserSelect: "none",
+              msUserSelect: "none",
+              userSelect: "none"
+            }}
+          >
+        {Array.isArray(nodes.children) ? nodes.children.map((node) => renderTree(node)) : null}
+      </StyledTreeItem>
+    return (props.searchFileText == "" || 
+    nodes.name.search(props.searchFileText) >= 0 || isFolder) && thisNode;
   };
 
   return (
-    <div className="chooseFiles">
+    <div>
+        <Typography variant="caption" style={{ 
+          opacity: 0.7, 
+          display: "block", 
+          lineHeight: "1.1em", 
+          minHeight: "24px",
+          marginTop: "12px", 
+          marginBottom: "12px" 
+          }}><i>Right click a file to download it, or 
+                right click a folder to open in a new window. 
+                (mobile: long-press)
+             </i>
+          </Typography>
         <TreeView
-        className={classes.root}
-        defaultExpanded={props.expandeditems}
-        defaultCollapseIcon={<MinusSquare />}
-        defaultExpandIcon={<PlusSquare />}
-        defaultEndIcon={<CloseSquare />}>
-        {renderTree(data)}
+          className={classes.root}
+          defaultExpanded={props.expandedItems}
+          defaultCollapseIcon={<MinusSquare />}
+          defaultExpandIcon={<PlusSquare />}
+          defaultEndIcon={<CloseSquare />}
+        >
+          {renderTree(data)}
         </TreeView>
         <Menu
             id="simple-menu"
