@@ -1,4 +1,3 @@
-import logo from './logo.svg';
 import Viewport from "./components/Viewport"
 import './App.css';
 

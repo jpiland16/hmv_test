@@ -7,6 +7,8 @@ import TreeItem from '@material-ui/lab/TreeItem';
 import Collapse from '@material-ui/core/Collapse';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
+import Button from '@material-ui/core/Button'
+import SyncIcon from '@material-ui/icons/Sync'
 import { useSpring, animated } from 'react-spring/web.cjs'; // web.cjs is required for IE 11 support
 import './ChooseFiles.css'
 import { Typography } from '@material-ui/core';
@@ -31,6 +33,7 @@ async function doXHR(method, url) {
 }
 
 async function getFileList() {
+    data.children = [{name: "placeholder", id: "placeholder"}];
     doXHR("GET", "/api/get-file-list").then(
         (xhrr) => {
             try {
@@ -128,7 +131,7 @@ const useStyles = makeStyles({
 });
 
 export default function CustomizedTreeView(props) {
-  data.children.length == 0 && getFileList();
+  data.children.length === 0 && getFileList();
   const classes = useStyles();
 
   const [anchorEl, setAnchorEl] = React.useState(null); // For download menu
@@ -153,7 +156,7 @@ export default function CustomizedTreeView(props) {
   }
 
   const getAllIds = function(root) {
-    if (!root.children || root.children.length == 0) return [];
+    if (!root.children || root.children.length === 0) return [];
     let fileIdList = [ root.id ];
     for (let i = 0; i < root.children.length; i++) {
       fileIdList = fileIdList.concat(getAllIds(root.children[i]));
@@ -163,7 +166,7 @@ export default function CustomizedTreeView(props) {
   }
 
   const renderTree = function (nodes) {
-    const isFolder = !(!nodes.children || nodes.children.length == 0);
+    const isFolder = !(!nodes.children || nodes.children.length === 0);
     const thisNode = <StyledTreeItem 
           key={nodes.id} 
           nodeId={nodes.id} 
@@ -174,19 +177,19 @@ export default function CustomizedTreeView(props) {
           } }
           style={{
               whiteSpace: "nowrap",
-              opacity: nodes.name.substr(-4) == ".dat" || isFolder ? 1 : 0.5,
+              opacity: nodes.name.substr(-4) === ".dat" || isFolder ? 1 : 0.5,
               WebkitTouchCallout: "none",
               WebkitUserSelect: "none",
               MozUserSelect: "none",
               msUserSelect: "none",
               userSelect: "none",
-              color: props.searchFileText != "" && nodes.name.toLowerCase().search(props.searchFileText.toLowerCase()) >= 0 ? "blue" : "black" 
+              color: props.searchFileText !== "" && nodes.name.toLowerCase().indexOf(props.searchFileText.toLowerCase()) >= 0 ? "blue" : "black" 
             }}
           >
         {Array.isArray(nodes.children) ? nodes.children.map((node) => renderTree(node)) : null}
       </StyledTreeItem>
-    return (props.searchFileText == "" || 
-    nodes.name.toLowerCase().search(props.searchFileText.toLowerCase()) >= 0 || isFolder) && thisNode;
+    return (props.searchFileText === "" || 
+    nodes.name.toLowerCase().indexOf(props.searchFileText.toLowerCase()) >= 0 || isFolder) && thisNode;
   };
 
   return (
@@ -203,9 +206,12 @@ export default function CustomizedTreeView(props) {
                 (mobile: long-press)
              </i>
           </Typography>
+          <Button size="small" style={{marginLeft: "0px", opacity: 0.74, marginBottom: "6px", marginTop: "0px"}} onClick={() => window.location.href="/api/scan-all-files"}>
+              <SyncIcon style={{marginRight: "6px", fontSize:"small"}}/> Refresh file list
+          </Button>
         <TreeView
           className={classes.root}
-          expanded={props.searchFileText == "" ? props.expandedItems : getAllIds(data)}
+          expanded={props.searchFileText === "" ? props.expandedItems : getAllIds(data)}
           defaultCollapseIcon={<MinusSquare />}
           defaultExpandIcon={<PlusSquare />}
           defaultEndIcon={<CloseSquare />}

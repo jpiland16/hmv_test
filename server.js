@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const serveIndex = require('serve-index');
 const fs = require('fs');
+const { count } = require('console');
 
 function walkDirectory(dir) {
     let myPromise = new Promise(function(myResolve, myReject) {
@@ -42,23 +43,57 @@ function walkDirectory(dir) {
 }
 
 async function scanAllFiles() {
-    try {
-        let returnedFiles = await walkDirectory(`./files`);
-        console.log("Directory rescan requested at " + new Date().toUTCString());
-        let fileListString = JSON.stringify(returnedFiles);
-        fs.writeFileSync(`${__dirname}/fileList.json`, fileListString);
-    } catch(error) {
-        console.error("Promise rejected with error:");
-        console.error(error);
+    return new Promise(async function (myResolve, myReject) {
+        try {
+            let returnedFiles = await walkDirectory(`./files`);
+            console.log("Directory rescan requested at " + new Date().toUTCString());
+            let fileListString = JSON.stringify(returnedFiles);
+            fs.writeFileSync(`${__dirname}/fileList.json`, fileListString);
+
+            myResolve(returnedFiles);
+        } catch(error) {
+            console.error("Promise rejected with error:");
+            console.error(error);
+            myReject(error);
+        }
+    });
+}
+
+function countItems(root) {
+    if (!root.children) return [1, 1]; // [ Total items, files ]
+    let allItemCount = 1; // Including self
+    let leafCount = 0;
+    for (let i = 0; i < root.children.length; i++) {
+        let childCount = countItems(root.children[i]);
+        allItemCount += childCount[0];
+        leafCount += childCount[1];
     }
+    return [allItemCount, leafCount]
 }
 
 app.get("/api/*", (req, res) => {
     let requestedResource = req.url.substr(5);
     switch (requestedResource) {
         case "scan-all-files":
-            res.sendFile(`${__dirname}/scanning.html`);
-            scanAllFiles();
+            //res.sendFile(`${__dirname}/scanning.html`);
+            let d = new Date();
+            scanAllFiles().then((files) => {
+                    const [ totalCount, fileCount ] = countItems({ children: files });
+                    let time = new Date() - d;
+                    res.send(`<html>
+                                <head>
+                                    <title>Directory Scan</title> 
+                                </head>
+                                <body style="font-size: 24px">
+                                    Scan complete. ${totalCount - 1} items found (${fileCount} files). 
+                                    Completed in ${time} ms. <a href="/">Return to the home page.</a>
+                                </body>
+                            </html>
+                            `)
+                }, (error) => {
+                    console.log(error);
+                }
+            );
             break;
         case "get-file-list":
             res.sendFile(`${__dirname}/fileList.json`);

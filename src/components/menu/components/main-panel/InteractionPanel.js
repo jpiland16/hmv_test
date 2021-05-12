@@ -7,7 +7,7 @@ import About from "./subpanels/About/About"
 
 export default function InteractionPanel(props) {
     return (
-        <div className="interactionPanel">
+        <div className="interactionPanel" style={{ height: props.getWindowDimensions()[0] > 768 ? "calc(100% - 96px)" : "calc(100% - 48px)" }}>
             {
                 [<ChooseFiles {...props}/>, <TestModel />, <MyAccount />, <Settings />, <About />][props.selectedPanel]
             }

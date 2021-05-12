@@ -1,7 +1,5 @@
 import './main-panel.css';
-import Button from '@material-ui/core/Button'
 import IconButton from '@material-ui/core/IconButton'
-import TuneIcon from '@material-ui/icons/Tune'
 import Tooltip from '@material-ui/core/Tooltip'
 import { Transition } from 'react-transition-group'
 
@@ -49,10 +47,8 @@ const SpinPin = (props) => (
 
 export default function BottomActionBar(props) {
     return (
-        <div className="bottomBar">
-            {  
-                props.getWindowDimensions()[0] >= 768 && <SpinPin in={props.pinActive} onClick={props.onClick}/> 
-            }
+        props.getWindowDimensions()[0] > 768 && <div className="bottomBar">
+                <SpinPin in={props.pinActive} onClick={props.onClick}/>
         </div>
     );
 }
