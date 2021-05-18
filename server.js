@@ -128,4 +128,6 @@ app.use('*',  (req, res)=> {
     });
 });
 
-app.listen(80);
+const PORT = process.env.PORT || 80
+
+app.listen(PORT);
