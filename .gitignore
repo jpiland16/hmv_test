@@ -23,5 +23,7 @@ yarn-debug.log*
 yarn-error.log*
 
 # other
-/files
+/files/**
+!/files/demo
+!/files/demo/S4-ADL4.dat
 fileList.json

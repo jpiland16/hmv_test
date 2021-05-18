@@ -9,7 +9,7 @@ function walkDirectory(dir) {
         let thisDirFiles = [];
         fs.readdir(dir,{withFileTypes: true}, async function(err, fileList) {
             if (err) {
-                myReject(error);
+                myReject(err);
             } else {
                 for (let i = 0; i < fileList.length; i++) {
                     let item = fileList[i];
