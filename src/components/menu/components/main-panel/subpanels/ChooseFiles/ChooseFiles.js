@@ -131,63 +131,63 @@ const useStyles = makeStyles({
 });
 
 export default function CustomizedTreeView(props) {
-  data.children.length === 0 && getFileList();
-  const classes = useStyles();
+    data.children.length === 0 && getFileList();
+    const classes = useStyles();
 
-  const [anchorEl, setAnchorEl] = React.useState(null); // For download menu
-  const [filePath, setFilePath] = React.useState(""); // For download menu
-  const [selectedIsFolder, setSelectedIsFolder] = React.useState(false); // For download menu
+    const [anchorEl, setAnchorEl] = React.useState(null); // For download menu
+    const [filePath, setFilePath] = React.useState(""); // For download menu
+    const [selectedIsFolder, setSelectedIsFolder] = React.useState(false); // For download menu
 
-  const handleContextMenu = (event, path, isFolder) => {
-        setSelectedIsFolder(isFolder);
-        event.preventDefault();
-        event.stopPropagation();
-        setFilePath(path);
-        setAnchorEl(event.currentTarget);
-  };
+    const handleContextMenu = (event, path, isFolder) => {
+            setSelectedIsFolder(isFolder);
+            event.preventDefault();
+            event.stopPropagation();
+            setFilePath(path);
+            setAnchorEl(event.currentTarget);
+    };
 
-  const handleClose = () => {
-        setAnchorEl(null);
-  };
+    const handleClose = () => {
+            setAnchorEl(null);
+    };
 
-  const handleDownload = () => {
-        (window.open(`/files${filePath}`))
-        handleClose();
-  }
-
-  const getAllIds = function(root) {
-    if (!root.children || root.children.length === 0) return [];
-    let fileIdList = [ root.id ];
-    for (let i = 0; i < root.children.length; i++) {
-        fileIdList = fileIdList.concat(getAllIds(root.children[i]));
+    const handleDownload = () => {
+            (window.open(`/files${filePath}`))
+            handleClose();
     }
-    console.log(fileIdList);
-    return fileIdList;
-  }
 
-  const renderTree = function (nodes) {
-    const isFolder = !(!nodes.children || nodes.children.length === 0);
-    const thisNode = <StyledTreeItem 
-          key={nodes.id} 
-          nodeId={nodes.id} 
-          label={nodes.name} 
-          onContextMenu={ (event) => handleContextMenu(event, nodes.id, isFolder) } 
-          onClick={ (event) => { 
-                props.setSelectedFile(nodes.id) 
-          } }
-          style={{
-                whiteSpace: "nowrap",
-                opacity: nodes.name.substr(-4) === ".dat" || isFolder ? 1 : 0.5,
-                WebkitTouchCallout: "none",
-                WebkitUserSelect: "none",
-                MozUserSelect: "none",
-                msUserSelect: "none",
-                userSelect: "none",
-                color: props.searchFileText !== "" && nodes.name.toLowerCase().indexOf(props.searchFileText.toLowerCase()) >= 0 ? "blue" : "black" 
-            }}
-          >
-        {Array.isArray(nodes.children) ? nodes.children.map((node) => renderTree(node)) : null}
-      </StyledTreeItem>
+    const getAllIds = function(root) {
+        if (!root.children || root.children.length === 0) return [];
+        let fileIdList = [ root.id ];
+        for (let i = 0; i < root.children.length; i++) {
+            fileIdList = fileIdList.concat(getAllIds(root.children[i]));
+        }
+        console.log(fileIdList);
+        return fileIdList;
+    }
+
+    const renderTree = function (nodes) {
+        const isFolder = !(!nodes.children || nodes.children.length === 0);
+        const thisNode = <StyledTreeItem 
+                key={nodes.id} 
+                nodeId={nodes.id} 
+                label={nodes.name} 
+                onContextMenu={ (event) => handleContextMenu(event, nodes.id, isFolder) } 
+                onClick={ (event) => { 
+                        props.setSelectedFile(nodes.id) 
+                } }
+                style={{
+                        whiteSpace: "nowrap",
+                        opacity: nodes.name.substr(-4) === ".dat" || isFolder ? 1 : 0.5,
+                        WebkitTouchCallout: "none",
+                        WebkitUserSelect: "none",
+                        MozUserSelect: "none",
+                        msUserSelect: "none",
+                        userSelect: "none",
+                        color: props.searchFileText !== "" && nodes.name.toLowerCase().indexOf(props.searchFileText.toLowerCase()) >= 0 ? "blue" : "black" 
+                    }}
+                >
+                {Array.isArray(nodes.children) ? nodes.children.map((node) => renderTree(node)) : null}
+            </StyledTreeItem>
     return (props.searchFileText === "" || 
     nodes.name.toLowerCase().indexOf(props.searchFileText.toLowerCase()) >= 0 || isFolder) && thisNode;
   };
