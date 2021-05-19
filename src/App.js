@@ -1,8 +1,6 @@
 import Viewport from "./components/Viewport"
 import './App.css';
 
-function App() {
+export default function App() {
   return <Viewport />;
 }
-
-export default App;

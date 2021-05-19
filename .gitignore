@@ -25,5 +25,7 @@ yarn-error.log*
 # other
 /files/**
 !/files/demo
-!/files/demo/S4-ADL4.dat
+!/files/demo/**
+!/files/figures
+!/files/figures/**
 fileList.json

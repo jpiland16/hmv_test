@@ -19,6 +19,7 @@
     "react-spring": "^9.1.2",
     "serve": "^11.3.2",
     "serve-index": "^1.9.1",
+    "three": "^0.128.0",
     "walkdir": "^0.4.1",
     "web-vitals": "^1.1.2"
   },
