@@ -128,6 +128,8 @@ app.use('*',  (req, res)=> {
     });
 });
 
+scanAllFiles();
+
 const PORT = process.env.PORT || 80
 
 app.listen(PORT);

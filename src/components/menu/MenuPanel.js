@@ -5,7 +5,7 @@ import MainPanel from './components/MainPanel';
 import { useState } from 'react'
 
 export default function MenuPanel(props) {
-    const [selectedPanel, setSelectedPanel] = useState(0);
+    const [selectedPanel, setSelectedPanel] = useState(1);
     return (
         <Box className="menu-below-all">
             <SideActionBar visible={props.visible} selectedPanel={selectedPanel} setSelected={(panel) => setSelectedPanel(panel) }/>

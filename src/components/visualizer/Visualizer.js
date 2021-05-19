@@ -12,25 +12,19 @@ let boneNames = {
     RUA: "upperarm_r", 
     RLA: "lowerarm_r", 
     LLA: "lowerarm_l", 
-    BACK: "spine_03", 
+    BACK: "spine_02", /** IMPORTANT */
     LSHOE: "foot_l", 
-    RSHOE: "foor_r"    
+    RSHOE: "foot_r"
 }
 
 let bones = {
-    LUA: undefined, 
-    RUA: undefined, 
-    RLA: undefined, 
-    LLA: undefined, 
-    BACK: undefined, 
-    LSHOE: undefined, 
-    RSHOE: undefined
+    
 }
 
 function createScene(parentElement) {
     camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 0.1, 500 );
     
-    camera.position.z = 1;
+    camera.position.z = 3;
     camera.position.y = 0;
     camera.rotation.z = 1;
 
@@ -49,7 +43,9 @@ function createScene(parentElement) {
     return new Promise((myResolve, myReject) => {
         loadModel(scene).then(() => {
             let controls = new OrbitControls( camera, renderer.domElement );
-            controls.addEventListener( 'change', () => renderer.render(scene, camera) );
+            controls.addEventListener( 'change', () => {
+                renderer.render(scene, camera); 
+            });
             renderer.render(scene, camera);
             myResolve();
         }, () => {
@@ -84,9 +80,9 @@ function loadModel() {
                 }
             
                 bones.BACK.attach(bones.RUA)
-                bones.BACK.attach(bones.RLA)
+                bones.RUA.attach(bones.RLA) /* IMPORTANT */
                 bones.BACK.attach(bones.LUA)
-                bones.BACK.attach(bones.LLA)
+                bones.LUA.attach(bones.LLA) /* IMPORTANT */
                 
                 //console.log("Done loading")
                 myResolve();
@@ -104,10 +100,18 @@ export default function Visualizer(props) {
 
     const thisElementRef = React.useRef(null);
 
-    const [ modelLoaded, setModelLoaded ] = React.useState(false);
-
     React.useEffect(() => {
-        modelLoaded || (createScene(thisElementRef.current).then(() => setModelLoaded(true), () => setModelLoaded(false)));
+        props.modelLoaded || (createScene(thisElementRef.current).then(
+            () => {
+                props.setModelLoaded(true)
+                props.setBones(bones)
+            }, 
+            () => props.setModelLoaded(false)
+        ));
+
+        props.modelNeedsUpdating && renderer.render(scene, camera) 
+        && props.setModelNeedsUpdating(false);
+
         function handleResize() {
             refreshRendererSize(thisElementRef.current);
         }
@@ -118,7 +122,7 @@ export default function Visualizer(props) {
 
     return (
         <div ref={thisElementRef} id="visualizationBase">
-            { modelLoaded ? undefined : 
+            { props.modelLoaded ? undefined : 
                 <div id="loadingSpinner">
                     <CircularProgress /><br />
                     Please wait while the model is loading...

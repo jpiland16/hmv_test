@@ -9,7 +9,7 @@ export default function InteractionPanel(props) {
     return (
         <div className="interactionPanel" style={{ height: props.getWindowDimensions()[0] > 768 ? "calc(100% - 96px)" : "calc(100% - 48px)" }}>
             {
-                [<ChooseFiles {...props}/>, <TestModel />, <MyAccount />, <Settings />, <About />][props.selectedPanel]
+                [<ChooseFiles {...props}/>, <TestModel {...props} />, <MyAccount />, <Settings />, <About />][props.selectedPanel]
             }
         </div>
     );
