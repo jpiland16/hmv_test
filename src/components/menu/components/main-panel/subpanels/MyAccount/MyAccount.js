@@ -1,7 +1,7 @@
 export default function MyAccount() {
     return (
         <div>
-            Your name
+            Maybe have a sign in option here to save settings?
         </div>
     );
 }

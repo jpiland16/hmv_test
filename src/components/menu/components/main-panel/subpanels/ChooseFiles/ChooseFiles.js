@@ -161,7 +161,7 @@ export default function CustomizedTreeView(props) {
         for (let i = 0; i < root.children.length; i++) {
             fileIdList = fileIdList.concat(getAllIds(root.children[i]));
         }
-        console.log(fileIdList);
+        //console.log(fileIdList);
         return fileIdList;
     }
 

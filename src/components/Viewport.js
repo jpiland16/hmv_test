@@ -7,7 +7,7 @@ import Visualizer from './visualizer/Visualizer';
 
 export default function Viewport() {
 
-    const [expandedItems, setExpandedItems] = React.useState(["/"]);
+    const [expandedItems, setExpandedItems] = React.useState([]);
     const [selectedFile, setSelectedFile] = React.useState("");
     const [searchFileText, setSearchFileText] = React.useState("");
     const [ modelLoaded, setModelLoaded ] = React.useState(false);

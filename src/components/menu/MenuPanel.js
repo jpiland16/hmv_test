@@ -9,7 +9,7 @@ export default function MenuPanel(props) {
     return (
         <Box className="menu-below-all">
             <SideActionBar visible={props.visible} selectedPanel={selectedPanel} setSelected={(panel) => setSelectedPanel(panel) }/>
-            <MainPanel selectedPanel={selectedPanel} {...props}/>
+            <MainPanel selectedPanel={selectedPanel} setSelected={setSelectedPanel} {...props}/>
         </Box>
     );
 }
