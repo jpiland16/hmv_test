@@ -4,8 +4,6 @@ export default function About() {
             Test page for HMV project <br />
             Jonathan Piland | 2021
 
-            <br /><br />
-
             <h2>Some notes</h2>
             The quaternions are constrained to be unit quaternions. This is why you may notice other sliders moving when you adjust one value.
 
@@ -16,6 +14,12 @@ export default function About() {
                 <li>right click and drag is move (double finger drag on mobile), and</li>
                 <li>scrolling controls zoom (pinch in/out on mobile).</li>
             </ul>
+
+            
+
+            <br /><br />
+
+            <a href="https://github.com/jpiland16/hmv_test/" target="_blank">View code on GitHub</a>
 
         </div>
     );
