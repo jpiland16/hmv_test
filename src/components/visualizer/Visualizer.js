@@ -36,7 +36,7 @@ function createScene(parentElement) {
 
     parentElement.appendChild(renderer.domElement);
 
-    var lightA1 = new THREE.AmbientLight(0xFFFFFF, 1.5)
+    var lightA1 = new THREE.AmbientLight(0xFFFFFF, 3)
     scene.add(lightA1)
     renderer.render(scene, camera);
 
@@ -65,7 +65,7 @@ function loadModel() {
     return new Promise((myResolve, myReject) => {
         var loader = new GLTFLoader();
 
-        const model_path = "files/figures/claudia.glb";
+        const model_path = "files/figures/mannequin.glb";
 
         loader.load(model_path, gltf => {
                 // gltf.scene.position.set(-2,-2,-2)

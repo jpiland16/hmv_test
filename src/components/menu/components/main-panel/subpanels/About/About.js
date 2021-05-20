@@ -15,11 +15,13 @@ export default function About() {
                 <li>scrolling controls zoom (pinch in/out on mobile).</li>
             </ul>
 
-            
-
-            <br /><br />
+            <br />
 
             <a href="https://github.com/jpiland16/hmv_test/" target="_blank">View code on GitHub</a>
+
+            <br /><br /><br />
+
+            The mannequin shown is modified from <a href="https://skfb.ly/onNqw" target="_blank">Mannequin</a> by <a href="https://sketchfab.com/xaratoni7" target="_blank">3d</a> which is licensed under <a href="http://creativecommons.org/licenses/by/4.0/" target="_blank">Creative Commons Attribution</a>.
 
         </div>
     );

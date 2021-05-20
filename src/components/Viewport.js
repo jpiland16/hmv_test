@@ -7,7 +7,53 @@ import Visualizer from './visualizer/Visualizer';
 
 export default function Viewport() {
 
-    const [expandedItems, setExpandedItems] = React.useState([]);
+    const files = React.useRef([]);
+    files.current.length == 0 && getFileList();
+
+    async function doXHR(method, url) {
+        return new Promise(function(myResolve, myReject) {
+            let x = new XMLHttpRequest();
+            x.open(method, url);
+            x.onload = () => {
+                myResolve(x);
+            }
+            x.onerror = () => { myReject(x); }
+            x.send()
+        });
+    }
+    
+    async function getFileList() {
+        doXHR("GET", "/api/get-file-list").then(
+            (xhrr) => {
+                try {
+                    files.current = JSON.parse(xhrr.responseText);
+                } catch (e) {
+                    console.warn("Error in processing files...");
+                    console.error(e);
+                    files.current = [{
+                        id: 'root2',
+                        name: 'We apologize, but the files could not be loaded due to a JSON error. So, we capitalized upon this to create a very longer folder name for testing.',
+                        children: [{
+                          id: 'test1',
+                          name: 'test1',
+                          children: [{
+                            id: 'test2',
+                            name: 'test2'
+                          }]
+                        }],
+                    }]
+                }
+            },
+            (errXhrr) => {
+                console.error("XHR Error");
+                console.log(errXhrr.status);
+                console.log(errXhrr.statusText);
+                console.log(errXhrr.responseText);
+            }
+        )
+    }
+
+    const [expandedItems, setExpandedItems] = React.useState(["/"]);
     const [selectedFile, setSelectedFile] = React.useState("");
     const [searchFileText, setSearchFileText] = React.useState("");
     const [ modelLoaded, setModelLoaded ] = React.useState(false);
@@ -80,6 +126,7 @@ export default function Viewport() {
                 updateModel={onSliderUpdate}
                 batchUpdate={batchUpdateObject}
                 bones={bones}
+                fileList={files}
             />
             <Visualizer 
                 modelLoaded={modelLoaded}

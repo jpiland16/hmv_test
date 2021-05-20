@@ -13,56 +13,13 @@ import { useSpring, animated } from 'react-spring/web.cjs'; // web.cjs is requir
 import './ChooseFiles.css'
 import { Typography } from '@material-ui/core';
 
-const data = {
-    id: '/',
-    name: 'files',
-    children: [],
+const makeRoot = (children) => {
+    return {
+        id: '/',
+        name: 'files',
+        children: children
+    }
 };
-
-
-async function doXHR(method, url) {
-    return new Promise(function(myResolve, myReject) {
-        let x = new XMLHttpRequest();
-        x.open(method, url);
-        x.onload = () => {
-            myResolve(x);
-        }
-        x.onerror = () => { myReject(x); }
-        x.send()
-    });
-}
-
-async function getFileList() {
-    data.children = [{name: "placeholder", id: "placeholder"}];
-    doXHR("GET", "/api/get-file-list").then(
-        (xhrr) => {
-            try {
-                data.children = JSON.parse(xhrr.responseText);
-            } catch (e) {
-                console.warn("Error in processing files...");
-                console.error(e);
-                data.children = [{
-                    id: 'root2',
-                    name: 'We apologize, but the files could not be loaded due to a JSON error. So, we capitalized upon this to create a very longer folder name for testing.',
-                    children: [{
-                      id: 'test1',
-                      name: 'test1',
-                      children: [{
-                        id: 'test2',
-                        name: 'test2'
-                      }]
-                    }],
-                }]
-            }
-        },
-        (errXhrr) => {
-            console.error("XHR Error");
-            console.log(errXhrr.status);
-            console.log(errXhrr.statusText);
-            console.log(errXhrr.responseText);
-        }
-    )
-}
 
 function MinusSquare(props) {
     return (
@@ -131,7 +88,6 @@ const useStyles = makeStyles({
 });
 
 export default function CustomizedTreeView(props) {
-    data.children.length === 0 && getFileList();
     const classes = useStyles();
 
     const [anchorEl, setAnchorEl] = React.useState(null); // For download menu
@@ -211,13 +167,13 @@ export default function CustomizedTreeView(props) {
             </Button>
         <TreeView
             className={classes.root}
-            expanded={props.searchFileText === "" ? props.expandedItems : getAllIds(data)}
+            expanded={props.searchFileText === "" ? props.expandedItems : getAllIds(makeRoot(props.fileList.current))}
             defaultCollapseIcon={<MinusSquare />}
             defaultExpandIcon={<PlusSquare />}
             defaultEndIcon={<CloseSquare />}
             onNodeToggle={(event, nodeIds) => props.setExpandedItems(nodeIds)}
         >
-            {renderTree(data)}
+            {renderTree(makeRoot(props.fileList.current))}
         </TreeView>
         <Menu
             id="simple-menu"
