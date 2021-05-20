@@ -7,7 +7,7 @@
             const SITE = "https://hmv-test.herokuapp.com/";
 
             function loadSite() {
-                window.setInterval(dotDot, 1000);
+                let t = window.setInterval(dotDot, 1000);
                 new Promise((myResolve, myReject) => {
                     const x = new XMLHttpRequest();
                     x.onload = () => myResolve();
@@ -15,7 +15,7 @@
                     x.open("GET", `https://api.allorigins.win/get?url=` + encodeURIComponent(SITE));
                     x.send();
                 }).then((response) => window.location.href = SITE, (err) => {
-                    window.clearInterval(dotDot);
+                    window.clearInterval(t);
                     console.log(err);
                     document.getElementById("log").innerText = "There was an error loading the page. Check the console (or refresh this page to try again)."
                 });
@@ -23,7 +23,7 @@
 
             function dotDot() {
                 var el = document.getElementById("log");
-                el.innerText = el.innerText + ".";
+                el.innerText = el.innerText + "..";
             }
 
         </script>
@@ -48,7 +48,7 @@
         <h2>My <a href ="https://hmv-test.herokuapp.com/">Heroku site</a> might be asleep,
             so this website is currently checking to make sure it is awake.</h2>
         <br/><br/>
-        <h3>You should be redirected shortly.</h3>
+        <h3>You should be redirected shortly. (please allow 10-30 seconds)</h3>
         <br/><br/>
         <br/><br/>
         <h4 id="log"></h4>
