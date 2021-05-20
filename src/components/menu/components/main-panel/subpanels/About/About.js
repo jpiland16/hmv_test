@@ -17,11 +17,11 @@ export default function About() {
 
             <br />
 
-            <a href="https://github.com/jpiland16/hmv_test/" target="_blank">View code on GitHub</a>
+            <a href="https://github.com/jpiland16/hmv_test/" target="_blank" rel="noreferrer">View code on GitHub</a>
 
             <br /><br /><br />
 
-            The mannequin shown is modified from <a href="https://skfb.ly/onNqw" target="_blank">Mannequin</a> by <a href="https://sketchfab.com/xaratoni7" target="_blank">3d</a> which is licensed under <a href="http://creativecommons.org/licenses/by/4.0/" target="_blank">Creative Commons Attribution</a>.
+            The mannequin shown is modified from <a href="https://skfb.ly/onNqw" target="_blank" rel="noreferrer">Mannequin</a> by <a href="https://sketchfab.com/xaratoni7" target="_blank" rel="noreferrer">3d</a> which is licensed under <a href="http://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noreferrer">Creative Commons Attribution</a>.
 
         </div>
     );

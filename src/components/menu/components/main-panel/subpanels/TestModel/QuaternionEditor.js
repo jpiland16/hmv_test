@@ -10,8 +10,8 @@ export default function QuaternionEditor(props) {
 
         let needsKickstart = true;
         for (let i = 0; i < 4; i++) {
-            if (i != fixedId) {
-                if (props.sliderValues[thisObj][i] != 0) {
+            if (i !== fixedId) {
+                if (props.sliderValues[thisObj][i] !== 0) {
                     needsKickstart = false;
                     break;
                 }
@@ -27,7 +27,7 @@ export default function QuaternionEditor(props) {
         let otherSumOfSq = 0;
 
         for (let i = 0; i < 4; i++) {
-            if (i != fixedId) otherSumOfSq += 
+            if (i !== fixedId) otherSumOfSq += 
                 Math.pow(props.sliderValues[thisObj][i], 2); 
         }
 
@@ -36,7 +36,7 @@ export default function QuaternionEditor(props) {
         let newQarray = [];
 
         for (let i = 0; i < 4; i++) {
-            if (i == fixedId) newQarray[i] = newValue;
+            if (i === fixedId) newQarray[i] = newValue;
             else newQarray[i] = props.sliderValues[thisObj][i] * (targetMag / wrongMag);
         }
 

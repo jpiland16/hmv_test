@@ -121,7 +121,7 @@ export default function Visualizer(props) {
     });
 
     return (
-        <div ref={thisElementRef} id="visualizationBase">
+        <div ref={thisElementRef} id="visualizationBase" onClick={props.onClick}>
             { props.modelLoaded ? undefined : 
                 <div id="loadingSpinner">
                     <CircularProgress /><br />

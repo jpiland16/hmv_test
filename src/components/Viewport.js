@@ -8,7 +8,7 @@ import Visualizer from './visualizer/Visualizer';
 export default function Viewport() {
 
     const files = React.useRef([]);
-    files.current.length == 0 && getFileList();
+    files.current.length === 0 && getFileList();
 
     async function doXHR(method, url) {
         return new Promise(function(myResolve, myReject) {
@@ -60,6 +60,8 @@ export default function Viewport() {
     const [ bones, setBones ] = React.useState(null);
     const [ quaternionValues, updateModel ] = React.useState(null);
     const [ modelNeedsUpdating, setModelNeedsUpdating ] = React.useState(false);
+    const [menuIsOpen, setMenuIsOpen] = React.useState(false); // Menu is closed by default
+    const [menuIsPinned, setMenuIsPinned] = React.useState(false); // Menu is unpinned by default
 
     function getWindowDimensions() {
             const { innerWidth: width, innerHeight: height } = window;
@@ -114,13 +116,20 @@ export default function Viewport() {
 
     return (
         <div className="myView">
-            <Menu expandedItems={expandedItems} 
+            <Menu 
+                isOpen={menuIsOpen}
+                setIsOpen={setMenuIsOpen}
+                isPinned={menuIsPinned}
+                setIsPinned={setMenuIsPinned}
+                
+                expandedItems={expandedItems} 
                 setExpandedItems={setExpandedItems} 
                 selectedFile={selectedFile}
                 setSelectedFile={setSelectedFile}
                 getWindowDimensions={useWindowDimensions}
                 searchFileText={searchFileText}
                 setSearchFileText={setSearchFileText}
+
                 modelLoaded={modelLoaded}
                 sliderValues={quaternionValues}
                 updateModel={onSliderUpdate}
@@ -134,6 +143,9 @@ export default function Viewport() {
                 setBones={onLoadBones}
                 modelNeedsUpdating={modelNeedsUpdating}
                 setModelNeedsUpdating={setModelNeedsUpdating}
+                onClick = {
+                    (event) => !menuIsPinned && setMenuIsOpen(false)
+                }
             />
         </div>
     )
