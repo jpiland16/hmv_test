@@ -15,7 +15,7 @@ export default function Menu(props) {
                              {...props}/>
                         </Paper>
                     </Slide>
-                    <MenuButton isCloseIcon={props.isOpen} onClick={() => (props.setIsOpen(!props.isOpen))}/>
+                    <MenuButton disabled={!props.modelLoaded} isCloseIcon={props.isOpen} onClick={() => (props.setIsOpen(!props.isOpen))}/>
                 </div>
             {/* </ClickAwayListener> */}
         </div>

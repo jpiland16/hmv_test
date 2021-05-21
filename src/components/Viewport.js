@@ -11,9 +11,6 @@ let parentOf = {};
 
 export default function Viewport() {
 
-    const useGlobalQs = true;
-    const rippleEffect = false;
-
     const files = React.useRef([]);
     files.current.length === 0 && getFileList();
 
@@ -69,6 +66,8 @@ export default function Viewport() {
     const [ modelNeedsUpdating, setModelNeedsUpdating ] = React.useState(false);
     const [ menuIsOpen, setMenuIsOpen ] = React.useState(false); // Menu is closed by default
     const [ menuIsPinned, setMenuIsPinned ] = React.useState(true); // Menu is pinned by default
+    const [ useGlobalQs, setUseGlobalQs ] = React.useState(true); // Use global quaternions by default
+    const [ rippleEffect, setRippleEffect ] = React.useState(false); // Limbs move independently by default
 
     function getWindowDimensions() {
             const { innerWidth: width, innerHeight: height } = window;
@@ -113,6 +112,11 @@ export default function Viewport() {
         setParent(bones, "LUA", "BACK");
         setParent(bones, "LLA", "LUA");
 
+        setEntireModelState(bones, useGlobalQs);
+    }
+
+    function setEntireModelState(bones, useGlobalQs) {
+
         let boneList = Object.getOwnPropertyNames(bones);
         let newModelState = { };
         for (let i = 0; i < boneList.length; i++) {
@@ -125,6 +129,7 @@ export default function Viewport() {
             }
         }
         updateModel(newModelState);
+
     }
 
     function getGlobalFromLocal(bones, localQ, currentBoneName) {
@@ -220,6 +225,13 @@ export default function Viewport() {
                 updateModel={updateSingleQValue}
                 batchUpdate={batchUpdateObject}
                 bones={bones}
+
+                useGlobalQs={useGlobalQs}
+                setUseGlobalQs={setUseGlobalQs}
+                useRipple={rippleEffect}
+                setUseRipple={setRippleEffect}
+                refreshGlobalLocal={setEntireModelState}
+
                 fileList={files}
             />
             <Visualizer 
