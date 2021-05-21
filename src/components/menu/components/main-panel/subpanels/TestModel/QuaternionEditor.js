@@ -46,9 +46,11 @@ export default function QuaternionEditor(props) {
     return (
         <div>
             <Typography>{props.title}</Typography>
-            {[0, 1, 2, 3].map((myIndex) => 
-                <QSlider index={myIndex} {...props} 
-                onChange={(event, newValue) => handleSliderUpdate(myIndex, newValue)}/>)}
+            <div style={{backgroundColor: "#eeeeee", padding: "6px"}}>
+                {[0, 1, 2, 3].map((myIndex) => 
+                    <QSlider index={myIndex} {...props} 
+                    onChange={(event, newValue) => handleSliderUpdate(myIndex, newValue)}/>)}
+            </div>
         </div>
     );
 }

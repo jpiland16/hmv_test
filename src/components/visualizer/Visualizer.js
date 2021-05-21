@@ -9,9 +9,9 @@ let renderer, camera, scene;
 
 let boneNames = {
     LUA: "upperarm_l", 
+    LLA: "lowerarm_l", 
     RUA: "upperarm_r", 
     RLA: "lowerarm_r", 
-    LLA: "lowerarm_l", 
     BACK: "spine_02", /** IMPORTANT */
     LSHOE: "foot_l", 
     RSHOE: "foot_r"
@@ -79,11 +79,11 @@ function loadModel() {
                     bones[boneList[i]] = model.getObjectByName(boneNames[boneList[i]])
                 }
             
-                bones.BACK.attach(bones.RUA)
-                bones.RUA.attach(bones.RLA) /* IMPORTANT */
-                bones.BACK.attach(bones.LUA)
-                bones.LUA.attach(bones.LLA) /* IMPORTANT */
-                
+                // bones.BACK.attach(bones.RUA)
+                // bones.RUA.attach(bones.RLA) /* IMPORTANT */
+                // bones.BACK.attach(bones.LUA)
+                // bones.LUA.attach(bones.LLA) /* IMPORTANT */
+
                 //console.log("Done loading")
                 myResolve();
             }, function ( xhr ) {
@@ -101,10 +101,10 @@ export default function Visualizer(props) {
     const thisElementRef = React.useRef(null);
 
     React.useEffect(() => {
-        props.modelLoaded || (createScene(thisElementRef.current).then(
+        props.modelLoaded || (createScene(thisElementRef.current, props).then(
             () => {
                 props.setModelLoaded(true)
-                props.setBones(bones)
+                props.setBones(bones)                
             }, 
             () => props.setModelLoaded(false)
         ));
