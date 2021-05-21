@@ -32,12 +32,8 @@ export default function TestModel(props) {
                     <FormControlLabel
                         control={
                         <Switch
-                            checked={props.useGlobalQs ? props.useRipple : "true"}
-                            onChange={(event) => {
-                                    if(props.useGlobalQs) props.setUseRipple(event.target.checked);
-                                }
-                            }
-                            disabled={!props.useGlobalQs}
+                            checked={props.useRipple}
+                            onChange={(event) => props.setUseRipple(event.target.checked) }
                             color="primary"
                         />
                         }

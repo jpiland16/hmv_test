@@ -9,6 +9,8 @@ import * as THREE from 'three'
 let childrenOf = {};
 let parentOf = {};
 
+let globalQs = {};
+
 export default function Viewport() {
 
     const files = React.useRef([]);
@@ -62,7 +64,7 @@ export default function Viewport() {
     const [ searchFileText, setSearchFileText ] = React.useState("");
     const [ modelLoaded, setModelLoaded ] = React.useState(false);
     const [ bones, setBones ] = React.useState(null);
-    const [ quaternionValues, updateModel ] = React.useState(null);
+    const [ sliderValues, setSliderValues ] = React.useState(null);
     const [ modelNeedsUpdating, setModelNeedsUpdating ] = React.useState(false);
     const [ menuIsOpen, setMenuIsOpen ] = React.useState(false); // Menu is closed by default
     const [ menuIsPinned, setMenuIsPinned ] = React.useState(true); // Menu is pinned by default
@@ -112,23 +114,30 @@ export default function Viewport() {
         setParent(bones, "LUA", "BACK");
         setParent(bones, "LLA", "LUA");
 
-        setEntireModelState(bones, useGlobalQs);
-    }
-
-    function setEntireModelState(bones, useGlobalQs) {
-
         let boneList = Object.getOwnPropertyNames(bones);
-        let newModelState = { };
         for (let i = 0; i < boneList.length; i++) {
             let boneQ = bones[boneList[i]].quaternion; // This is the "local" quaternion
-            if(useGlobalQs) {
-                let globalQ = getGlobalFromLocal(bones, boneQ, boneList[i]);
-                newModelState[boneList[i]] = [globalQ.x, globalQ.y, globalQ.z, globalQ.w];
-            } else {
-                newModelState[boneList[i]] = [boneQ.x, boneQ.y, boneQ.z, boneQ.w];
-            }
+            let globalQ = getGlobalFromLocal(bones, boneQ, boneList[i]);
+            globalQs[boneList[i]] = globalQ;
         }
-        updateModel(newModelState);
+
+        setSliderPositions(bones, useGlobalQs);
+    }
+
+    function setSliderPositions(bones, useGlobalQs) {
+
+        let boneList = Object.getOwnPropertyNames(bones);
+        let newSliderPositions = { };
+
+        for (let i = 0; i < boneList.length; i++) {
+            let boneName = boneList[i];
+            let sliderQ = useGlobalQs ? 
+                globalQs[boneName] :
+                getLocalFromGlobal(globalQs[boneName], boneName);
+            newSliderPositions[boneName] = [sliderQ.x, sliderQ.y, sliderQ.z, sliderQ.w];           
+        }
+        
+        setSliderValues(newSliderPositions);
 
     }
 
@@ -159,48 +168,55 @@ export default function Viewport() {
     }
 
     function updateSingleQValue(boneId, qIndex, newValue) {
-        let newModelState = { ...quaternionValues }; // Create shallow clone of old model state
-        newModelState[boneId][qIndex] = newValue;
-        let newQ = newModelState[boneId];
-        bones[boneId].quaternion.set(newQ[0], newQ[1], newQ[2], newQ[3]);
-        updateModel(newModelState);
+        let newSliderValues = { ...sliderValues }; // Create shallow clone of old model state
+        newSliderValues[boneId][qIndex] = newValue;
+        setSliderValues(newSliderValues);
     }
 
-    function batchUpdateObject(boneId, newQ) {
-        let newModelState = { ...quaternionValues }; // Create shallow clone of old model state
-        newModelState[boneId] = newQ;
-
-        if (useGlobalQs) {
-            let globalQ = new THREE.Quaternion(newQ[0], newQ[1], newQ[2], newQ[3]);
-            let localQ = getLocalFromGlobal(globalQ, boneId)
-
-            bones[boneId].quaternion.set(localQ.x, localQ.y, localQ.z, localQ.w);
+    function batchUpdateObject(boneId, slideArray) {
+        let newSliderValues = { ...sliderValues }; // Create shallow clone of old model state
+        newSliderValues[boneId] = slideArray;
+        let newQ = new THREE.Quaternion(slideArray[0], slideArray[1], slideArray[2], slideArray[3]);
         
-            let affectedByInheritance = [];
-            
-            if (childrenOf[boneId]) affectedByInheritance.push(...childrenOf[boneId])
+        let newGlobalQ = useGlobalQs ? 
+            newQ :
+            getGlobalFromLocal(bones, newQ, boneId);
 
-            while (affectedByInheritance.length > 0) {
-                let currentBone = affectedByInheritance.shift();
-                if (childrenOf[currentBone]) affectedByInheritance.push(...childrenOf[currentBone])
-                let localQ = bones[currentBone].quaternion;
-                let globalQ;
-                if (rippleEffect) {
-                    globalQ = getGlobalFromLocal(bones, localQ, currentBone);
-                    newModelState[currentBone] = [globalQ.x, globalQ.y, globalQ.z, globalQ.w];
-                } else {
-                    let oldQ = quaternionValues[currentBone];
-                    globalQ = new THREE.Quaternion(oldQ[0], oldQ[1], oldQ[2], oldQ[3]);
-                    let newLocalQ = getLocalFromGlobal(globalQ, currentBone);
-                    bones[currentBone].quaternion.set(newLocalQ.x, newLocalQ.y, newLocalQ.z, newLocalQ.w);
-                }
+        let newLocalQ = useGlobalQs ?
+            getLocalFromGlobal(newQ, boneId) :
+            newQ;
+
+        globalQs[boneId] = newGlobalQ;
+
+        bones[boneId].quaternion.set(newLocalQ.x, newLocalQ.y, newLocalQ.z, newLocalQ.w);
+    
+        let affectedByInheritance = [];
+        
+        if (childrenOf[boneId]) affectedByInheritance.push(...childrenOf[boneId])
+
+        while (affectedByInheritance.length > 0) {
+            let currentBone = affectedByInheritance.shift();
+            if (childrenOf[currentBone]) affectedByInheritance.push(...childrenOf[currentBone])
+            if (rippleEffect) {
+                // We don't have to "DO" anything to the model. This is default behavior.
+                // Just update the sliders.
+                let currLocalQ = bones[currentBone].quaternion;
+                let currGlobalQ = getGlobalFromLocal(bones, currLocalQ, currentBone);
+                let sliderQ = useGlobalQs ? currGlobalQ : currLocalQ;
+                newSliderValues[currentBone] = [sliderQ.x, sliderQ.y, sliderQ.z, sliderQ.w];
+                globalQs[currentBone] = currGlobalQ;
+            } else {
+                // This is NOT the default behavior.
+                let oldGlobalQ = globalQs[currentBone];
+                // Note: scope
+                let newLocalQ = getLocalFromGlobal(oldGlobalQ, currentBone);
+                let sliderQ = useGlobalQs ? oldGlobalQ : newLocalQ;
+                bones[currentBone].quaternion.set(newLocalQ.x, newLocalQ.y, newLocalQ.z, newLocalQ.w);
+                newSliderValues[currentBone] = [sliderQ.x, sliderQ.y, sliderQ.z, sliderQ.w];
             }
-
-        } else {
-            bones[boneId].quaternion.set(newQ[0], newQ[1], newQ[2], newQ[3]);
         }
 
-        updateModel(newModelState);
+        setSliderValues(newSliderValues);
         setModelNeedsUpdating(true);
     }
 
@@ -221,7 +237,7 @@ export default function Viewport() {
                 setSearchFileText={setSearchFileText}
 
                 modelLoaded={modelLoaded}
-                sliderValues={quaternionValues}
+                sliderValues={sliderValues}
                 updateModel={updateSingleQValue}
                 batchUpdate={batchUpdateObject}
                 bones={bones}
@@ -230,7 +246,7 @@ export default function Viewport() {
                 setUseGlobalQs={setUseGlobalQs}
                 useRipple={rippleEffect}
                 setUseRipple={setRippleEffect}
-                refreshGlobalLocal={setEntireModelState}
+                refreshGlobalLocal={setSliderPositions}
 
                 fileList={files}
             />
