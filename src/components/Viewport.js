@@ -12,7 +12,7 @@ let parentOf = {};
 export default function Viewport() {
 
     const useGlobalQs = true;
-    const rippleEffect = true;
+    const rippleEffect = false;
 
     const files = React.useRef([]);
     files.current.length === 0 && getFileList();
@@ -132,7 +132,7 @@ export default function Viewport() {
         globalQ.copy(localQ); 
 
         while (parentOf[currentBoneName]) {
-            globalQ.multiply(bones[parentOf[currentBoneName]].quaternion)
+            globalQ.premultiply(bones[parentOf[currentBoneName]].quaternion)
             currentBoneName = parentOf[currentBoneName];
         }
 
@@ -145,11 +145,11 @@ export default function Viewport() {
         while (parentOf[currentBoneName]) {
             let parentQ = new THREE.Quaternion();
             parentQ.copy(bones[parentOf[currentBoneName]].quaternion);
-            localQ.premultiply(parentQ.invert())
+            localQ.multiply(parentQ.invert())
             currentBoneName = parentOf[currentBoneName];
         }
 
-        localQ.premultiply(globalQ);
+        localQ.multiply(globalQ);
         return localQ;
     }
 
