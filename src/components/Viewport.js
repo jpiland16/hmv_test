@@ -70,6 +70,7 @@ export default function Viewport() {
     const [ menuIsPinned, setMenuIsPinned ] = React.useState(true); // Menu is pinned by default
     const [ useGlobalQs, setUseGlobalQs ] = React.useState(true); // Use global quaternions by default
     const [ rippleEffect, setRippleEffect ] = React.useState(false); // Limbs move independently by default
+    const [ playTimerId, setPlayTimerId ] = React.useState(0); // There is no window.setInterval occuring by default
 
     function getWindowDimensions() {
             const { innerWidth: width, innerHeight: height } = window;
@@ -249,6 +250,9 @@ export default function Viewport() {
                 refreshGlobalLocal={setSliderPositions}
 
                 fileList={files}
+
+                playTimerId={playTimerId}
+                setPlayTimerId={setPlayTimerId}
             />
             <Visualizer 
                 modelLoaded={modelLoaded}

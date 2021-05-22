@@ -7,6 +7,7 @@ import Tooltip from '@material-ui/core/Tooltip'
 import Zoom from '@material-ui/core/Zoom'
 import FileCopyIcon from '@material-ui/icons/FileCopy';
 import TuneIcon from '@material-ui/icons/Tune';
+import CategoryIcon from '@material-ui/icons/Category'
 
 export default function SideActionBar(props) {
     return (
@@ -41,9 +42,16 @@ export default function SideActionBar(props) {
                     </IconButton>
                 </Tooltip>
             </Zoom>
+            <Zoom in={props.visible} style={{ transitionDelay: props.visible ? '250ms' : '0ms' }}>
+                <Tooltip title="Labs" placement="right">
+                    <IconButton color={props.selectedPanel === 4 ? "primary" : "default"} onClick={() => props.setSelected(4)}>
+                        <CategoryIcon />
+                    </IconButton>
+                </Tooltip>
+            </Zoom>
             <div className="infoIcon">
                 <Tooltip title="About" placement="right">
-                    <IconButton color={props.selectedPanel === 4 ? "primary" : "default"} onClick={() => props.setSelected(4)}>
+                    <IconButton color={props.selectedPanel === 5 ? "primary" : "default"} onClick={() => props.setSelected(5)}>
                         <InfoIcon />
                     </IconButton>
                 </Tooltip>
