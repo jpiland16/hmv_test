@@ -57,15 +57,15 @@ for (let i = 0; i < inputArray.length; i++) {
 function getQuaternionFromLine(lineNum) {
 
     let line = linesArray[lineNum];
-    let iHat = new THREE.Vector3(1, 0, 0);
+    
+    // Have to use jHat because that is the direction the arm is pointing 
+    // with no rotation (i.e. when transformed by the identity quaternion (X = 0, Y = 0, Z = 0, W = 1))
+    let jHat = new THREE.Vector3(0, 1, 0);
     let vTarget = new THREE.Vector3(line[START_COL], line[START_COL + 1], line[START_COL + 2]);
 
-    let crossProduct = new THREE.Vector3();
-    crossProduct.copy(iHat);
+    let crossProduct = new THREE.Vector3().crossVectors(jHat, vTarget);
 
-    crossProduct.cross(vTarget);
-
-    let dotProduct = iHat.dot(vTarget);
+    let dotProduct = jHat.dot(vTarget);
 
     if (dotProduct >  0.9999) return new THREE.Quaternion(0, 0, 0,  1);
     if (dotProduct < -0.9999) return new THREE.Quaternion(0, 0, 0, -1);
@@ -78,9 +78,11 @@ function getQuaternionFromLine(lineNum) {
     let q = new THREE.Quaternion(crossProduct.x, crossProduct.y, crossProduct.z, w);
 
     q.normalize();
-
-    // Rotates the motion 90deg CCW about global z-axis
-    if (USE_ADJUSTMENT_QUATERNION) q.premultiply(new THREE.Quaternion(0, 0, 0.707, 0.707))
+    
+    // Rotates the motion 90deg CW about global y-axis
+    // If disabled, cone shape is in front of the body (cone opens toward +Z axis)
+    // If enabled, cone shape is on right of body (cone opens toward -X axis)
+    if (USE_ADJUSTMENT_QUATERNION) q.premultiply(new THREE.Quaternion(0, 0.707, 0, -0.707))
 
     return q;
 
@@ -90,13 +92,10 @@ export default function GeneratedData(props) {
 
     props.setUseGlobalQs(USE_GLOBAL);
     props.setUseRipple(AUTO_RIPPLE);
-    
-    const lineNumberRef = React.useRef(0); // Start from beginning of file by default
-    const [ sliderValue, setSliderValue ] = React.useState(0);
 
     const playAdvance = () => {
 
-        let lineNumber = lineNumberRef.current;
+        let lineNumber = props.lineNumberRef.current;
 
         if (lineNumber < linesArray.length - 1) {
             setLineNum(++lineNumber);
@@ -112,8 +111,8 @@ export default function GeneratedData(props) {
     }
 
     const setLineNum = (n) => {
-        setSliderValue(n);
-        lineNumberRef.current = n;
+        props.setTimeSliderValue(n);
+        props.lineNumberRef.current = n;
         let q = getQuaternionFromLine(n);
         //console.log(`Line ${n}: (X: ${q.x}, Y: ${q.y}, Z: ${q.z}, W: ${q.w})`);
         props.batchUpdate(TARGET_BONE, [q.x, q.y, q.z, q.w]);
@@ -124,21 +123,23 @@ export default function GeneratedData(props) {
             <h3>Sam's test, 5/21/2021</h3>
             <a href="https://github.com/jpiland16/hmv_test/blob/master/src/components/menu/components/main-panel/subpanels/Labs/Sam20210521/GeneratedData.js" target="_blank" rel="noreferrer">View relevant code</a>
             <br />
-            <IconButton style={{ marginTop: "-18px"}} onClick={ () => {
-                if(props.playTimerId !== 0) {
-                    window.clearInterval(props.playTimerId);
-                    props.setPlayTimerId(0);
-                } else {
-                    setLineNum(lineNumberRef.current);
-                    props.setPlayTimerId(
-                        window.setInterval(playAdvance, 1000 / FPS));
-                }
-            } }>
-                { props.playTimerId !== 0 ? <PauseIcon /> : <PlayArrowIcon /> }
-            </IconButton>
-            <Slider min={0} max={linesArray.length} value={sliderValue} 
-                onChange={(event, newValue) => setLineNum(newValue)} 
-                style={{width: "calc(100% - 72px)", marginTop: "12px", marginLeft: "12px"}}/>
+            <div style={{ display: "flex", alignItems: "center"}}>
+                <IconButton style={{ marginRight: "12px", marginTop: "2px" }} onClick={ () => {
+                    if(props.playTimerId !== 0) {
+                        window.clearInterval(props.playTimerId);
+                        props.setPlayTimerId(0);
+                    } else {
+                        setLineNum(props.lineNumberRef.current);
+                        props.setPlayTimerId(
+                            window.setInterval(playAdvance, 1000 / FPS));
+                    }
+                } }>
+                    { props.playTimerId !== 0 ? <PauseIcon /> : <PlayArrowIcon /> }
+                </IconButton>
+                <Slider min={0} max={linesArray.length - 1} value={props.timeSliderValue} 
+                    onChange={(event, newValue) => setLineNum(newValue)} 
+                    style={{width: "calc(100% - 84px)"}}/>
+            </div>
         </div>
     )
 }

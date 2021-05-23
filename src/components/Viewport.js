@@ -71,6 +71,9 @@ export default function Viewport() {
     const [ useGlobalQs, setUseGlobalQs ] = React.useState(true); // Use global quaternions by default
     const [ rippleEffect, setRippleEffect ] = React.useState(false); // Limbs move independently by default
     const [ playTimerId, setPlayTimerId ] = React.useState(0); // There is no window.setInterval occuring by default
+    
+    const lineNumberRef = React.useRef(0); // Start from beginning of file by default
+    const [ timeSliderValue, setTimeSliderValue ] = React.useState(0);
 
     function getWindowDimensions() {
             const { innerWidth: width, innerHeight: height } = window;
@@ -253,6 +256,9 @@ export default function Viewport() {
 
                 playTimerId={playTimerId}
                 setPlayTimerId={setPlayTimerId}
+                lineNumberRef={lineNumberRef}
+                timeSliderValue={timeSliderValue}
+                setTimeSliderValue={setTimeSliderValue}
             />
             <Visualizer 
                 modelLoaded={modelLoaded}

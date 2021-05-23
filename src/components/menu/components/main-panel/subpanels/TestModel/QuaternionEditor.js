@@ -1,5 +1,6 @@
 import Typography from '@material-ui/core/Typography'
 import QSlider from './QSlider'
+import Tooltip from '@material-ui/core/Tooltip'
 
 export default function QuaternionEditor(props) {
 
@@ -45,12 +46,15 @@ export default function QuaternionEditor(props) {
 
     return (
         <div>
+
             <Typography>{props.title}</Typography>
-            <div style={{backgroundColor: "#eeeeee", padding: "6px"}}>
-                {[0, 1, 2, 3].map((myIndex) => 
-                    <QSlider index={myIndex} {...props} 
-                    onChange={(event, newValue) => handleSliderUpdate(myIndex, newValue)}/>)}
-            </div>
+            <Tooltip title={props.playTimerId !== 0 ? "Cannot adjust sliders while viewing pre-recorded data" : ""} >
+                <div style={{backgroundColor: "#eeeeee", padding: "6px"}}>
+                    {[0, 1, 2, 3].map((myIndex) => 
+                        <QSlider index={myIndex} {...props} 
+                        onChange={(event, newValue) => handleSliderUpdate(myIndex, newValue)}/>)}
+                </div>
+            </Tooltip>
         </div>
     );
 }

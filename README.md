@@ -2,6 +2,8 @@
 
 testing page for human model visualizer
 
+To start: run `node server` from root directory
+
 ## Specific notes
 
 ### Global vs. local quaternions

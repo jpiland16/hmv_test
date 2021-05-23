@@ -13,28 +13,32 @@ export default function TestModel(props) {
             
             <div>
                 
-                <FormControlLabel
-                    control={
-                    <Switch
-                        checked={props.useGlobalQs}
-                        onChange={(event) => {
-                                props.setUseGlobalQs(event.target.checked);
-                                props.refreshGlobalLocal(props.bones, event.target.checked);
+                <Tooltip title={props.playTimerId !== 0 ? "Cannot change this setting while viewing pre-recorded data" : ""} >
+                    <FormControlLabel
+                        control={
+                        <Switch
+                            checked={props.useGlobalQs}
+                            onChange={(event) => {
+                                    props.setUseGlobalQs(event.target.checked);
+                                    props.refreshGlobalLocal(props.bones, event.target.checked);
+                                }
                             }
+                            color="primary"
+                            disabled={props.playTimerId !== 0}
+                        />
                         }
-                        color="primary"
+                        label="Use global quaternions"
                     />
-                    }
-                    label="Use global quaternions"
-                />
+                </Tooltip>
                 <HelpIcon tooltip="About this setting" onClick={() => window.open("https://github.com/jpiland16/hmv_test#global-vs-local-quaternions")}/>
-                <Tooltip title={props.useGlobalQs ? "" : "Changes always auto-ripple when using local quaternions"} >
+                <Tooltip title={props.playTimerId !== 0 ? "Cannot change this setting while viewing pre-recorded data" : ""} >
                     <FormControlLabel
                         control={
                         <Switch
                             checked={props.useRipple}
                             onChange={(event) => props.setUseRipple(event.target.checked) }
                             color="primary"
+                            disabled={props.playTimerId !== 0}
                         />
                         }
                         label="Changes to parent auto-ripple to children"
