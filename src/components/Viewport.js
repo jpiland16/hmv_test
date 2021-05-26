@@ -2,6 +2,7 @@ import './Viewport.css'
 import Menu from './menu/Menu'
 import React from 'react'
 import Visualizer from './visualizer/Visualizer';
+import PlayBar from './PlayBar'
 import * as THREE from 'three'
 
 // Window resize code: see https://stackoverflow.com/questions/36862334/get-viewport-window-height-in-reactjs
@@ -70,10 +71,19 @@ export default function Viewport() {
     const [ menuIsPinned, setMenuIsPinned ] = React.useState(true); // Menu is pinned by default
     const [ useGlobalQs, setUseGlobalQs ] = React.useState(true); // Use global quaternions by default
     const [ rippleEffect, setRippleEffect ] = React.useState(false); // Limbs move independently by default
-    const [ playTimerId, setPlayTimerId ] = React.useState(0); // There is no window.setInterval occuring by default
-    
-    const lineNumberRef = React.useRef(0); // Start from beginning of file by default
+    const [ playing, setPlaying ] = React.useState(false); // Paused by default
+    const [ cardsPos, setCardsPos ] = React.useState('bottom');
+
+    const [ openLab, setOpenLab ] = React.useState("");
     const [ timeSliderValue, setTimeSliderValue ] = React.useState(0);
+    const [ outputTypes, setOutputTypes ] = React.useState([]);
+    const [ data, setData ] = React.useState([]);
+    const [ FPS, setFPS ] = React.useState(30);
+    const [ repeat, setRepeat ] = React.useState(false);
+    const [ lastIndex, setLastIndex ] = React.useState(-1);
+    
+    const playTimerId = React.useRef(0);
+    const lineNumberRef = React.useRef(0); // Start from beginning of file by default
 
     function getWindowDimensions() {
             const { innerWidth: width, innerHeight: height } = window;
@@ -117,6 +127,7 @@ export default function Viewport() {
         setParent(bones, "RLA", "RUA");
         setParent(bones, "LUA", "BACK");
         setParent(bones, "LLA", "LUA");
+        setParent(bones, "BACK", "ROOT");
 
         let boneList = Object.getOwnPropertyNames(bones);
         for (let i = 0; i < boneList.length; i++) {
@@ -198,29 +209,96 @@ export default function Viewport() {
         
         if (childrenOf[boneId]) affectedByInheritance.push(...childrenOf[boneId])
 
-        while (affectedByInheritance.length > 0) {
-            let currentBone = affectedByInheritance.shift();
-            if (childrenOf[currentBone]) affectedByInheritance.push(...childrenOf[currentBone])
-            if (rippleEffect) {
-                // We don't have to "DO" anything to the model. This is default behavior.
-                // Just update the sliders.
-                let currLocalQ = bones[currentBone].quaternion;
-                let currGlobalQ = getGlobalFromLocal(bones, currLocalQ, currentBone);
-                let sliderQ = useGlobalQs ? currGlobalQ : currLocalQ;
-                newSliderValues[currentBone] = [sliderQ.x, sliderQ.y, sliderQ.z, sliderQ.w];
-                globalQs[currentBone] = currGlobalQ;
-            } else {
-                // This is NOT the default behavior.
-                let oldGlobalQ = globalQs[currentBone];
-                // Note: scope
-                let newLocalQ = getLocalFromGlobal(oldGlobalQ, currentBone);
-                let sliderQ = useGlobalQs ? oldGlobalQ : newLocalQ;
-                bones[currentBone].quaternion.set(newLocalQ.x, newLocalQ.y, newLocalQ.z, newLocalQ.w);
-                newSliderValues[currentBone] = [sliderQ.x, sliderQ.y, sliderQ.z, sliderQ.w];
+        if (playTimerId.current !== 0) { // (Don't bother doing this when viewing pre-recorded data.)
+            while (affectedByInheritance.length > 0) {
+                let currentBone = affectedByInheritance.shift();
+                if (childrenOf[currentBone]) affectedByInheritance.push(...childrenOf[currentBone])
+                if (rippleEffect) {
+                    // We don't have to "DO" anything to the model. This is default behavior.
+                    // Just update the sliders.
+                    let currLocalQ = bones[currentBone].quaternion;
+                    let currGlobalQ = getGlobalFromLocal(bones, currLocalQ, currentBone);
+                    let sliderQ = useGlobalQs ? currGlobalQ : currLocalQ;
+                    newSliderValues[currentBone] = [sliderQ.x, sliderQ.y, sliderQ.z, sliderQ.w];
+                    globalQs[currentBone] = currGlobalQ;
+                } else {
+                    // This is NOT the default behavior.
+                    let oldGlobalQ = globalQs[currentBone];
+                    // Note: scope
+                    let newLocalQ = getLocalFromGlobal(oldGlobalQ, currentBone);
+                    let sliderQ = useGlobalQs ? oldGlobalQ : newLocalQ;
+                    bones[currentBone].quaternion.set(newLocalQ.x, newLocalQ.y, newLocalQ.z, newLocalQ.w);
+                    newSliderValues[currentBone] = [sliderQ.x, sliderQ.y, sliderQ.z, sliderQ.w];
+                }
             }
         }
 
         setSliderValues(newSliderValues);
+        setModelNeedsUpdating(true);
+    }
+
+    function resetModel() {
+        const resetValues = {
+            ROOT: {
+                x: 0,
+                y: 0,
+                z: 0,
+                w: 1
+            },
+            BACK: {
+                x: -0.06,
+                y: 0,
+                z: 0,
+                w: 0.998
+            },
+            LUA: {
+                x: -0.472,
+                y: -0.468,
+                z: 0.561,
+                w: -0.494
+            },
+            LLA: {
+                x: -0.471,
+                y: -0.466,
+                z: 0.51,
+                w: -0.549
+            },
+            RUA: {
+                x: 0.471,
+                y: -0.471,
+                z: 0.561,
+                w: 0.492
+            },
+            RLA: {
+                x: 0.471,
+                y: -0.468,
+                z: 0.509,
+                w: 0.547
+            },
+            LSHOE: {
+                x: 0.495,
+                y: -0.015,
+                z: 0.008,
+                w: 0.869
+            },
+            RSHOE: {
+                x: 0.497,
+                y: 0.014,
+                z: -0.008,
+                w: 0.867
+            }
+        }
+
+        let boneNames = Object.getOwnPropertyNames(resetValues);
+
+        for (let i = 0; i < boneNames.length; i++) {
+            let q = resetValues[boneNames[i]];
+            globalQs[boneNames[i]] = new THREE.Quaternion(q.x, q.y, q.z, q.w);
+            let lq = getLocalFromGlobal(globalQs[boneNames[i]], boneNames[i]);
+            bones[boneNames[i]].quaternion.set(lq.x, lq.y, lq.z, lq.w);
+        }
+        
+        setSliderPositions(bones, useGlobalQs)
         setModelNeedsUpdating(true);
     }
 
@@ -239,12 +317,15 @@ export default function Viewport() {
                 getWindowDimensions={useWindowDimensions}
                 searchFileText={searchFileText}
                 setSearchFileText={setSearchFileText}
+                cardsPos={cardsPos}
+                setCardsPos={setCardsPos}
 
                 modelLoaded={modelLoaded}
                 sliderValues={sliderValues}
                 updateModel={updateSingleQValue}
                 batchUpdate={batchUpdateObject}
                 bones={bones}
+                resetModel={resetModel}
 
                 useGlobalQs={useGlobalQs}
                 setUseGlobalQs={setUseGlobalQs}
@@ -255,11 +336,22 @@ export default function Viewport() {
                 fileList={files}
 
                 playTimerId={playTimerId}
-                setPlayTimerId={setPlayTimerId}
                 lineNumberRef={lineNumberRef}
                 timeSliderValue={timeSliderValue}
                 setTimeSliderValue={setTimeSliderValue}
+                setPlaying={setPlaying}
+
+                openLab={openLab}
+                setOpenLab={setOpenLab}
+                setOutputTypes={setOutputTypes}
+                setData={setData}
+                data={data}
+                setFPS={setFPS}
+                setRepeat={setRepeat}
+                lastIndex={lastIndex}
+                setLastIndex={setLastIndex}
             />
+
             <Visualizer 
                 modelLoaded={modelLoaded}
                 setModelLoaded={setModelLoaded}
@@ -269,6 +361,21 @@ export default function Viewport() {
                 onClick = {
                     (event) => !menuIsPinned && setMenuIsOpen(false)
                 }
+            />
+
+            <PlayBar 
+                lineNumberRef={lineNumberRef}
+                playTimerId={playTimerId}
+                playing={playing}
+                setPlaying={setPlaying}
+                timeSliderValue={timeSliderValue}
+                setTimeSliderValue={setTimeSliderValue}
+                FPS={FPS}
+                repeat={repeat}
+                data={data}
+                getWindowDimensions={useWindowDimensions}
+                menuIsOpen={menuIsOpen}
+                disabled={data.length === 0}
             />
         </div>
     )

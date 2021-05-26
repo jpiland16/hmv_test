@@ -1,6 +1,6 @@
-export default function MyAccount() {
+export default function MyAccount(props) {
     return (
-        <div>
+        <div style={{display: props.display}}>
             Maybe have a sign in option here to save settings?
         </div>
     );

@@ -11,7 +11,7 @@ export default function QSlider(props) {
                 + (Math.round(sliderValue * 1000) / 1000)}</Typography>
                 <Slider value={sliderValue} 
                 onChange={props.onChange} min={-1.0} max={1.0} step={0.01}
-                style={{ padding: "0px" }} disabled={props.playTimerId !== 0}/>
+                style={{ padding: "0px" }} disabled={props.playTimerId.current !== 0}/>
         </div>
     )
 

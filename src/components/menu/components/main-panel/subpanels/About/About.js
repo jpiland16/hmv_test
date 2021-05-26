@@ -1,6 +1,6 @@
-export default function About() {
+export default function About(props) {
     return (
-        <div>
+        <div style={{display: props.display}}>
             Test page for HMV project <br />
             Jonathan Piland | 2021
 

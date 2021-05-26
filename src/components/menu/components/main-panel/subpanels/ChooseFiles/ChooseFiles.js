@@ -149,7 +149,7 @@ export default function CustomizedTreeView(props) {
   };
 
   return (
-    <div>
+    <div style={{display: props.display}}>
         <Typography variant="caption" style={{ 
             opacity: 0.7, 
             display: "block", 

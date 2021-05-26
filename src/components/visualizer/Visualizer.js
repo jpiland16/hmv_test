@@ -14,7 +14,8 @@ let boneNames = {
     RLA: "lowerarm_r", 
     BACK: "spine_02", /** IMPORTANT */
     LSHOE: "foot_l", 
-    RSHOE: "foot_r"
+    RSHOE: "foot_r",
+    ROOT: "_rootJoint"
 }
 
 let bones = {

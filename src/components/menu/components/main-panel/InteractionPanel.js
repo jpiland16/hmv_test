@@ -9,9 +9,12 @@ import About from "./subpanels/About/About"
 export default function InteractionPanel(props) {
     return (
         <div className="interactionPanel" style={{ height: props.getWindowDimensions()[0] > 768 ? "calc(100% - 96px)" : "calc(100% - 48px)" }}>
-            {
-                [<ChooseFiles {...props}/>, <TestModel {...props} />, <MyAccount />, <Settings />, <Labs {...props}/>, <About />][props.selectedPanel]
-            }
+                <ChooseFiles {...props} display={props.selectedPanel === 0 ? 'block' : 'none'}/>
+                <TestModel   {...props} display={props.selectedPanel === 1 ? 'block' : 'none'}/>
+                <MyAccount              display={props.selectedPanel === 2 ? 'block' : 'none'}/>
+                <Settings    {...props} display={props.selectedPanel === 3 ? 'block' : 'none'}/>
+                <Labs        {...props} display={props.selectedPanel === 4 ? 'block' : 'none'}/>
+                <About                  display={props.selectedPanel === 5 ? 'block' : 'none'}/>
         </div>
     );
 }
