@@ -2113,7 +2113,10 @@ export default function GeneratedData(props) {
         props.repeat.current = REPEAT;
         props.FPS.current = FPS;
         props.data.current = linesArray;
-        props.outputTypes.current=[1,2,3,4,5,6,7];
+        props.outputTypes.current = [{
+            startCol: 243,
+            columnCount: 1
+        }]
         props.lastIndex.current = -1;
     }
 

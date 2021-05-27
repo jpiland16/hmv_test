@@ -7,7 +7,7 @@ import Button from '@material-ui/core/Button'
 
 export default function TestModel(props) {
     return (
-        <div style={{width: "calc(100% - 24px)", display: props.display}}>
+        <div style={{width: "calc(100% - 30px)", marginTop: "12px", marginLeft: "6px", display: props.display}}>
             {
             
             props.modelLoaded && props.bones && props.sliderValues ?
@@ -17,6 +17,7 @@ export default function TestModel(props) {
                     <div>
                         <Button
                             color="secondary"
+                            variant="contained"
                             disabled={props.playTimerId.current !== 0}
                             onClick={() => props.resetModel()}
                         >
@@ -24,7 +25,6 @@ export default function TestModel(props) {
                         </Button>
                     </div>
                 </Tooltip>
-                <br />
                 <Tooltip title={props.playTimerId.current !== 0 ? "Cannot change this setting while viewing pre-recorded data. Pause playback first, then try again." : ""} >
                     <FormControlLabel
                         control={

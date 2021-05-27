@@ -2,7 +2,7 @@ import CardItem from './CardItem'
 import './CardSet.css'
 
 export default function CardSet(props) {
-    return (
+    return props.data.current.length > 0 && (
         <div className="cardSet" style={{
             display: props.cardsPos !== 'hidden' ? "block" : "none",
             position: "absolute",
@@ -23,7 +23,13 @@ export default function CardSet(props) {
                     `${props.outputTypes.current.length * 18}vw` :
                     "20vw"
             }}>
-                {props.outputTypes.current.map((value) => <CardItem options={value} floatLeft={props.cardsPos === 'bottom'}/>)}
+                {props.outputTypes.current.map((value, index) => <CardItem 
+                    key={index} 
+                    options={value} 
+                    floatLeft={props.cardsPos === 'bottom'} 
+                    data={props.data}
+                    lineNumber={props.timeSliderValue}
+                />)}
             </div>
         </div>
     );

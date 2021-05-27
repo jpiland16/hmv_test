@@ -30,6 +30,11 @@ export default function GeneratedData(props) {
             props.FPS.current = FPS;
             props.lastIndex.current = -1;
 
+            props.outputTypes.current = [{
+                startCol: 243,
+                columnCount: 1
+            }]
+
             let x = new XMLHttpRequest();
             x.open("GET", window.location.href === "http://localhost:3000/" ? 
                 "https://raw.githubusercontent.com/jpiland16/hmv_test/master/files/demo/S4-ADL4.dat" : 

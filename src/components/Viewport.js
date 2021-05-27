@@ -73,7 +73,7 @@ export default function Viewport() {
     const useGlobalQs = React.useRef(true); // Use global quaternions by default
     const rippleEffect = React.useRef(false); // Limbs move independently by default
     const [ playing, setPlaying ] = React.useState(false); // Paused by default
-    const [ cardsPos, setCardsPos ] = React.useState('bottom');
+    const [ cardsPos, setCardsPos ] = React.useState('hidden');
 
     const [ openLab, setOpenLab ] = React.useState("");
     const [ timeSliderValue, setTimeSliderValue ] = React.useState(0);
@@ -376,6 +376,8 @@ export default function Viewport() {
             />
 
             <CardSet 
+                timeSliderValue={timeSliderValue}
+                data={data}
                 cardsPos={cardsPos}
                 menuIsOpen={menuIsOpen}
                 getWindowDimensions={useWindowDimensions}

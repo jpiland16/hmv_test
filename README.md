@@ -22,7 +22,7 @@ and thus we can also obtain
 
 *Q<sub>L</sub>* = *Q<sub>n</sub><sup>-1</sup>Q<sub>n-1</sub><sup>-1</sup>* &times; ... &times; *Q<sub>2</sub><sup>-1</sup>Q<sub>1</sub><sup>-1</sup>Q<sub>W</sub>* &nbsp; *(converts world orientation to local orientation)*
 
-These functions are implemented as [`getGlobalFromLocal`](https://github.com/jpiland16/hmv_test/blob/master/src/components/Viewport.js#L144-L154) and [`getLocalFromGlobal`](https://github.com/jpiland16/hmv_test/blob/master/src/components/Viewport.js#L156-L168), respectively, in [Viewport.js](https://github.com/jpiland16/hmv_test/blob/master/src/components/Viewport.js).
+These functions are implemented as [`getGlobalFromLocal`](https://github.com/jpiland16/hmv_test/blob/master/src/components/Viewport.js#L160-L170) and [`getLocalFromGlobal`](https://github.com/jpiland16/hmv_test/blob/master/src/components/Viewport.js#L172-L184), respectively, in [Viewport.js](https://github.com/jpiland16/hmv_test/blob/master/src/components/Viewport.js).
 
 ### Auto ripple
 

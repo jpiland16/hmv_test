@@ -17,7 +17,8 @@ export default function PlayBar(props) {
             if (!props.repeat.current) {
                 window.clearInterval(props.playTimerId.current);
                 props.playTimerId.current = 0;
-                setLineNum(props.lineNumberRef.current)
+                setLineNum(props.lineNumberRef.current);
+                props.setPlaying(false);
             } else {
                 setLineNum(0);
             }
