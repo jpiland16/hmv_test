@@ -210,7 +210,7 @@ export default function Viewport() {
         
         if (childrenOf[boneId]) affectedByInheritance.push(...childrenOf[boneId])
 
-        if (playTimerId.current !== 0) { // (Don't bother doing this when viewing pre-recorded data.)
+        if (playTimerId.current === 0) { // (Don't bother doing this when viewing pre-recorded data.)
             while (affectedByInheritance.length > 0) {
                 let currentBone = affectedByInheritance.shift();
                 if (childrenOf[currentBone]) affectedByInheritance.push(...childrenOf[currentBone])

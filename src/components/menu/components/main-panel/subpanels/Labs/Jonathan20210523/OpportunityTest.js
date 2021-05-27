@@ -2107,7 +2107,6 @@ for (let i = 0; i < inputArray.length; i++) {
 export default function GeneratedData(props) {
 
     if (props.data.current.length === 0) {
-        props.useGlobalQs.current = USE_GLOBAL;
         props.repeat.current = REPEAT;
         props.FPS.current = FPS;
         props.data.current = linesArray;
@@ -2120,6 +2119,7 @@ export default function GeneratedData(props) {
 
     
     React.useEffect(() => {
+        props.useGlobalQs.current = USE_GLOBAL;
         if (props.timeSliderValue !== props.lastIndex.current) { // We need to update the model, because the timeSlider has moved
             let boneNames = Object.getOwnPropertyNames(boneList);
             for (let i = 0; i < boneNames.length; i++) {

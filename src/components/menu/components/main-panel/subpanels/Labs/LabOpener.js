@@ -20,6 +20,7 @@ export default function LabOpener(props) {
                     props.outputTypes.current = []                              // Clear all graphs
                     props.setTimeSliderValue(0);                                // Move to start
                     props.lineNumberRef.current = 0;                            // (same as above)
+                    props.setUseRipple(true)                                    // For the initialization of the model
                     if (props.playTimerId.current !== 0) {                      // Stop playback if it is occuring
                             window.clearInterval(props.playTimerId.current);   
                             props.playTimerId.current = 0;
