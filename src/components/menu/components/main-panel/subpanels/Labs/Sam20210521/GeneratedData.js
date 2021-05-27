@@ -36,7 +36,6 @@ const inputData = `0 0 0 0 0.7071067811865475 0.0 0.7071067811865475 0.0 0 0 0 0
 const START_COL = 4;
 const TARGET_BONE = 'RUA';
 const USE_GLOBAL = true;
-const AUTO_RIPPLE = true;
 const REPEAT = true;
 const USE_ADJUSTMENT_QUATERNION = true;
 const FPS = 20;
@@ -88,7 +87,6 @@ export default function GeneratedData(props) {
 
     if (props.data.current.length === 0) {
         props.useGlobalQs.current = USE_GLOBAL;
-        props.useRipple.current = AUTO_RIPPLE;
         props.repeat.current = REPEAT;
         props.FPS.current = FPS;
         props.data.current = linesArray;

@@ -2093,7 +2093,6 @@ const boneList = {
 
 
 const USE_GLOBAL = true;
-const AUTO_RIPPLE = true;
 const REPEAT = false;
 const FPS = 30;
 
@@ -2109,7 +2108,6 @@ export default function GeneratedData(props) {
 
     if (props.data.current.length === 0) {
         props.useGlobalQs.current = USE_GLOBAL;
-        props.useRipple.current = AUTO_RIPPLE;
         props.repeat.current = REPEAT;
         props.FPS.current = FPS;
         props.data.current = linesArray;

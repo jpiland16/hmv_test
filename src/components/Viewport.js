@@ -10,8 +10,8 @@ import * as THREE from 'three'
 
 let childrenOf = {};
 let parentOf = {};
-
 let globalQs = {};
+let sliderValuesShadowCopy = {};
 
 export default function Viewport() {
 
@@ -71,7 +71,7 @@ export default function Viewport() {
     const [ menuIsOpen, setMenuIsOpen ] = React.useState(false); // Menu is closed by default
     const [ menuIsPinned, setMenuIsPinned ] = React.useState(true); // Menu is pinned by default
     const useGlobalQs = React.useRef(true); // Use global quaternions by default
-    const rippleEffect = React.useRef(false); // Limbs move independently by default
+    const [ useRipple, setUseRipple ] = React.useState(false); // Limbs move independently by default
     const [ playing, setPlaying ] = React.useState(false); // Paused by default
     const [ cardsPos, setCardsPos ] = React.useState('hidden');
 
@@ -190,7 +190,7 @@ export default function Viewport() {
     }
 
     function batchUpdateObject(boneId, slideArray) {
-        let newSliderValues = { ...sliderValues }; // Create shallow clone of old model state
+        let newSliderValues = Object.getOwnPropertyNames(sliderValuesShadowCopy).length > 0 ? {...sliderValuesShadowCopy} : { ...sliderValues }; // Create shallow clone of old model state
         newSliderValues[boneId] = slideArray;
         let newQ = new THREE.Quaternion(slideArray[0], slideArray[1], slideArray[2], slideArray[3]);
         
@@ -214,7 +214,7 @@ export default function Viewport() {
             while (affectedByInheritance.length > 0) {
                 let currentBone = affectedByInheritance.shift();
                 if (childrenOf[currentBone]) affectedByInheritance.push(...childrenOf[currentBone])
-                if (rippleEffect.current) {
+                if (useRipple) {
                     // We don't have to "DO" anything to the model. This is default behavior.
                     // Just update the sliders.
                     let currLocalQ = bones[currentBone].quaternion;
@@ -234,6 +234,7 @@ export default function Viewport() {
             }
         }
 
+        sliderValuesShadowCopy = newSliderValues;
         setSliderValues(newSliderValues);
         setModelNeedsUpdating(true);
     }
@@ -329,7 +330,8 @@ export default function Viewport() {
                 resetModel={resetModel}
 
                 useGlobalQs={useGlobalQs}
-                useRipple={rippleEffect}
+                useRipple={useRipple}
+                setUseRipple={setUseRipple}
                 refreshGlobalLocal={setSliderPositions}
 
                 fileList={files}

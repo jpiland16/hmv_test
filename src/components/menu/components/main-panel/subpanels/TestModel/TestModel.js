@@ -47,8 +47,8 @@ export default function TestModel(props) {
                     <FormControlLabel
                         control={
                         <Switch
-                            checked={props.useRipple.current}
-                            onChange={(event) => props.useRipple.current = event.target.checked }
+                            checked={props.useRipple}
+                            onChange={(event) => props.setUseRipple(event.target.checked) }
                             color="primary"
                             disabled={props.playTimerId.current !== 0}
                         />
