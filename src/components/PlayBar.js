@@ -11,10 +11,10 @@ export default function PlayBar(props) {
 
         let lineNumber = props.lineNumberRef.current;
 
-        if (lineNumber < props.data.length - 1) {
+        if (lineNumber < props.data.current.length - 1) {
             setLineNum(++lineNumber);
         } else {
-            if (!props.repeat) {
+            if (!props.repeat.current) {
                 window.clearInterval(props.playTimerId.current);
                 props.playTimerId.current = 0;
                 setLineNum(props.lineNumberRef.current)
@@ -41,20 +41,20 @@ export default function PlayBar(props) {
                     props.playTimerId.current = 0;
                     props.setPlaying(false);
                 } else {
-                    if (props.lineNumberRef.current === props.data.length - 1) setLineNum(0);
+                    if (props.lineNumberRef.current === props.data.current.length - 1) setLineNum(0);
                     else setLineNum(props.lineNumberRef.current);
                     props.playTimerId.current = (
-                        window.setInterval(playAdvance, 1000 / props.FPS));
+                        window.setInterval(playAdvance, 1000 / props.FPS.current));
                     props.setPlaying(true)
                 }
             } }>
                 { props.playing ? <PauseIcon /> : <PlayArrowIcon /> }
             </IconButton>
-            <Slider disabled={props.disabled} min={0} max={props.data.length - 1} value={props.timeSliderValue} 
+            <Slider disabled={props.disabled} min={0} max={props.data.current.length - 1} value={props.timeSliderValue} 
                 onChange={(event, newValue) => setLineNum(newValue)} 
                 style={{width: "calc(100% - 84px - 72px)"}}/>
             <div className="timeStamp">
-                { props.data.length > 0 ? props.data[props.timeSliderValue][0] : "#######"}
+                { props.data.current.length > 0 ? props.data.current[props.timeSliderValue][0] : "#######"}
             </div>
         </div>
     )

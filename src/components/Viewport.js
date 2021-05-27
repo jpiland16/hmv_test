@@ -3,6 +3,7 @@ import Menu from './menu/Menu'
 import React from 'react'
 import Visualizer from './visualizer/Visualizer';
 import PlayBar from './PlayBar'
+import CardSet from './cards/CardSet'
 import * as THREE from 'three'
 
 // Window resize code: see https://stackoverflow.com/questions/36862334/get-viewport-window-height-in-reactjs
@@ -69,18 +70,18 @@ export default function Viewport() {
     const [ modelNeedsUpdating, setModelNeedsUpdating ] = React.useState(false);
     const [ menuIsOpen, setMenuIsOpen ] = React.useState(false); // Menu is closed by default
     const [ menuIsPinned, setMenuIsPinned ] = React.useState(true); // Menu is pinned by default
-    const [ useGlobalQs, setUseGlobalQs ] = React.useState(true); // Use global quaternions by default
-    const [ rippleEffect, setRippleEffect ] = React.useState(false); // Limbs move independently by default
+    const useGlobalQs = React.useRef(true); // Use global quaternions by default
+    const rippleEffect = React.useRef(false); // Limbs move independently by default
     const [ playing, setPlaying ] = React.useState(false); // Paused by default
     const [ cardsPos, setCardsPos ] = React.useState('bottom');
 
     const [ openLab, setOpenLab ] = React.useState("");
     const [ timeSliderValue, setTimeSliderValue ] = React.useState(0);
-    const [ outputTypes, setOutputTypes ] = React.useState([]);
-    const [ data, setData ] = React.useState([]);
-    const [ FPS, setFPS ] = React.useState(30);
-    const [ repeat, setRepeat ] = React.useState(false);
-    const [ lastIndex, setLastIndex ] = React.useState(-1);
+    const outputTypes = React.useRef([]);
+    const data = React.useRef([]);
+    const FPS = React.useRef(30);
+    const repeat = React.useRef(false);
+    const lastIndex = React.useRef(-1);
     
     const playTimerId = React.useRef(0);
     const lineNumberRef = React.useRef(0); // Start from beginning of file by default
@@ -136,7 +137,7 @@ export default function Viewport() {
             globalQs[boneList[i]] = globalQ;
         }
 
-        setSliderPositions(bones, useGlobalQs);
+        setSliderPositions(bones, useGlobalQs.current);
     }
 
     function setSliderPositions(bones, useGlobalQs) {
@@ -193,11 +194,11 @@ export default function Viewport() {
         newSliderValues[boneId] = slideArray;
         let newQ = new THREE.Quaternion(slideArray[0], slideArray[1], slideArray[2], slideArray[3]);
         
-        let newGlobalQ = useGlobalQs ? 
+        let newGlobalQ = useGlobalQs.current ? 
             newQ :
             getGlobalFromLocal(bones, newQ, boneId);
 
-        let newLocalQ = useGlobalQs ?
+        let newLocalQ = useGlobalQs.current ?
             getLocalFromGlobal(newQ, boneId) :
             newQ;
 
@@ -213,12 +214,12 @@ export default function Viewport() {
             while (affectedByInheritance.length > 0) {
                 let currentBone = affectedByInheritance.shift();
                 if (childrenOf[currentBone]) affectedByInheritance.push(...childrenOf[currentBone])
-                if (rippleEffect) {
+                if (rippleEffect.current) {
                     // We don't have to "DO" anything to the model. This is default behavior.
                     // Just update the sliders.
                     let currLocalQ = bones[currentBone].quaternion;
                     let currGlobalQ = getGlobalFromLocal(bones, currLocalQ, currentBone);
-                    let sliderQ = useGlobalQs ? currGlobalQ : currLocalQ;
+                    let sliderQ = useGlobalQs.current ? currGlobalQ : currLocalQ;
                     newSliderValues[currentBone] = [sliderQ.x, sliderQ.y, sliderQ.z, sliderQ.w];
                     globalQs[currentBone] = currGlobalQ;
                 } else {
@@ -226,7 +227,7 @@ export default function Viewport() {
                     let oldGlobalQ = globalQs[currentBone];
                     // Note: scope
                     let newLocalQ = getLocalFromGlobal(oldGlobalQ, currentBone);
-                    let sliderQ = useGlobalQs ? oldGlobalQ : newLocalQ;
+                    let sliderQ = useGlobalQs.current ? oldGlobalQ : newLocalQ;
                     bones[currentBone].quaternion.set(newLocalQ.x, newLocalQ.y, newLocalQ.z, newLocalQ.w);
                     newSliderValues[currentBone] = [sliderQ.x, sliderQ.y, sliderQ.z, sliderQ.w];
                 }
@@ -298,7 +299,7 @@ export default function Viewport() {
             bones[boneNames[i]].quaternion.set(lq.x, lq.y, lq.z, lq.w);
         }
         
-        setSliderPositions(bones, useGlobalQs)
+        setSliderPositions(bones, useGlobalQs.current)
         setModelNeedsUpdating(true);
     }
 
@@ -328,9 +329,7 @@ export default function Viewport() {
                 resetModel={resetModel}
 
                 useGlobalQs={useGlobalQs}
-                setUseGlobalQs={setUseGlobalQs}
                 useRipple={rippleEffect}
-                setUseRipple={setRippleEffect}
                 refreshGlobalLocal={setSliderPositions}
 
                 fileList={files}
@@ -341,15 +340,13 @@ export default function Viewport() {
                 setTimeSliderValue={setTimeSliderValue}
                 setPlaying={setPlaying}
 
+                outputTypes={outputTypes}
                 openLab={openLab}
                 setOpenLab={setOpenLab}
-                setOutputTypes={setOutputTypes}
-                setData={setData}
                 data={data}
-                setFPS={setFPS}
-                setRepeat={setRepeat}
                 lastIndex={lastIndex}
-                setLastIndex={setLastIndex}
+                FPS={FPS}
+                repeat={repeat}
             />
 
             <Visualizer 
@@ -375,7 +372,14 @@ export default function Viewport() {
                 data={data}
                 getWindowDimensions={useWindowDimensions}
                 menuIsOpen={menuIsOpen}
-                disabled={data.length === 0}
+                disabled={data.current.length === 0}
+            />
+
+            <CardSet 
+                cardsPos={cardsPos}
+                menuIsOpen={menuIsOpen}
+                getWindowDimensions={useWindowDimensions}
+                outputTypes={outputTypes}
             />
         </div>
     )

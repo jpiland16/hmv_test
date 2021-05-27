@@ -86,20 +86,22 @@ function getQuaternionFromLine(lineNum) {
 
 export default function GeneratedData(props) {
 
-    if (props.data.length === 0) {
-        props.setUseGlobalQs(USE_GLOBAL);
-        props.setUseRipple(AUTO_RIPPLE);
-        props.setRepeat(REPEAT);
-        props.setFPS(FPS);
-        props.setData(linesArray);
-        props.setLastIndex(-1);
+    if (props.data.current.length === 0) {
+        props.useGlobalQs.current = USE_GLOBAL;
+        props.useRipple.current = AUTO_RIPPLE;
+        props.repeat.current = REPEAT;
+        props.FPS.current = FPS;
+        props.data.current = linesArray;
+        props.lastIndex.current = -1;
     }
 
-    if (props.timeSliderValue !== props.lastIndex) { // We need to update the model, because the timeSlider has moved
-        let q = getQuaternionFromLine(props.timeSliderValue);
-        props.batchUpdate(TARGET_BONE, [q.x, q.y, q.z, q.w]);
-        props.setLastIndex(props.timeSliderValue)
-    }
+    React.useEffect(() => {
+        if (props.timeSliderValue !== props.lastIndex.current) { // We need to update the model, because the timeSlider has moved
+            let q = getQuaternionFromLine(props.timeSliderValue);
+            props.batchUpdate(TARGET_BONE, [q.x, q.y, q.z, q.w]);
+            props.lastIndex.current = props.timeSliderValue;
+        }
+    });
 
     return (
         <div>

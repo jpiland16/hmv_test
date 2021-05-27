@@ -2107,30 +2107,33 @@ for (let i = 0; i < inputArray.length; i++) {
 
 export default function GeneratedData(props) {
 
-    if (props.data.length === 0) {
-        props.setUseGlobalQs(USE_GLOBAL);
-        props.setUseRipple(AUTO_RIPPLE);
-        props.setRepeat(REPEAT);
-        props.setFPS(FPS);
-        props.setData(linesArray);
-        props.setLastIndex(-1);
+    if (props.data.current.length === 0) {
+        props.useGlobalQs.current = USE_GLOBAL;
+        props.useRipple.current = AUTO_RIPPLE;
+        props.repeat.current = REPEAT;
+        props.FPS.current = FPS;
+        props.data.current = linesArray;
+        props.outputTypes.current=[1,2,3,4,5,6,7];
+        props.lastIndex.current = -1;
     }
 
-    let boneNames = Object.getOwnPropertyNames(boneList);
     
-    if (props.timeSliderValue !== props.lastIndex) { // We need to update the model, because the timeSlider has moved
-        for (let i = 0; i < boneNames.length; i++) {
-            let columnStart = boneList[boneNames[i]];
-            let q = new THREE.Quaternion(
-                linesArray[props.timeSliderValue][columnStart + 1] / 1000, // X
-                linesArray[props.timeSliderValue][columnStart + 2] / 1000, // Y
-                linesArray[props.timeSliderValue][columnStart + 3] / 1000, // Z
-                linesArray[props.timeSliderValue][columnStart + 0] / 1000, // W
-            );
-            props.setLastIndex(props.timeSliderValue);
-            props.batchUpdate(boneNames[i], [q.x, q.y, q.z, q.w]);
+    React.useEffect(() => {
+        if (props.timeSliderValue !== props.lastIndex.current) { // We need to update the model, because the timeSlider has moved
+            let boneNames = Object.getOwnPropertyNames(boneList);
+            for (let i = 0; i < boneNames.length; i++) {
+                let columnStart = boneList[boneNames[i]];
+                let q = new THREE.Quaternion(
+                    linesArray[props.timeSliderValue][columnStart + 1] / 1000, // X
+                    linesArray[props.timeSliderValue][columnStart + 2] / 1000, // Y
+                    linesArray[props.timeSliderValue][columnStart + 3] / 1000, // Z
+                    linesArray[props.timeSliderValue][columnStart + 0] / 1000, // W
+                );
+                props.lastIndex.current = props.timeSliderValue;
+                props.batchUpdate(boneNames[i], [q.x, q.y, q.z, q.w]);
+            }
         }
-    }
+    });
 
     return (
         <div>

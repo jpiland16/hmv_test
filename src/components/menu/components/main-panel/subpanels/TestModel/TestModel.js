@@ -14,22 +14,24 @@ export default function TestModel(props) {
             
             <div>
                 <Tooltip title={props.playTimerId.current !== 0 ? "Cannot reset model while viewing pre-recorded data. Pause playback first, then try again." : ""} >
-                    <Button
-                        color="secondary"
-                        disabled={props.playTimerId.current !== 0}
-                        onClick={() => props.resetModel()}
-                    >
-                        Reset model
-                    </Button>
+                    <div>
+                        <Button
+                            color="secondary"
+                            disabled={props.playTimerId.current !== 0}
+                            onClick={() => props.resetModel()}
+                        >
+                            Reset model
+                        </Button>
+                    </div>
                 </Tooltip>
                 <br />
                 <Tooltip title={props.playTimerId.current !== 0 ? "Cannot change this setting while viewing pre-recorded data. Pause playback first, then try again." : ""} >
                     <FormControlLabel
                         control={
                         <Switch
-                            checked={props.useGlobalQs}
+                            checked={props.useGlobalQs.current}
                             onChange={(event) => {
-                                    props.setUseGlobalQs(event.target.checked);
+                                    props.useGlobalQs.current = event.target.checked;
                                     props.refreshGlobalLocal(props.bones, event.target.checked);
                                 }
                             }
@@ -45,8 +47,8 @@ export default function TestModel(props) {
                     <FormControlLabel
                         control={
                         <Switch
-                            checked={props.useRipple}
-                            onChange={(event) => props.setUseRipple(event.target.checked) }
+                            checked={props.useRipple.current}
+                            onChange={(event) => props.useRipple.current = event.target.checked }
                             color="primary"
                             disabled={props.playTimerId.current !== 0}
                         />
@@ -59,8 +61,8 @@ export default function TestModel(props) {
                 {
 
                 Object.keys(props.bones).map((boneId) => {
-                        return (<div>
-                                    <QuaternionEditor {...props} title={boneId} />
+                        return (<div key={boneId + "div"} >
+                                    <QuaternionEditor {...props} key={boneId + "editor"}   title={boneId} />
                                 </div>)
                 }) 
 

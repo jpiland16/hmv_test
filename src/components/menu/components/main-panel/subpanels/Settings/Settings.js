@@ -12,7 +12,7 @@ export default function Settings(props) {
     };
 
     return (
-        <div style={{display: props.display}}>
+        <div style={{display: props.display}} className="settingsDiv">
             <FormControl component="fieldset">
                 <FormLabel component="legend">Cards position</FormLabel>
                 <RadioGroup aria-label="cards position" value={props.cardsPos} onChange={handleChange}>
