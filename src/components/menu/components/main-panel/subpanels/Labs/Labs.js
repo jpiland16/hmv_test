@@ -1,6 +1,7 @@
 import Sam20210521 from './Sam20210521/GeneratedData'
 import Jonathan20210523 from './Jonathan20210523/OpportunityTest'
 import Jonathan20210526 from './Jonathan20210526/RequestFile'
+import Jonathan20210527 from './Jonathan20210527/RequestFile2'
 import Tooltip from '@material-ui/core/Tooltip'
 import Button from '@material-ui/core/Button'
 
@@ -34,6 +35,10 @@ export default function Labs(props) {
 
             <LabOpener title="Jonathan 5/26/2021" {...props}>
                 <Jonathan20210526 {...props} />
+            </LabOpener>
+
+            <LabOpener title="Jonathan 5/27/2021" {...props}>
+                <Jonathan20210527 {...props} />
             </LabOpener>
             
         </div>

@@ -1,4 +1,6 @@
 import './CardItem.css'
+import React from 'react';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Legend, ResponsiveContainer } from 'recharts';
 
 const oppColumns = [{
     label: "TIME",
@@ -150,263 +152,263 @@ const oppColumns = [{
     unit: "milli g"
 },{
     label: "(IMU) BACK accX",
-    multiplier: 0.0098,
+    multiplier: 0.098,
     unit: "milli g"
 },{
     label: "(IMU) BACK accY",
-    multiplier: 0.0098,
+    multiplier: 0.098,
     unit: "milli g"
 },{
     label: "(IMU) BACK accZ",
-    multiplier: 0.0098,
+    multiplier: 0.098,
     unit: "milli g"
 },{
     label: "(IMU) BACK gyroX",
-    multiplier: 0.0001,
+    multiplier: 0.001,
     unit: "unknown"
 },{
     label: "(IMU) BACK gyroY",
-    multiplier: 0.0001,
+    multiplier: 0.001,
     unit: "unknown"
 },{
     label: "(IMU) BACK gyroZ",
-    multiplier: 0.0001,
+    multiplier: 0.001,
     unit: "unknown"
 },{
     label: "(IMU) BACK magneticX",
-    multiplier: 0.0001,
+    multiplier: 0.001,
     unit: "unknown"
 },{
     label: "(IMU) BACK magneticY",
-    multiplier: 0.0001,
+    multiplier: 0.001,
     unit: "unknown"
 },{
     label: "(IMU) BACK magneticZ",
-    multiplier: 0.0001,
+    multiplier: 0.001,
     unit: "unknown"
 },{
     label: "(IMU) BACK Quaternion1",
-    multiplier: 0.0001,
+    multiplier: 0.001,
     unit: "none"
 },{
     label: "(IMU) BACK Quaternion2",
-    multiplier: 0.0001,
+    multiplier: 0.001,
     unit: "none"
 },{
     label: "(IMU) BACK Quaternion3",
-    multiplier: 0.0001,
+    multiplier: 0.001,
     unit: "none"
 },{
     label: "(IMU) BACK Quaternion4",
-    multiplier: 0.0001,
+    multiplier: 0.001,
     unit: "none"
 },{
     label: "(IMU) RUA accX",
-    multiplier: 0.0098,
+    multiplier: 0.098,
     unit: "milli g"
 },{
     label: "(IMU) RUA accY",
-    multiplier: 0.0098,
+    multiplier: 0.098,
     unit: "milli g"
 },{
     label: "(IMU) RUA accZ",
-    multiplier: 0.0098,
+    multiplier: 0.098,
     unit: "milli g"
 },{
     label: "(IMU) RUA gyroX",
-    multiplier: 0.0001,
+    multiplier: 0.001,
     unit: "unknown"
 },{
     label: "(IMU) RUA gyroY",
-    multiplier: 0.0001,
+    multiplier: 0.001,
     unit: "unknown"
 },{
     label: "(IMU) RUA gyroZ",
-    multiplier: 0.0001,
+    multiplier: 0.001,
     unit: "unknown"
 },{
     label: "(IMU) RUA magneticX",
-    multiplier: 0.0001,
+    multiplier: 0.001,
     unit: "unknown"
 },{
     label: "(IMU) RUA magneticY",
-    multiplier: 0.0001,
+    multiplier: 0.001,
     unit: "unknown"
 },{
     label: "(IMU) RUA magneticZ",
-    multiplier: 0.0001,
+    multiplier: 0.001,
     unit: "unknown"
 },{
     label: "(IMU) RUA Quaternion1",
-    multiplier: 0.0001,
+    multiplier: 0.001,
     unit: "none"
 },{
     label: "(IMU) RUA Quaternion2",
-    multiplier: 0.0001,
+    multiplier: 0.001,
     unit: "none"
 },{
     label: "(IMU) RUA Quaternion3",
-    multiplier: 0.0001,
+    multiplier: 0.001,
     unit: "none"
 },{
     label: "(IMU) RUA Quaternion4",
-    multiplier: 0.0001,
+    multiplier: 0.001,
     unit: "none"
 },{
     label: "(IMU) RLA accX",
-    multiplier: 0.0098,
+    multiplier: 0.098,
     unit: "milli g"
 },{
     label: "(IMU) RLA accY",
-    multiplier: 0.0098,
+    multiplier: 0.098,
     unit: "milli g"
 },{
     label: "(IMU) RLA accZ",
-    multiplier: 0.0098,
+    multiplier: 0.098,
     unit: "milli g"
 },{
     label: "(IMU) RLA gyroX",
-    multiplier: 0.0001,
+    multiplier: 0.001,
     unit: "unknown"
 },{
     label: "(IMU) RLA gyroY",
-    multiplier: 0.0001,
+    multiplier: 0.001,
     unit: "unknown"
 },{
     label: "(IMU) RLA gyroZ",
-    multiplier: 0.0001,
+    multiplier: 0.001,
     unit: "unknown"
 },{
     label: "(IMU) RLA magneticX",
-    multiplier: 0.0001,
+    multiplier: 0.001,
     unit: "unknown"
 },{
     label: "(IMU) RLA magneticY",
-    multiplier: 0.0001,
+    multiplier: 0.001,
     unit: "unknown"
 },{
     label: "(IMU) RLA magneticZ",
-    multiplier: 0.0001,
+    multiplier: 0.001,
     unit: "unknown"
 },{
     label: "(IMU) RLA Quaternion1",
-    multiplier: 0.0001,
+    multiplier: 0.001,
     unit: "none"
 },{
     label: "(IMU) RLA Quaternion2",
-    multiplier: 0.0001,
+    multiplier: 0.001,
     unit: "none"
 },{
     label: "(IMU) RLA Quaternion3",
-    multiplier: 0.0001,
+    multiplier: 0.001,
     unit: "none"
 },{
     label: "(IMU) RLA Quaternion4",
-    multiplier: 0.0001,
+    multiplier: 0.001,
     unit: "none"
 },{
     label: "(IMU) LUA accX",
-    multiplier: 0.0098,
+    multiplier: 0.098,
     unit: "milli g"
 },{
     label: "(IMU) LUA accY",
-    multiplier: 0.0098,
+    multiplier: 0.098,
     unit: "milli g"
 },{
     label: "(IMU) LUA accZ",
-    multiplier: 0.0098,
+    multiplier: 0.098,
     unit: "milli g"
 },{
     label: "(IMU) LUA gyroX",
-    multiplier: 0.0001,
+    multiplier: 0.001,
     unit: "unknown"
 },{
     label: "(IMU) LUA gyroY",
-    multiplier: 0.0001,
+    multiplier: 0.001,
     unit: "unknown"
 },{
     label: "(IMU) LUA gyroZ",
-    multiplier: 0.0001,
+    multiplier: 0.001,
     unit: "unknown"
 },{
     label: "(IMU) LUA magneticX",
-    multiplier: 0.0001,
+    multiplier: 0.001,
     unit: "unknown"
 },{
     label: "(IMU) LUA magneticY",
-    multiplier: 0.0001,
+    multiplier: 0.001,
     unit: "unknown"
 },{
     label: "(IMU) LUA magneticZ",
-    multiplier: 0.0001,
+    multiplier: 0.001,
     unit: "unknown"
 },{
     label: "(IMU) LUA Quaternion1",
-    multiplier: 0.0001,
+    multiplier: 0.001,
     unit: "none"
 },{
     label: "(IMU) LUA Quaternion2",
-    multiplier: 0.0001,
+    multiplier: 0.001,
     unit: "none"
 },{
     label: "(IMU) LUA Quaternion3",
-    multiplier: 0.0001,
+    multiplier: 0.001,
     unit: "none"
 },{
     label: "(IMU) LUA Quaternion4",
-    multiplier: 0.0001,
+    multiplier: 0.001,
     unit: "none"
 },{
     label: "(IMU) LLA accX",
-    multiplier: 0.0098,
+    multiplier: 0.098,
     unit: "milli g"
 },{
     label: "(IMU) LLA accY",
-    multiplier: 0.0098,
+    multiplier: 0.098,
     unit: "milli g"
 },{
     label: "(IMU) LLA accZ",
-    multiplier: 0.0098,
+    multiplier: 0.098,
     unit: "milli g"
 },{
     label: "(IMU) LLA gyroX",
-    multiplier: 0.0001,
+    multiplier: 0.001,
     unit: "unknown"
 },{
     label: "(IMU) LLA gyroY",
-    multiplier: 0.0001,
+    multiplier: 0.001,
     unit: "unknown"
 },{
     label: "(IMU) LLA gyroZ",
-    multiplier: 0.0001,
+    multiplier: 0.001,
     unit: "unknown"
 },{
     label: "(IMU) LLA magneticX",
-    multiplier: 0.0001,
+    multiplier: 0.001,
     unit: "unknown"
 },{
     label: "(IMU) LLA magneticY",
-    multiplier: 0.0001,
+    multiplier: 0.001,
     unit: "unknown"
 },{
     label: "(IMU) LLA magneticZ",
-    multiplier: 0.0001,
+    multiplier: 0.001,
     unit: "unknown"
 },{
     label: "(IMU) LLA Quaternion1",
-    multiplier: 0.0001,
+    multiplier: 0.001,
     unit: "none"
 },{
     label: "(IMU) LLA Quaternion2",
-    multiplier: 0.0001,
+    multiplier: 0.001,
     unit: "none"
 },{
     label: "(IMU) LLA Quaternion3",
-    multiplier: 0.0001,
+    multiplier: 0.001,
     unit: "none"
 },{
     label: "(IMU) LLA Quaternion4",
-    multiplier: 0.0001,
+    multiplier: 0.001,
     unit: "none"
 },{
     label: "(IMU) L-SHOE EuX",
@@ -422,51 +424,51 @@ const oppColumns = [{
     unit: "degrees"
 },{
     label: "(IMU) L-SHOE Nav_Ax",
-    multiplier: 0.0098,
+    multiplier: 0.098,
     unit: "milli g"
 },{
     label: "(IMU) L-SHOE Nav_Ay",
-    multiplier: 0.0098,
+    multiplier: 0.098,
     unit: "milli g"
 },{
     label: "(IMU) L-SHOE Nav_Az",
-    multiplier: 0.0098,
+    multiplier: 0.098,
     unit: "milli g"
 },{
     label: "(IMU) L-SHOE Body_Ax",
-    multiplier: 0.0098,
+    multiplier: 0.098,
     unit: "milli g"
 },{
     label: "(IMU) L-SHOE Body_Ay",
-    multiplier: 0.0098,
+    multiplier: 0.098,
     unit: "milli g"
 },{
     label: "(IMU) L-SHOE Body_Az",
-    multiplier: 0.0098,
+    multiplier: 0.098,
     unit: "milli g"
 },{
     label: "(IMU) L-SHOE AngVelBodyFrameX",
-    multiplier: 0.0001,
+    multiplier: 0.001,
     unit: "mm/s"
 },{
     label: "(IMU) L-SHOE AngVelBodyFrameY",
-    multiplier: 0.0001,
+    multiplier: 0.001,
     unit: "mm/s"
 },{
     label: "(IMU) L-SHOE AngVelBodyFrameZ",
-    multiplier: 0.0001,
+    multiplier: 0.001,
     unit: "mm/s"
 },{
     label: "(IMU) L-SHOE AngVelNavFrameX",
-    multiplier: 0.0001,
+    multiplier: 0.001,
     unit: "mm/s"
 },{
     label: "(IMU) L-SHOE AngVelNavFrameY",
-    multiplier: 0.0001,
+    multiplier: 0.001,
     unit: "mm/s"
 },{
     label: "(IMU) L-SHOE AngVelNavFrameZ",
-    multiplier: 0.0001,
+    multiplier: 0.001,
     unit: "mm/s"
 },{
     label: "(IMU) L-SHOE Compass",
@@ -486,51 +488,51 @@ const oppColumns = [{
     unit: "degrees"
 },{
     label: "(IMU) R-SHOE Nav_Ax",
-    multiplier: 0.0098,
+    multiplier: 0.098,
     unit: "milli g"
 },{
     label: "(IMU) R-SHOE Nav_Ay",
-    multiplier: 0.0098,
+    multiplier: 0.098,
     unit: "milli g"
 },{
     label: "(IMU) R-SHOE Nav_Az",
-    multiplier: 0.0098,
+    multiplier: 0.098,
     unit: "milli g"
 },{
     label: "(IMU) R-SHOE Body_Ax",
-    multiplier: 0.0098,
+    multiplier: 0.098,
     unit: "milli g"
 },{
     label: "(IMU) R-SHOE Body_Ay",
-    multiplier: 0.0098,
+    multiplier: 0.098,
     unit: "milli g"
 },{
     label: "(IMU) R-SHOE Body_Az",
-    multiplier: 0.0098,
+    multiplier: 0.098,
     unit: "milli g"
 },{
     label: "(IMU) R-SHOE AngVelBodyFrameX",
-    multiplier: 0.0001,
+    multiplier: 0.001,
     unit: "mm/s"
 },{
     label: "(IMU) R-SHOE AngVelBodyFrameY",
-    multiplier: 0.0001,
+    multiplier: 0.001,
     unit: "mm/s"
 },{
     label: "(IMU) R-SHOE AngVelBodyFrameZ",
-    multiplier: 0.0001,
+    multiplier: 0.001,
     unit: "mm/s"
 },{
     label: "(IMU) R-SHOE AngVelNavFrameX",
-    multiplier: 0.0001,
+    multiplier: 0.001,
     unit: "mm/s"
 },{
     label: "(IMU) R-SHOE AngVelNavFrameY",
-    multiplier: 0.0001,
+    multiplier: 0.001,
     unit: "mm/s"
 },{
     label: "(IMU) R-SHOE AngVelNavFrameZ",
-    multiplier: 0.0001,
+    multiplier: 0.001,
     unit: "mm/s"
 },{
     label: "(IMU) R-SHOE Compass",
@@ -1090,16 +1092,32 @@ const labelLegend = {
     405506: "Toggle Switch"
 }
 
+// NOTE: See http://tsitsul.in/blog/coloropt/
+const colors = [    
+    "#ebac23",
+    "#b80058",
+    "#008cf9",
+    "#006e00",
+    "#00bbad",
+    "#d163e6",
+    "#b24502",
+    "#ff9287",
+    "#5954d6",
+    "#00c6f8",
+    "#878500",
+    "#00a76c",
+    "#bdbdbd" 
+];
+
 const LABEL_COL_BEGIN = 243;
 
 export default function CardItem(props) {
 
     const getLabelCard = (options, data, lineNum) => {
         let columnIndices = [];
-        for (let i = options.startCol; 
-            i < options.startCol + options.columnCount; i++) {
-                columnIndices.push(i);
-            }
+        for (let i = options.startCol; i < options.startCol + options.columnCount; i++) {
+            columnIndices.push(i);
+        }
                     
         return (
             <div>
@@ -1113,10 +1131,60 @@ export default function CardItem(props) {
 
     }
 
+    const getGraphCard = (options, data, lineNum) => {
+
+        let graphData = [];
+
+        let dataNames = [];
+
+        let startRow = Math.max(0, lineNum - options.rowsBefore);
+        let endRow = Math.min(data.length, lineNum + options.rowsAfter)
+
+        for (let row = startRow; row <= endRow; row++) {
+            let obj = {
+                name: data[row][0], // time
+            }
+            for (let i = options.startCol; i < options.startCol + options.columnCount; i++) {
+                obj[oppColumns[i].label] = data[row][i] * oppColumns[i].multiplier;
+                if (row === startRow) dataNames.push(oppColumns[i].label);
+            }
+            graphData.push(obj);
+        }
+
+        return (
+            <ResponsiveContainer width="100%" aspect={4.0/3.0}>
+                <LineChart
+                    data={graphData}
+                    margin={{
+                      top: 0,
+                      right: 0,
+                      left: -25,
+                      bottom: 0,
+                    }}
+                >
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="name" />
+                    <YAxis />
+                    <Legend />
+
+                    {dataNames.map((key, index) => <Line 
+                        type="monotone" 
+                        dataKey={key} 
+                        key={key} 
+                        stroke={colors[index % colors.length]}
+                        dot={false}
+                    />)}
+
+                </LineChart>
+            </ResponsiveContainer>
+        )
+
+    }
+
     return (
       <div className="cardItem" style={{ float: props.floatLeft ? "left" : "none"}}>
             { props.options.startCol < LABEL_COL_BEGIN 
-                && props.options.columnCount + props.options.startCol <= LABEL_COL_BEGIN ? "graphs" :
+                && props.options.columnCount + props.options.startCol <= LABEL_COL_BEGIN  ? getGraphCard(props.options, props.data.current, props.lineNumber) :
             props.options.startCol >= LABEL_COL_BEGIN 
                 && props.options.startCol + props.options.columnCount < oppColumns.length ? getLabelCard(props.options, props.data.current, props.lineNumber) :
             "Invalid columns specified."}
