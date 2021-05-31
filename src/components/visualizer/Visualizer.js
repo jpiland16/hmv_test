@@ -66,7 +66,7 @@ function loadModel() {
     return new Promise((myResolve, myReject) => {
         var loader = new GLTFLoader();
 
-        const model_path = "files/figures/mannequin.glb";
+        const model_path = "https://raw.githubusercontent.com/jpiland16/hmv_test/master/files/figures/mannequin.glb";
 
         loader.load(model_path, gltf => {
                 // gltf.scene.position.set(-2,-2,-2)
