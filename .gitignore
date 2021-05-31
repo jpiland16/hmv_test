@@ -30,3 +30,5 @@ yarn-error.log*
 !/files/figures/**
 fileList.json
 src/files
+build.log
+git.log

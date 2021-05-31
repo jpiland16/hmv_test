@@ -63,8 +63,18 @@ function refreshRendererSize(parentElement) {
 }
 
 function loadModel() {
+    
+    var loader = new GLTFLoader();
+
+    loader.load("files/figures/compass.glb", gltf => { scene.add(gltf.scene) });
+    loader.load("files/figures/grid.glb", gltf => { 
+        let mesh = gltf.scene.children[0];
+        mesh.material.opacity = 0.4;
+        mesh.material.transparent = true;
+        scene.add(gltf.scene) 
+    });
+
     return new Promise((myResolve, myReject) => {
-        var loader = new GLTFLoader();
 
         const model_path = window.location.href === "http://localhost:3000/" ? 
         "https://raw.githubusercontent.com/jpiland16/hmv_test/master/files/figures/mannequin.glb" :

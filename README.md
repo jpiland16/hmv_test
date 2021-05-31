@@ -1,8 +1,19 @@
-# hmv_test  | [_launch website_](https://jpiland16.github.io/hmv_test/)
+# hmv_test  | [_launch website_](http://vcm-20389.vm.duke.edu/)
 
-testing page for human model visualizer
+human model visualizer project, 2021
 
-To start: run `node server` from root directory
+### Authors *(alphabetically)*
+
+ - [Jonathan Piland](https://github.com/jpiland16)
+ - [Samuel Thompson](https://github.com/samuel-thompsonn)
+ - [Sophie Williams](https://github.com/sosophiemw)
+
+> Note: some concepts were reused from [HumanSkeletonVisualizer](https://github.com/karendeng00/HumanSkeletonVisualizer/) by (karendeng00)[https://github.com/karendeng00] and (charlottemcc)[https://github.com/charlottemcc].
+
+### Getting started:
+ - `git clone`
+ - `npm install`
+ - `node server` or `pm2 start server.js`
 
 ## Specific notes
 

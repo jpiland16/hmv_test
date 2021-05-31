@@ -3,6 +3,7 @@ const app = express();
 const serveIndex = require('serve-index');
 const fs = require('fs');
 const { count } = require('console');
+const { exec } = require('child_process');
 
 function walkDirectory(dir) {
     let myPromise = new Promise(function(myResolve, myReject) {
@@ -71,6 +72,11 @@ function countItems(root) {
     return [allItemCount, leafCount]
 }
 
+function onProjectUpdate() {
+    console.log("Pull operation requested at " + new Date().toUTCString());
+    exec("git pull > git.log && npm run build > build.log")
+}
+
 app.get("/api/*", (req, res) => {
     let requestedResource = req.url.substr(5);
     switch (requestedResource) {
@@ -98,10 +104,19 @@ app.get("/api/*", (req, res) => {
         case "get-file-list":
             res.sendFile(`${__dirname}/fileList.json`);
             break;
+        case "pull":
+            res.send("POST request expected.");
+            // res.send("Initiating website rebuild...");
+            // onProjectUpdate();
+            break;
         default:
             res.send("Unexpected resource requested: " + requestedResource);
     
     }
+});
+
+app.post('/api/pull', (req, res) => {
+    onProjectUpdate();
 });
 
 app.use('/files', serveIndex(__dirname + '/files', {
@@ -123,9 +138,23 @@ app.get('/files/*', (req, res) => {
 app.use(express.static(`${__dirname}/build`));
 
 app.use('*',  (req, res)=> {
-    res.sendFile("/build/index.html", {
-        "root": __dirname
-    });
+    if (fs.existsSync("./build/index.html")) {
+        res.sendFile("/build/index.html", {
+            "root": __dirname
+        });
+    } else {
+        res.send(`<html>
+                    <head>
+                        <title>
+                            Wesite under maintenance
+                        </title>
+                    </head>
+                    <body>
+                        The website is currently being rebuilt. Please refresh the page in 1-2 minutes.
+                        <a href='https://github.com/jpiland16/hmv_test'>Contact the developers</a> if you believe this message is in error.
+                    </body>
+                  </html>`)
+    }
 });
 
 scanAllFiles();

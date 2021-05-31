@@ -9,6 +9,7 @@ export default function Settings(props) {
   
     const handleChange = (event) => {
         props.setCardsPos(event.target.value);
+        window.localStorage.setItem("cardsPos", event.target.value);
     };
 
     return (
