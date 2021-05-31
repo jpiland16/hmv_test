@@ -116,6 +116,7 @@ app.get("/api/*", (req, res) => {
 });
 
 app.post('/api/pull', (req, res) => {
+    res.sendStatus(200);
     onProjectUpdate();
 });
 

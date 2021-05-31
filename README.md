@@ -8,7 +8,7 @@ human model visualizer project, 2021
  - [Samuel Thompson](https://github.com/samuel-thompsonn)
  - [Sophie Williams](https://github.com/sosophiemw)
 
-> Note: some concepts were reused from [HumanSkeletonVisualizer](https://github.com/karendeng00/HumanSkeletonVisualizer/) by (karendeng00)[https://github.com/karendeng00] and (charlottemcc)[https://github.com/charlottemcc].
+> Note: some concepts were reused from [HumanSkeletonVisualizer](https://github.com/karendeng00/HumanSkeletonVisualizer/) by [karendeng00](https://github.com/karendeng00) and [charlottemcc](https://github.com/charlottemcc).
 
 ### Getting started:
  - `git clone`
