@@ -128,7 +128,7 @@ export default function GeneratedData(props) {
         <div>
             <div>{props.data.current.length > 0 ? "File downloaded successfully." : `File downloading: ${progress}% complete`}</div>
             { props.data.current.length === 0 && <LinearProgress variant="determinate" value={progress} /> }
-            <a href="https://github.com/jpiland16/hmv_test/blob/master/src/components/menu/components/main-panel/subpanels/Labs/Jonathan20210526/RequestFile.js" target="_blank" rel="noreferrer">View relevant code</a>
+            <a href="https://github.com/jpiland16/hmv_test/blob/master/src/components/menu/components/main-panel/subpanels/Labs/Sophie20210530/test1.js" target="_blank" rel="noreferrer">View relevant code</a>
         </div>
     )
 }
