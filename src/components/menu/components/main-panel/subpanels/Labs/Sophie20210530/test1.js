@@ -4,6 +4,7 @@ import LinearProgress from '@material-ui/core/LinearProgress'
 
 const boneList = {
     'BACK': 46,
+    'ROOT':46,
     'RUA': 59,
     'RLA': 72,
     'LUA': 85,
@@ -13,7 +14,7 @@ const boneList = {
 const USE_GLOBAL = true;
 
 const REPEAT = false;
-const FPS = 30;
+const FPS = 60;
 
 let outgoingRequest = false;
 
@@ -97,27 +98,21 @@ export default function GeneratedData(props) {
             let boneNames = Object.getOwnPropertyNames(boneList);
             for (let i = 0; i < boneNames.length; i++) {
                 let columnStart = boneList[boneNames[i]];
-                let q1=new THREE.Quaternion()
-                if(i==0){
-                    q1.x=0
-                    q1.y=0
-                    q1.z=Math.sqrt(2)/2
-                    q1.w=Math.sqrt(2)/2
-                    q1.premultiply(new THREE.Quaternion(1,0,0,0))
+                let q1 //this quaternion rotates the limb to the identity quaternion in OPPORTUNITY world
+                if(i<=1){
+                    q1=new THREE.Quaternion(Math.sqrt(2)/2, Math.sqrt(2)/-2, 0, 0)
                 } else{
-                    q1.x=0
-                    q1.y=0
-                    q1.z=Math.sqrt(2)/-2
-                    q1.w=Math.sqrt(2)/2
+                    q1=new THREE.Quaternion(0,0,Math.sqrt(2)/-2, Math.sqrt(2)/2)
+                    q1.premultiply(new THREE.Quaternion(1,0,0,0))
                 }
                 let q2=new THREE.Quaternion(props.data.current[props.timeSliderValue][columnStart + 1], // X
                     props.data.current[props.timeSliderValue][columnStart + 2], // Y
                     props.data.current[props.timeSliderValue][columnStart + 3], // Z
                     props.data.current[props.timeSliderValue][columnStart + 0], // W
                 )
-                q2.normalize()
-                let q3=new THREE.Quaternion()
-                q3.multiplyQuaternions(q2,q1)
+                q2.normalize() //normalized quaternion from OPPORTUNITY data
+                let q3=new THREE.Quaternion() 
+                q3.multiplyQuaternions(q2,q1) //adds the OPP quaternion to the new "identity quaternion"
                 props.lastIndex.current = props.timeSliderValue;
                 props.batchUpdate(boneNames[i], [q3.x, q3.y, q3.z, q3.w]);
             }
