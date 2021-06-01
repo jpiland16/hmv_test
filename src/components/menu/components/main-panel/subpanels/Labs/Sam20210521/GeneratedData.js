@@ -36,7 +36,6 @@ const inputData = `0 0 0 0 0.7071067811865475 0.0 0.7071067811865475 0.0 0 0 0 0
 const START_COL = 4;
 const TARGET_BONE = 'RUA';
 const USE_GLOBAL = true;
-const AUTO_RIPPLE = true;
 const REPEAT = true;
 const USE_ADJUSTMENT_QUATERNION = true;
 const FPS = 20;
@@ -86,20 +85,21 @@ function getQuaternionFromLine(lineNum) {
 
 export default function GeneratedData(props) {
 
-    if (props.data.length === 0) {
-        props.setUseGlobalQs(USE_GLOBAL);
-        props.setUseRipple(AUTO_RIPPLE);
-        props.setRepeat(REPEAT);
-        props.setFPS(FPS);
-        props.setData(linesArray);
-        props.setLastIndex(-1);
+    if (props.data.current.length === 0) {
+        props.repeat.current = REPEAT;
+        props.FPS.current = FPS;
+        props.data.current = linesArray;
+        props.lastIndex.current = -1;
     }
 
-    if (props.timeSliderValue !== props.lastIndex) { // We need to update the model, because the timeSlider has moved
-        let q = getQuaternionFromLine(props.timeSliderValue);
-        props.batchUpdate(TARGET_BONE, [q.x, q.y, q.z, q.w]);
-        props.setLastIndex(props.timeSliderValue)
-    }
+    React.useEffect(() => {
+        props.useGlobalQs.current = USE_GLOBAL;
+        if (props.timeSliderValue !== props.lastIndex.current) { // We need to update the model, because the timeSlider has moved
+            let q = getQuaternionFromLine(props.timeSliderValue);
+            props.batchUpdate(TARGET_BONE, [q.x, q.y, q.z, q.w]);
+            props.lastIndex.current = props.timeSliderValue;
+        }
+    });
 
     return (
         <div>

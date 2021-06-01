@@ -1,8 +1,19 @@
-# hmv_test  | [_launch website_](https://jpiland16.github.io/hmv_test/)
+# hmv_test  | [_launch website_](http://vcm-20389.vm.duke.edu/)
 
-testing page for human model visualizer
+human model visualizer project, 2021
 
-To start: run `node server` from root directory
+### Authors *(alphabetically)*
+
+ - [Jonathan Piland](https://github.com/jpiland16)
+ - [Samuel Thompson](https://github.com/samuel-thompsonn)
+ - [Sophie Williams](https://github.com/sosophiemw)
+
+> Note: some concepts were reused from [HumanSkeletonVisualizer](https://github.com/karendeng00/HumanSkeletonVisualizer/) by [karendeng00](https://github.com/karendeng00) and [charlottemcc](https://github.com/charlottemcc).
+
+### Getting started:
+ - `git clone`
+ - `npm install`
+ - `node server` or `pm2 start server.js`
 
 ## Specific notes
 
@@ -22,7 +33,7 @@ and thus we can also obtain
 
 *Q<sub>L</sub>* = *Q<sub>n</sub><sup>-1</sup>Q<sub>n-1</sub><sup>-1</sup>* &times; ... &times; *Q<sub>2</sub><sup>-1</sup>Q<sub>1</sub><sup>-1</sup>Q<sub>W</sub>* &nbsp; *(converts world orientation to local orientation)*
 
-These functions are implemented as [`getGlobalFromLocal`](https://github.com/jpiland16/hmv_test/blob/master/src/components/Viewport.js#L144-L154) and [`getLocalFromGlobal`](https://github.com/jpiland16/hmv_test/blob/master/src/components/Viewport.js#L156-L168), respectively, in [Viewport.js](https://github.com/jpiland16/hmv_test/blob/master/src/components/Viewport.js).
+These functions are implemented as [`getGlobalFromLocal`](https://github.com/jpiland16/hmv_test/blob/master/src/components/Viewport.js#L160-L170) and [`getLocalFromGlobal`](https://github.com/jpiland16/hmv_test/blob/master/src/components/Viewport.js#L172-L184), respectively, in [Viewport.js](https://github.com/jpiland16/hmv_test/blob/master/src/components/Viewport.js).
 
 ### Auto ripple
 

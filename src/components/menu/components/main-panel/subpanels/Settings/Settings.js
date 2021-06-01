@@ -9,10 +9,11 @@ export default function Settings(props) {
   
     const handleChange = (event) => {
         props.setCardsPos(event.target.value);
+        window.localStorage.setItem("cardsPos", event.target.value);
     };
 
     return (
-        <div style={{display: props.display}}>
+        <div style={{display: props.display}} className="settingsDiv">
             <FormControl component="fieldset">
                 <FormLabel component="legend">Cards position</FormLabel>
                 <RadioGroup aria-label="cards position" value={props.cardsPos} onChange={handleChange}>

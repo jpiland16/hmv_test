@@ -16,9 +16,12 @@ export default function LabOpener(props) {
                     } else {
                         props.setOpenLab(props.title);  
                     }
-                    props.setData([]);                                          // Allow either refresh or disable
+                    props.data.current = [];                                    // Allow either refresh or disable
+                    props.outputTypes.current = []                              // Clear all graphs
                     props.setTimeSliderValue(0);                                // Move to start
                     props.lineNumberRef.current = 0;                            // (same as above)
+                    props.setUseRipple(true)                                    // For the initialization of the model
+                    props.resetModel()                                          // Same as above
                     if (props.playTimerId.current !== 0) {                      // Stop playback if it is occuring
                             window.clearInterval(props.playTimerId.current);   
                             props.playTimerId.current = 0;

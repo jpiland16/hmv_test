@@ -7,29 +7,31 @@ import Button from '@material-ui/core/Button'
 
 export default function TestModel(props) {
     return (
-        <div style={{width: "calc(100% - 24px)", display: props.display}}>
+        <div style={{width: "calc(100% - 30px)", marginTop: "12px", marginLeft: "6px", display: props.display}}>
             {
             
             props.modelLoaded && props.bones && props.sliderValues ?
             
             <div>
                 <Tooltip title={props.playTimerId.current !== 0 ? "Cannot reset model while viewing pre-recorded data. Pause playback first, then try again." : ""} >
-                    <Button
-                        color="secondary"
-                        disabled={props.playTimerId.current !== 0}
-                        onClick={() => props.resetModel()}
-                    >
-                        Reset model
-                    </Button>
+                    <div>
+                        <Button
+                            color="secondary"
+                            variant="contained"
+                            disabled={props.playTimerId.current !== 0}
+                            onClick={() => props.resetModel()}
+                        >
+                            Reset model
+                        </Button>
+                    </div>
                 </Tooltip>
-                <br />
                 <Tooltip title={props.playTimerId.current !== 0 ? "Cannot change this setting while viewing pre-recorded data. Pause playback first, then try again." : ""} >
                     <FormControlLabel
                         control={
                         <Switch
-                            checked={props.useGlobalQs}
+                            checked={props.useGlobalQs.current}
                             onChange={(event) => {
-                                    props.setUseGlobalQs(event.target.checked);
+                                    props.useGlobalQs.current = event.target.checked;
                                     props.refreshGlobalLocal(props.bones, event.target.checked);
                                 }
                             }
@@ -59,8 +61,8 @@ export default function TestModel(props) {
                 {
 
                 Object.keys(props.bones).map((boneId) => {
-                        return (<div>
-                                    <QuaternionEditor {...props} title={boneId} />
+                        return (<div key={boneId + "div"} >
+                                    <QuaternionEditor {...props} key={boneId + "editor"}   title={boneId} />
                                 </div>)
                 }) 
 

@@ -63,15 +63,28 @@ function refreshRendererSize(parentElement) {
 }
 
 function loadModel() {
-    return new Promise((myResolve, myReject) => {
-        var loader = new GLTFLoader();
+    
+    var loader = new GLTFLoader();
 
-        const model_path = "https://raw.githubusercontent.com/jpiland16/hmv_test/master/files/figures/mannequin.glb";
+    loader.load("files/figures/compass.glb", gltf => { scene.add(gltf.scene) });
+    loader.load("files/figures/grid.glb", gltf => { 
+        let mesh = gltf.scene.children[0];
+        mesh.material.opacity = 0.4;
+        mesh.material.transparent = true;
+        scene.add(gltf.scene) 
+    });
+
+    return new Promise((myResolve, myReject) => {
+
+        const model_path = window.location.href === "http://localhost:3000/" ? 
+        "https://raw.githubusercontent.com/jpiland16/hmv_test/master/files/figures/mannequin.glb" :
+        "files/figures/mannequin.glb";
 
         loader.load(model_path, gltf => {
                 // gltf.scene.position.set(-2,-2,-2)
 
                 var model = gltf.scene;
+
                 scene.add( model );
 
                 let boneList = Object.getOwnPropertyNames(boneNames);
