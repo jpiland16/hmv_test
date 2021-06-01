@@ -26,7 +26,14 @@ export default function GeneratedData(props) {
 
         if(!outgoingRequest) {
             
-            
+            if (props.getCamera()) {
+                    props.getCamera().position.x = -5;
+                    props.getCamera().position.y = 0;
+                    props.getCamera().position.z = 0;
+                    props.getCamera().up.set(0, 0, 1);
+                    props.getControls().update();
+                } 
+
             props.repeat.current = REPEAT;
             props.FPS.current = FPS;
             props.lastIndex.current = -1;
@@ -70,8 +77,8 @@ export default function GeneratedData(props) {
                 let inputArray = x.responseText.split("\n");
                 let linesArray = [];
 
-                for (let i = 0; i < inputArray.length - 1; i++) { // Last line is blank
-                    linesArray[i] = inputArray[i].split(" ");
+                for (let i = 0; i < inputArray.length - 1; i+=3) { // Using every three lines to triple the speed
+                    linesArray[i/3] = inputArray[i].split(" ");
                 }
 
                 props.data.current = linesArray;
@@ -102,9 +109,11 @@ export default function GeneratedData(props) {
                 if(i<=1){
                     q1=new THREE.Quaternion(Math.sqrt(2)/2, Math.sqrt(2)/-2, 0, 0)
                 } else{
-                    q1=new THREE.Quaternion(0,0,Math.sqrt(2)/-2, Math.sqrt(2)/2)
-                    q1.premultiply(new THREE.Quaternion(1,0,0,0))
+                    // q1=new THREE.Quaternion(0,0,Math.sqrt(2)/-2, Math.sqrt(2)/2)
+                    // q1.premultiply(new THREE.Quaternion(1,0,0,0))
+                    q1=new THREE.Quaternion(Math.sqrt(2)/2,Math.sqrt(2)/2,0,0)
                 }
+                //q1.premultiply(new THREE.Quaternion(-Math.sqrt(2)/2, 0, 0, -Math.sqrt(2)/2))
                 let q2=new THREE.Quaternion(props.data.current[props.timeSliderValue][columnStart + 1], // X
                     props.data.current[props.timeSliderValue][columnStart + 2], // Y
                     props.data.current[props.timeSliderValue][columnStart + 3], // Z
