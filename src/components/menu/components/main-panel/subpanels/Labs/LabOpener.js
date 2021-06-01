@@ -26,7 +26,14 @@ export default function LabOpener(props) {
                             window.clearInterval(props.playTimerId.current);   
                             props.playTimerId.current = 0;
                             props.setPlaying(false);
-                    }                           
+                    } 
+                    if (props.getCamera()) {
+                        props.getCamera().position.x = 0;
+                        props.getCamera().position.y = 0;
+                        props.getCamera().position.z = 3;
+                        props.getCamera().up.set(0, 1, 0);
+                        props.getControls().update();
+                    }                          
                 }}>
                     <IconButton>
                         {props.openLab === props.title ? <ExpandLessIcon /> : <ExpandMoreIcon />}

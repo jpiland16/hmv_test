@@ -5,7 +5,7 @@ import CircularProgress from '@material-ui/core/CircularProgress'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 
-let renderer, camera, scene;
+let renderer, camera, scene, controls;
 
 let boneNames = {
     LUA: "upperarm_l", 
@@ -27,7 +27,6 @@ function createScene(parentElement) {
     
     camera.position.z = 3;
     camera.position.y = 0;
-    camera.rotation.z = 1;
 
     scene = new THREE.Scene();
     renderer = new THREE.WebGLRenderer( { antialias: true } );
@@ -43,7 +42,7 @@ function createScene(parentElement) {
 
     return new Promise((myResolve, myReject) => {
         loadModel(scene).then(() => {
-            let controls = new OrbitControls( camera, renderer.domElement );
+            controls = new OrbitControls( camera, renderer.domElement );
             controls.addEventListener( 'change', () => {
                 renderer.render(scene, camera); 
             });
@@ -59,15 +58,23 @@ function refreshRendererSize(parentElement) {
     renderer.setSize( parentElement.offsetWidth, parentElement.offsetHeight );
     camera.aspect = parentElement.offsetWidth / parentElement.offsetHeight;
     camera.updateProjectionMatrix();
-    renderer.render(scene, camera)
+    renderer.render(scene, camera);
 }
 
 function loadModel() {
     
     var loader = new GLTFLoader();
 
-    loader.load("files/figures/compass.glb", gltf => { scene.add(gltf.scene) });
-    loader.load("files/figures/grid.glb", gltf => { 
+    const compassPath =  window.location.href === "http://localhost:3000/" ? 
+    "https://raw.githubusercontent.com/jpiland16/hmv_test/master/files/figures/compass.glb" :
+    "files/figures/compass.glb"
+
+    const gridPath = window.location.href === "http://localhost:3000/" ? 
+    "https://raw.githubusercontent.com/jpiland16/hmv_test/master/files/figures/grid.glb" :
+    "files/figures/grid.glb";
+
+    // loader.load(compassPath, gltf => { scene.add(gltf.scene) });
+    loader.load(gridPath, gltf => { 
         let mesh = gltf.scene.children[0];
         mesh.material.opacity = 0.4;
         mesh.material.transparent = true;
@@ -76,11 +83,11 @@ function loadModel() {
 
     return new Promise((myResolve, myReject) => {
 
-        const model_path = window.location.href === "http://localhost:3000/" ? 
+        const modelPath = window.location.href === "http://localhost:3000/" ? 
         "https://raw.githubusercontent.com/jpiland16/hmv_test/master/files/figures/mannequin.glb" :
         "files/figures/mannequin.glb";
 
-        loader.load(model_path, gltf => {
+        loader.load(modelPath, gltf => {
                 // gltf.scene.position.set(-2,-2,-2)
 
                 var model = gltf.scene;
@@ -118,7 +125,9 @@ export default function Visualizer(props) {
         props.modelLoaded || (createScene(thisElementRef.current, props).then(
             () => {
                 props.setModelLoaded(true)
-                props.setBones(bones)                
+                props.setBones(bones) 
+                props.camera.current = camera;    
+                props.orbitControls.current = controls;
             }, 
             () => props.setModelLoaded(false)
         ));

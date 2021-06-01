@@ -68,6 +68,15 @@ export default function GeneratedData(props) {
 
         if(!outgoingRequest) {
             
+            // (testing how to adjust the camera)
+            //
+            // if (props.getCamera()) {
+            //     props.getCamera().position.x = -5;
+            //     props.getCamera().position.y = 0;
+            //     props.getCamera().position.z = 0;
+            //     props.getCamera().up.set(0, 0, 1);
+            //     props.getControls().update();
+            // }   
             
             props.repeat.current = REPEAT;
             props.FPS.current = FPS;

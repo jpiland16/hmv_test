@@ -74,6 +74,8 @@ export default function Viewport() {
     const [ useRipple, setUseRipple ] = React.useState(false); // Limbs move independently by default
     const [ playing, setPlaying ] = React.useState(false); // Paused by default
     const [ cardsPos, setCardsPos ] = React.useState(window.localStorage.getItem("cardsPos") || 'hidden');
+    const camera = React.useRef(undefined);
+    const orbitControls = React.useRef(undefined);
 
     const [ openLab, setOpenLab ] = React.useState("");
     const [ timeSliderValue, setTimeSliderValue ] = React.useState(0);
@@ -304,6 +306,14 @@ export default function Viewport() {
         setModelNeedsUpdating(true);
     }
 
+    function getCamera() {
+        return camera.current;
+    }
+
+    function getControls() {
+        return orbitControls.current;
+    }
+
     return (
         <div className="myView">
             <Menu 
@@ -349,9 +359,14 @@ export default function Viewport() {
                 lastIndex={lastIndex}
                 FPS={FPS}
                 repeat={repeat}
+
+                getCamera={getCamera}
+                getControls={getControls}
             />
 
             <Visualizer 
+                camera={camera}
+                orbitControls={orbitControls}
                 modelLoaded={modelLoaded}
                 setModelLoaded={setModelLoaded}
                 setBones={onLoadBones}
