@@ -22,33 +22,35 @@ export default function SideActionBar(props) {
                 </Tooltip>
             </Zoom>
             <Zoom in={props.visible} style={{ transitionDelay: props.visible ? '100ms' : '0ms' }}>
-                <Tooltip title="Test model" placement="right">
-                    <IconButton color={props.selectedPanel === 1 ? "primary" : "default"} onClick={() => props.setSelected(1)}>
-                        <TuneIcon />
-                    </IconButton>
-                </Tooltip>
-            </Zoom>
-            <Zoom in={props.visible} style={{ transitionDelay: props.visible ? '150ms' : '0ms' }}>
-                <Tooltip title="My account" placement="right">
-                    <IconButton color={props.selectedPanel === 2 ? "primary" : "default"} onClick={() => props.setSelected(2)}>
-                        <AccountCircleIcon />
-                    </IconButton>
-                </Tooltip>
-            </Zoom>
-            <Zoom in={props.visible} style={{ transitionDelay: props.visible ? '200ms' : '0ms' }}>
                 <Tooltip title="Settings" placement="right">
                     <IconButton color={props.selectedPanel === 3 ? "primary" : "default"} onClick={() => props.setSelected(3)}>
                         <SettingsIcon />
                     </IconButton>
                 </Tooltip>
             </Zoom>
-            <Zoom in={props.visible} style={{ transitionDelay: props.visible ? '250ms' : '0ms' }}>
-                <Tooltip title="Labs" placement="right">
-                    <IconButton color={props.selectedPanel === 4 ? "primary" : "default"} onClick={() => props.setSelected(4)}>
-                        <CategoryIcon />
-                    </IconButton>
-                </Tooltip>
-            </Zoom>
+            { props.dev && <div>
+                <Zoom in={props.visible} style={{ transitionDelay: props.visible ? '150ms' : '0ms' }}>
+                    <Tooltip title="Test model" placement="right">
+                        <IconButton color={props.selectedPanel === 1 ? "primary" : "default"} onClick={() => props.setSelected(1)}>
+                            <TuneIcon />
+                        </IconButton>
+                    </Tooltip>
+                </Zoom>
+                <Zoom in={props.visible} style={{ transitionDelay: props.visible ? '200ms' : '0ms' }}>
+                    <Tooltip title="My account" placement="right">
+                        <IconButton color={props.selectedPanel === 2 ? "primary" : "default"} onClick={() => props.setSelected(2)}>
+                            <AccountCircleIcon />
+                        </IconButton>
+                    </Tooltip>
+                </Zoom>
+                <Zoom in={props.visible} style={{ transitionDelay: props.visible ? '250ms' : '0ms' }}>
+                    <Tooltip title="Labs" placement="right">
+                        <IconButton color={props.selectedPanel === 4 ? "primary" : "default"} onClick={() => props.setSelected(4)}>
+                            <CategoryIcon />
+                        </IconButton>
+                    </Tooltip>
+                </Zoom>
+            </div> }
             <div className="infoIcon">
                 <Tooltip title="About" placement="right">
                     <IconButton color={props.selectedPanel === 5 ? "primary" : "default"} onClick={() => props.setSelected(5)}>

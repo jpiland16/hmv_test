@@ -5,7 +5,7 @@ import MainPanel from './components/MainPanel';
 import { useState } from 'react'
 
 export default function MenuPanel(props) {
-    const [selectedPanel, setSelectedPanel] = useState((window.localStorage.getItem("selectedPanel")) ? Number(window.localStorage.getItem("selectedPanel")) : 1);
+    const [selectedPanel, setSelectedPanel] = useState(0);
     
     const panelClick = (panelId) => {
         setSelectedPanel(panelId);
@@ -14,7 +14,7 @@ export default function MenuPanel(props) {
     
     return (
         <Box className="menu-below-all">
-            <SideActionBar visible={props.visible} selectedPanel={selectedPanel} setSelected={panelClick}/>
+            <SideActionBar visible={props.visible} selectedPanel={selectedPanel} setSelected={panelClick} dev={props.dev}/>
             <MainPanel selectedPanel={selectedPanel} setSelected={panelClick} {...props}/>
         </Box>
     );

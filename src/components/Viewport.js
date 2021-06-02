@@ -13,7 +13,7 @@ let parentOf = {};
 let globalQs = {};
 let sliderValuesShadowCopy = {};
 
-export default function Viewport() {
+export default function Viewport(props) {
 
     const files = React.useRef([]);
     files.current.length === 0 && getFileList();
@@ -362,6 +362,8 @@ export default function Viewport() {
 
                 getCamera={getCamera}
                 getControls={getControls}
+                
+                dev={props.dev}
             />
 
             <Visualizer 
