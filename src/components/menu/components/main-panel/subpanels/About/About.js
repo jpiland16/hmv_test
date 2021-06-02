@@ -1,10 +1,10 @@
 export default function About(props) {
     return (
         <div style={{display: props.display}}>
-            Test page for HMV project <br />
-            Jonathan Piland | 2021
+            <h2>Human Model Visualizer</h2>
+            <h4><i><a href="https://github.com/jpiland16/hmv_test/" target="_blank" rel="noreferrer">View code on GitHub</a></i></h4>
 
-            <h2>Some notes</h2>
+            <h2>Notes</h2>
             The quaternions are constrained to be unit quaternions. This is why you may notice other sliders moving when you adjust one value.
 
             <h3>Viewport controls</h3>
@@ -15,11 +15,7 @@ export default function About(props) {
                 <li>scrolling controls zoom (pinch in/out on mobile).</li>
             </ul>
 
-            <br />
-
-            <a href="https://github.com/jpiland16/hmv_test/" target="_blank" rel="noreferrer">View code on GitHub</a>
-
-            <br /><br /><br />
+            <h2>Credits</h2>
 
             The mannequin shown is modified from <a href="https://skfb.ly/onNqw" target="_blank" rel="noreferrer">Mannequin</a> by <a href="https://sketchfab.com/xaratoni7" target="_blank" rel="noreferrer">3d</a> which is licensed under <a href="http://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noreferrer">Creative Commons Attribution</a>.
 

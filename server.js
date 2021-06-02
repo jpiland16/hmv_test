@@ -152,7 +152,7 @@ app.use('*',  (req, res)=> {
                     </head>
                     <body>
                         The website is currently being rebuilt. Please refresh the page in 1-2 minutes.
-                        <a href='https://github.com/jpiland16/hmv_test'>Contact the developers</a> if you believe this message is in error.
+                        <a href='https://github.com/jpiland16/hmv_test#hmv_test---launch-website'>Contact the developers</a> if you believe this message is in error.
                     </body>
                   </html>`)
     }
