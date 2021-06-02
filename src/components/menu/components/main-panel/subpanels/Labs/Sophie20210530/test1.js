@@ -1,10 +1,11 @@
 import React from 'react';
 import * as THREE from 'three'
 import LinearProgress from '@material-ui/core/LinearProgress'
+import { Vector3 } from 'three';
 
 const boneList = {
     'BACK': 46,
-    'ROOT':46,
+    'ROOT': 46,
     'RUA': 59,
     'RLA': 72,
     'LUA': 85,
@@ -26,13 +27,13 @@ export default function GeneratedData(props) {
 
         if(!outgoingRequest) {
             
-            if (props.getCamera()) {
-                    props.getCamera().position.x = -5;
-                    props.getCamera().position.y = 0;
-                    props.getCamera().position.z = 0;
-                    props.getCamera().up.set(0, 0, 1);
-                    props.getControls().update();
-                } 
+            // if (props.getCamera()) {
+            //         props.getCamera().position.x = -5;
+            //         props.getCamera().position.y = 0;
+            //         props.getCamera().position.z = 0;
+            //         props.getCamera().up.set(0, 0, 1);
+            //         props.getControls().update();
+            //     } 
 
             props.repeat.current = REPEAT;
             props.FPS.current = FPS;
@@ -103,29 +104,34 @@ export default function GeneratedData(props) {
         props.useGlobalQs.current = USE_GLOBAL;
         if (props.timeSliderValue !== props.lastIndex.current && props.data.current.length > 0) { // We need to update the model, because the timeSlider has moved
             let boneNames = Object.getOwnPropertyNames(boneList);
+           // let quaternion
             for (let i = 0; i < boneNames.length; i++) {
                 let columnStart = boneList[boneNames[i]];
                 let q1 //this quaternion rotates the limb to the identity quaternion in OPPORTUNITY world
                 if(i<=1){
-                    q1=new THREE.Quaternion(Math.sqrt(2)/2, Math.sqrt(2)/-2, 0, 0)
+                    q1=new THREE.Quaternion(0,0,Math.sqrt(2)/2, Math.sqrt(2)/2)
+                    q1.premultiply(new THREE.Quaternion(1,0,0,0))
                 } else{
-                    // q1=new THREE.Quaternion(0,0,Math.sqrt(2)/-2, Math.sqrt(2)/2)
-                    // q1.premultiply(new THREE.Quaternion(1,0,0,0))
-                    q1=new THREE.Quaternion(Math.sqrt(2)/2,Math.sqrt(2)/2,0,0)
+                    q1=new THREE.Quaternion(0,0,Math.sqrt(2)/-2, Math.sqrt(2)/2)
+                    q1.premultiply(new THREE.Quaternion(1,0,0,0))
                 }
-                //q1.premultiply(new THREE.Quaternion(-Math.sqrt(2)/2, 0, 0, -Math.sqrt(2)/2))
-                let q2=new THREE.Quaternion(props.data.current[props.timeSliderValue][columnStart + 1], // X
+                let q2=new THREE.Quaternion(
+                    props.data.current[props.timeSliderValue][columnStart + 1], // X
                     props.data.current[props.timeSliderValue][columnStart + 2], // Y
                     props.data.current[props.timeSliderValue][columnStart + 3], // Z
                     props.data.current[props.timeSliderValue][columnStart + 0], // W
                 )
                 q2.normalize() //normalized quaternion from OPPORTUNITY data
-                let q3=new THREE.Quaternion() 
+                let q4=new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1,0,0),-Math.PI/2) //rotates body to stand upright
+                let q3=new THREE.Quaternion()
                 q3.multiplyQuaternions(q2,q1) //adds the OPP quaternion to the new "identity quaternion"
+                q3.premultiply(q4)
+
                 props.lastIndex.current = props.timeSliderValue;
                 props.batchUpdate(boneNames[i], [q3.x, q3.y, q3.z, q3.w]);
             }
         }
+        
     });
 
     return (
