@@ -1,0 +1,39 @@
+<html>
+    <head>
+        <title>test POST request</title>
+        <script>
+
+            function upload() {
+                let el = document.getElementById("myFile");
+                let files = el.files;
+
+                const formData = new FormData();
+
+                for (let i = 0; i < files.length; i++) {
+                    formData.append('file' + i, files[i]);
+                    formData.append('file' + i + 'params', "some parameters");
+                }
+
+                let x = new XMLHttpRequest();
+                x.onload = () => {
+                    console.log("Finished");
+
+                    let x2 = new XMLHttpRequest();
+                    x2.open('GET', "/api/scan-all-files");
+                    x2.send();
+
+                }
+                x.open("POST", "/api/upload-file");
+                x.send(formData);
+
+            }
+
+        </script>
+    </head>
+
+    <body>
+        <input type="file" id="myFile" multiple/>
+        <button onclick="upload()">Upload</button>
+    </body>
+
+</html>
