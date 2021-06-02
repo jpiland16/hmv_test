@@ -114,7 +114,7 @@ export default function GeneratedData(props) {
             // }]
 
             let x = new XMLHttpRequest();
-            x.open("GET", window.location.href === "http://localhost:3000/" ? 
+            x.open("GET", window.location.href.substring(0, 22) === "http://localhost:3000/" ? 
                 "https://raw.githubusercontent.com/jpiland16/hmv_test/master/files/demo/S4-ADL4.dat" : 
                 "files/demo/S4-ADL4.dat");
                 // "files/opportunity-dataset/dataset/S1-Drill.dat");
