@@ -28,6 +28,7 @@ yarn-error.log*
 !/files/demo/**
 !/files/figures
 !/files/figures/**
+!/files/testPostRequest.html
 fileList.json
 src/files
 build.log

@@ -4,6 +4,7 @@ const serveIndex = require('serve-index');
 const fs = require('fs');
 const { count } = require('console');
 const { exec } = require('child_process');
+const formidable = require('formidable');
 
 function walkDirectory(dir) {
     let myPromise = new Promise(function(myResolve, myReject) {
@@ -118,6 +119,35 @@ app.get("/api/*", (req, res) => {
 app.post('/api/pull', (req, res) => {
     res.sendStatus(200);
     onProjectUpdate();
+});
+
+app.post('/api/upload-file', (req, res) => {
+    // See https://stackoverflow.com/questions/60107387/nodejs-express-file-upload-with-xmlhttprequest-not-working
+    const path = './files/user-uploads/';
+
+    var form = new formidable.IncomingForm();
+    form.uploadDir = path;
+    form.encoding = 'binary';
+
+    form.parse(req, function(err, fields, files) {
+         if (err) {
+              console.log(err);
+              res.send('upload failed')
+         } else {
+            let fileIds = Object.getOwnPropertyNames(files);
+            for (let i = 0; i < fileIds.length; i++) {
+                let fileId = fileIds[i];
+                console.log(` >>> Attempting to obtain: "${files[fileId].name}" with params: ${fields[fileId + 'params']}`)
+                var oldpath = files[fileId].path;
+                var newpath = path + files[fileId].name;
+                fs.rename(oldpath, newpath, function (err) {
+                    if (err) throw err;
+                });
+            }
+            console.log(`${fileIds.length} file(s) uploaded to the server at ${new Date().toUTCString()}`)
+            res.send('complete').end();
+         }
+    });
 });
 
 app.use('/files', serveIndex(__dirname + '/files', {

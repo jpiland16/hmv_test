@@ -12,7 +12,7 @@ export default function Menu(props) {
                     <Slide direction="right" in={props.isOpen}>
                         <Paper className="myMenuPanel" square elevation={4}>
                             <MenuPanel visible={props.isOpen} pinActive={props.isPinned} onClick={() => props.setIsPinned(!props.isPinned)} 
-                             {...props}/>
+                             {...props} dev={props.dev}/>
                         </Paper>
                     </Slide>
                     <MenuButton disabled={!props.modelLoaded} isCloseIcon={props.isOpen} onClick={() => (props.setIsOpen(!props.isOpen))}/>

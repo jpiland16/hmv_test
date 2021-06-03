@@ -67,11 +67,11 @@ function loadModel() {
 
     const compassPath =  window.location.href.substring(0, 22) === "http://localhost:3000/" ? 
     "https://raw.githubusercontent.com/jpiland16/hmv_test/master/files/figures/compass.glb" :
-    "files/figures/compass.glb"
+    "/files/figures/compass.glb"
 
     const gridPath = window.location.href.substring(0, 22) === "http://localhost:3000/" ? 
     "https://raw.githubusercontent.com/jpiland16/hmv_test/master/files/figures/grid.glb" :
-    "files/figures/grid.glb";
+    "/files/figures/grid.glb";
 
     // loader.load(compassPath, gltf => { scene.add(gltf.scene) });
     loader.load(gridPath, gltf => { 
@@ -85,7 +85,7 @@ function loadModel() {
 
         const modelPath = window.location.href.substring(0, 22) === "http://localhost:3000/" ? 
         "https://raw.githubusercontent.com/jpiland16/hmv_test/master/files/figures/mannequin.glb" :
-        "files/figures/mannequin.glb";
+        "/files/figures/mannequin.glb";
 
         loader.load(modelPath, gltf => {
                 // gltf.scene.position.set(-2,-2,-2)
