@@ -5,6 +5,7 @@ import Sam20210526 from './Sam20210526/GeneratedOrientation'
 import Jonathan20210527 from './Jonathan20210527/RequestFile2'
 import Sophie20210530 from './Sophie20210530/test1'
 import Sam20210531 from './Sam20210531/OrientationStudy.js'
+import Sophie20210603 from './Sophie20210603/test2.js'
 
 import Tooltip from '@material-ui/core/Tooltip'
 import Button from '@material-ui/core/Button'
@@ -47,9 +48,13 @@ export default function Labs(props) {
             </LabOpener>
             <LabOpener title="Sophie 5/30/2021" {...props}>
                 <Sophie20210530 {...props} />
+                
             </LabOpener>
             <LabOpener title="Sam 5/31/2021" {...props}>
                 <Sam20210531 {...props}/>
+            </LabOpener>
+            <LabOpener title="Sophie 6/3/2021" {...props}>
+                <Sophie20210603 {...props}/>
             </LabOpener>
             
         </div>
