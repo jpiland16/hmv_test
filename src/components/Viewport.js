@@ -3,6 +3,7 @@ import Menu from './menu/Menu'
 import React from 'react'
 import Visualizer from './visualizer/Visualizer';
 import PlayBar from './PlayBar'
+import TopActionBar from './TopActionBar'
 import CardSet from './cards/CardSet'
 import * as THREE from 'three'
 
@@ -14,6 +15,32 @@ let globalQs = {};
 let sliderValuesShadowCopy = {};
 
 export default function Viewport(props) {
+
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+
+    let initialExpandedItems = ["/"];
+
+    if (urlParams.has('file')) {
+        const fpath = urlParams.get('file');
+        let charPos = 1;
+        while (charPos < fpath.length) {
+            if (fpath.charAt(charPos) === '/')
+            initialExpandedItems.push(fpath.substring(0, charPos)) // don't include the slash
+            charPos++;
+        }
+    }
+
+    function isFileNameValid(fname) {
+        return fname.substr(-4) === ".dat";
+    }
+
+    function clickFile(id, name) {
+        if(isFileNameValid(name)) {
+            setSelectedFile(id);
+            window.history.replaceState(null, null, "?file=" + id);
+        }
+    }
 
     const files = React.useRef([]);
     files.current.length === 0 && getFileList();
@@ -60,9 +87,10 @@ export default function Viewport(props) {
             }
         )
     }
-
-    const [ expandedItems, setExpandedItems ] = React.useState(["/"]);
-    const [ selectedFile, setSelectedFile ] = React.useState("");
+    
+    const [selectedPanel, setSelectedPanel] = React.useState(0);
+    const [ expandedItems, setExpandedItems ] = React.useState(initialExpandedItems);
+    const [ selectedFile, setSelectedFile ] = React.useState(urlParams.has('file') ? urlParams.get('file') : "");
     const [ searchFileText, setSearchFileText ] = React.useState("");
     const [ modelLoaded, setModelLoaded ] = React.useState(false);
     const [ bones, setBones ] = React.useState(null);
@@ -321,14 +349,17 @@ export default function Viewport(props) {
                 setIsOpen={setMenuIsOpen}
                 isPinned={menuIsPinned}
                 setIsPinned={setMenuIsPinned}
-                
+                selectedPanel={selectedPanel}
+                setSelectedPanel={setSelectedPanel}
+
                 expandedItems={expandedItems} 
                 setExpandedItems={setExpandedItems} 
                 selectedFile={selectedFile}
-                setSelectedFile={setSelectedFile}
+                setSelectedFile={clickFile}
                 getWindowDimensions={useWindowDimensions}
                 searchFileText={searchFileText}
                 setSearchFileText={setSearchFileText}
+                checkFileName={isFileNameValid}
                 cardsPos={cardsPos}
                 setCardsPos={setCardsPos}
 
@@ -401,6 +432,17 @@ export default function Viewport(props) {
                 menuIsOpen={menuIsOpen}
                 getWindowDimensions={useWindowDimensions}
                 outputTypes={outputTypes}
+            />
+
+            <TopActionBar
+                selectedFile={selectedFile}
+                setSelectedFile={setSelectedFile}
+                modelLoaded={modelLoaded}
+                cardsPos={cardsPos}
+                getWindowDimensions={useWindowDimensions}
+                menuIsOpen={menuIsOpen}
+                setMenuIsOpen={setMenuIsOpen}
+                setSelectedPanel={setSelectedPanel}
             />
         </div>
     )
