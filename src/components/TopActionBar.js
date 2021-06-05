@@ -21,7 +21,7 @@ export default function TopActionBar(props) {
                             props.setSelectedPanel(0);
                         }
                 }} >
-                    {props.selectedFile === "" ? "No file selected." : <div><b>Viewing: </b>{(props.selectedFile.length > 16 ? "..." : "") + props.selectedFile.substr(-16)}</div>}
+                    {props.selectedFile === "" ? "No file selected." : <span><b>Viewing: </b>{(props.selectedFile.length > 16 ? "..." : "") + props.selectedFile.substr(-16)}</span>}
                 </Typography>
             </Tooltip>
             <Button disabled={!props.modelLoaded} className="topBtn" onClick={() => {
@@ -29,7 +29,8 @@ export default function TopActionBar(props) {
                             props.setMenuIsOpen(true);
                             props.setSelectedPanel(0);
                         } else {
-                            if(window.confirm("Are you sure you want to close the file " + props.selectedFile + "?")) props.setSelectedFile("")
+                            //if(window.confirm("Are you sure you want to close the file " + props.selectedFile + "?")) 
+                                window.history.replaceState(null, null, "?") || props.setSelectedFile("")
                         }
             }} size="small">
                 { props.selectedFile === "" ?

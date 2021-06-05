@@ -13,16 +13,21 @@ let childrenOf = {};
 let parentOf = {};
 let globalQs = {};
 let sliderValuesShadowCopy = {};
+let outgoingRequest = false;
+let firstLoad = true;
+let lastFiles = [];
 
 export default function Viewport(props) {
-
+    
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
 
+    let initialSelectedFile = ""
     let initialExpandedItems = ["/"];
 
     if (urlParams.has('file')) {
         const fpath = urlParams.get('file');
+        initialSelectedFile = fpath;
         let charPos = 1;
         while (charPos < fpath.length) {
             if (fpath.charAt(charPos) === '/')
@@ -30,6 +35,55 @@ export default function Viewport(props) {
             charPos++;
         }
     }
+    
+    const [ selectedPanel, setSelectedPanel ] = React.useState(0);
+    const [ expandedItems, setExpandedItems ] = React.useState(initialExpandedItems);
+    const [ selectedFile, setSelectedFile ] = React.useState(initialSelectedFile);
+    const [ searchFileText, setSearchFileText ] = React.useState("");
+    const [ modelLoaded, setModelLoaded ] = React.useState(false);
+    const [ bones, setBones ] = React.useState(null);
+    const [ sliderValues, setSliderValues ] = React.useState(null);
+    const [ modelNeedsUpdating, setModelNeedsUpdating ] = React.useState(false);
+    const [ menuIsOpen, setMenuIsOpen ] = React.useState(false); // Menu is closed by default
+    const [ menuIsPinned, setMenuIsPinned ] = React.useState(true); // Menu is pinned by default
+    const useGlobalQs = React.useRef(true); // Use global quaternions by default
+    const [ useRipple, setUseRipple ] = React.useState(false); // Limbs move independently by default
+    const [ playing, setPlaying ] = React.useState(false); // Paused by default
+    const [ cardsPos, setCardsPos ] = React.useState(window.localStorage.getItem("cardsPos") || 'hidden');
+    const [ downloadPercent, setDownloadPercent ] = React.useState(0);
+    const [ downloading, setDownloading ] = React.useState(false);
+
+    const camera = React.useRef(undefined);
+    const orbitControls = React.useRef(undefined);
+
+    const [ openLab, setOpenLab ] = React.useState("");
+    const [ timeSliderValue, setTimeSliderValue ] = React.useState(0);
+    const outputTypes = React.useRef([]);
+    const data = React.useRef([]);
+    const FPS = React.useRef(30);
+    const repeat = React.useRef(false);
+    const lastIndex = React.useRef(-1);
+    
+    const playTimerId = React.useRef(0);
+    const lineNumberRef = React.useRef(0); // Start from beginning of file by default
+
+    const files = React.useRef([]);
+
+    React.useEffect(() => {
+        if(bones) {
+            if(firstLoad) {
+                if (files.current.length === 0) {
+                    getFileList();
+                }
+                if (selectedFile !== "") {
+                    onSelectFileChange(selectedFile);
+                }
+                firstLoad = false;
+            } else {
+                files.current = lastFiles;
+            }
+        }
+    });
 
     function isFileNameValid(fname) {
         return fname.substr(-4) === ".dat";
@@ -37,13 +91,70 @@ export default function Viewport(props) {
 
     function clickFile(id, name) {
         if(isFileNameValid(name)) {
-            setSelectedFile(id);
+            onSelectFileChange(id);
             window.history.replaceState(null, null, "?file=" + id);
         }
     }
 
-    const files = React.useRef([]);
-    files.current.length === 0 && getFileList();
+    function downloadFile(fname) {
+        outgoingRequest = true;
+        setDownloading(true);
+        setDownloadPercent(0);
+        let x = new XMLHttpRequest();
+        x.open("GET", (window.location.href.substring(0, 22) === "http://localhost:3000/" ? 
+            "https://raw.githubusercontent.com/jpiland16/hmv_test/master/files" : "/files")
+            + fname);
+
+        x.onload = () => {
+            let inputArray = x.responseText.split("\n");
+            let linesArray = [];
+
+            for (let i = 0; i < inputArray.length - 1; i+=3) { // Using every three lines to triple the speed
+                linesArray[i/3] = inputArray[i].split(" ");
+            }
+
+            data.current = linesArray;
+            setDownloading(false);
+            outgoingRequest = false;
+        }
+
+        x.onprogress = (event) => {
+            setDownloadPercent(Math.min(100, Math.round(event.loaded / event.total * 100)));
+        }
+
+        x.onerror = (error) => {
+            console.log(error);
+        }
+
+        x.send();
+    }
+
+    function onSelectFileChange(mySelectedFile) {
+        if (!outgoingRequest) {
+            setSelectedFile(mySelectedFile);                    
+            data.current = [];           // Allow either refresh or disable
+            outputTypes.current = []     // Clear all graphs
+            setTimeSliderValue(0);       // Move to start
+            lineNumberRef.current = 0;   // (same as above)
+            setUseRipple(true)           // For the initialization of the model
+            if (modelLoaded) {
+                resetModel()                                          // Same as above
+                if (playTimerId.current !== 0) {                      // Stop playback if it is occuring
+                        window.clearInterval(playTimerId.current);   
+                        playTimerId.current = 0;
+                        setPlaying(false);
+                } 
+                if (getCamera()) {
+                    getCamera().position.x = 0;
+                    getCamera().position.y = 0;
+                    getCamera().position.z = 3;
+                    getCamera().up.set(0, 1, 0);
+                    getControls().update();
+                }  
+            }
+            if (mySelectedFile !== "") downloadFile(mySelectedFile)
+        }
+    }
 
     async function doXHR(method, url) {
         return new Promise(function(myResolve, myReject) {
@@ -60,24 +171,23 @@ export default function Viewport(props) {
     async function getFileList() {
         doXHR("GET", "/api/get-file-list").then(
             (xhrr) => {
+                let res;
                 try {
-                    files.current = JSON.parse(xhrr.responseText);
+                    res = JSON.parse(xhrr.responseText);
                 } catch (e) {
                     console.warn("Error in processing files...");
                     console.error(e);
-                    files.current = [{
-                        id: 'root2',
-                        name: 'We apologize, but the files could not be loaded due to a JSON error. So, we capitalized upon this to create a very longer folder name for testing.',
+                    res = [{
+                        id: '/demo',
+                        name: 'demo',
                         children: [{
-                          id: 'test1',
-                          name: 'test1',
-                          children: [{
-                            id: 'test2',
-                            name: 'test2'
-                          }]
+                          id: '/demo/S4-ADL4.dat',
+                          name: 'S4-ADL4.dat'
                         }],
                     }]
                 }
+                files.current = res;
+                lastFiles = res;
             },
             (errXhrr) => {
                 console.error("XHR Error");
@@ -87,34 +197,6 @@ export default function Viewport(props) {
             }
         )
     }
-    
-    const [selectedPanel, setSelectedPanel] = React.useState(0);
-    const [ expandedItems, setExpandedItems ] = React.useState(initialExpandedItems);
-    const [ selectedFile, setSelectedFile ] = React.useState(urlParams.has('file') ? urlParams.get('file') : "");
-    const [ searchFileText, setSearchFileText ] = React.useState("");
-    const [ modelLoaded, setModelLoaded ] = React.useState(false);
-    const [ bones, setBones ] = React.useState(null);
-    const [ sliderValues, setSliderValues ] = React.useState(null);
-    const [ modelNeedsUpdating, setModelNeedsUpdating ] = React.useState(false);
-    const [ menuIsOpen, setMenuIsOpen ] = React.useState(false); // Menu is closed by default
-    const [ menuIsPinned, setMenuIsPinned ] = React.useState(true); // Menu is pinned by default
-    const useGlobalQs = React.useRef(true); // Use global quaternions by default
-    const [ useRipple, setUseRipple ] = React.useState(false); // Limbs move independently by default
-    const [ playing, setPlaying ] = React.useState(false); // Paused by default
-    const [ cardsPos, setCardsPos ] = React.useState(window.localStorage.getItem("cardsPos") || 'hidden');
-    const camera = React.useRef(undefined);
-    const orbitControls = React.useRef(undefined);
-
-    const [ openLab, setOpenLab ] = React.useState("");
-    const [ timeSliderValue, setTimeSliderValue ] = React.useState(0);
-    const outputTypes = React.useRef([]);
-    const data = React.useRef([]);
-    const FPS = React.useRef(30);
-    const repeat = React.useRef(false);
-    const lastIndex = React.useRef(-1);
-    
-    const playTimerId = React.useRef(0);
-    const lineNumberRef = React.useRef(0); // Start from beginning of file by default
 
     function getWindowDimensions() {
             const { innerWidth: width, innerHeight: height } = window;
@@ -398,6 +480,8 @@ export default function Viewport(props) {
             />
 
             <Visualizer 
+                downloadPercent={downloadPercent}
+                downloading={downloading}
                 camera={camera}
                 orbitControls={orbitControls}
                 modelLoaded={modelLoaded}
@@ -436,7 +520,7 @@ export default function Viewport(props) {
 
             <TopActionBar
                 selectedFile={selectedFile}
-                setSelectedFile={setSelectedFile}
+                setSelectedFile={onSelectFileChange}
                 modelLoaded={modelLoaded}
                 cardsPos={cardsPos}
                 getWindowDimensions={useWindowDimensions}

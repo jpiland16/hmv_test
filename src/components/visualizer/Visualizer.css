@@ -7,9 +7,9 @@
     z-index: 1;
 }
 
-#loadingSpinner {
+.loading {
     text-align: center;
-    width: 200px;
+    width: 100vw;
     height: 200px;
     margin: auto;
     margin-top: calc(50vh - 100px);

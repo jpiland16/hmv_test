@@ -2,6 +2,7 @@ import './Visualizer.css';
 import * as THREE from 'three'
 import React from 'react';
 import CircularProgress from '@material-ui/core/CircularProgress'
+import LinearProgress from '@material-ui/core/LinearProgress'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 
@@ -108,7 +109,7 @@ function loadModel() {
                 //console.log("Done loading")
                 myResolve();
             }, function ( xhr ) {
-                //console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
+                // setModelDownloadProgress(Math.min(100, Math.round(xhr.loaded / xhr.total * 100)))
             }, function ( error ) {
                 console.error( error );
                 myReject(error)
@@ -144,13 +145,24 @@ export default function Visualizer(props) {
     });
 
     return (
-        <div ref={thisElementRef} id="visualizationBase" onClick={props.onClick}>
-            { props.modelLoaded ? undefined : 
-                <div id="loadingSpinner">
-                    <CircularProgress /><br />
-                    Please wait while the model is loading...
-                </div> 
-            }
+        <div>
+        { props.downloading && (
+            <div className="loading">
+                Downloading file: {props.downloadPercent}% complete<br />
+                <div style={{ width: "80vw", marginLeft: "10vw"}}>
+                    <LinearProgress variant="determinate" value={props.downloadPercent} />
+                </div>
+            </div>
+        ) }
+
+            <div style={{display: props.downloading ? "none" : "block"}} ref={thisElementRef} id="visualizationBase" onClick={props.onClick}>
+                { props.modelLoaded ? undefined : 
+                    <div className="loading">
+                        <CircularProgress /><br />
+                        Please wait while the model is loading...
+                    </div> 
+                }
+            </div>
         </div>
     );
 }
