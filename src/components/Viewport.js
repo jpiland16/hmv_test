@@ -6,6 +6,7 @@ import PlayBar from './PlayBar'
 import TopActionBar from './TopActionBar'
 import CardSet from './cards/CardSet'
 import * as THREE from 'three'
+import Animator from './Animator';
 
 // Window resize code: see https://stackoverflow.com/questions/36862334/get-viewport-window-height-in-reactjs
 
@@ -109,8 +110,8 @@ export default function Viewport(props) {
             let inputArray = x.responseText.split("\n");
             let linesArray = [];
 
-            for (let i = 0; i < inputArray.length - 1; i+=3) { // Using every three lines to triple the speed
-                linesArray[i/3] = inputArray[i].split(" ");
+            for (let i = 0; i < inputArray.length - 1; i++) {
+                linesArray[i] = inputArray[i].split(" ");
             }
 
             data.current = linesArray;
@@ -139,6 +140,7 @@ export default function Viewport(props) {
             setUseRipple(true)           // For the initialization of the model
             if (modelLoaded) {
                 resetModel()                                          // Same as above
+                setUseRipple(false)           
                 if (playTimerId.current !== 0) {                      // Stop playback if it is occuring
                         window.clearInterval(playTimerId.current);   
                         playTimerId.current = 0;
@@ -528,6 +530,33 @@ export default function Viewport(props) {
                 setMenuIsOpen={setMenuIsOpen}
                 setSelectedPanel={setSelectedPanel}
             />
+
+            <Animator
+                batchUpdate={batchUpdateObject}
+
+                useGlobalQs={useGlobalQs}
+                useRipple={useRipple}
+                setUseRipple={setUseRipple}
+                refreshGlobalLocal={setSliderPositions}
+
+                playTimerId={playTimerId}
+                lineNumberRef={lineNumberRef}
+                timeSliderValue={timeSliderValue}
+                setTimeSliderValue={setTimeSliderValue}
+                setPlaying={setPlaying}
+
+                outputTypes={outputTypes}
+                openLab={openLab}
+                setOpenLab={setOpenLab}
+                data={data}
+                lastIndex={lastIndex}
+                FPS={FPS}
+                repeat={repeat}
+
+                getCamera={getCamera}
+                getControls={getControls}
+            />
+
         </div>
     )
 }
