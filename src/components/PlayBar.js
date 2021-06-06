@@ -5,6 +5,14 @@ import Slider from '@material-ui/core/Slider'
 import IconButton from '@material-ui/core/IconButton';
 import './PlayBar.css'
 
+function getTimeStringFromMillis(time) {
+    let millis = time % 1000;
+    let allSeconds = (time - millis) / 1000;
+    let displaySeconds = allSeconds % 60;
+    let displayMinutes = (allSeconds - displaySeconds) / 60;
+    return `${displayMinutes}:${displaySeconds < 10 ? "0" : ""}${displaySeconds}.${millis < 100 ? "0" : ""}${millis < 10 ? "0" : ""}${millis}`;
+}
+
 export default function PlayBar(props) {
 
     const playAdvance = () => {
@@ -54,8 +62,16 @@ export default function PlayBar(props) {
             <Slider disabled={props.disabled} min={0} max={props.data.current.length - 1} value={props.timeSliderValue} 
                 onChange={(event, newValue) => setLineNum(newValue)} 
                 style={{width: "calc(100% - 84px - 72px)"}}/>
-            <div className="timeStamp">
-                { props.data.current.length > 0 ? props.data.current[props.timeSliderValue][0] : "#######"}
+            <div title="click to change format" className="timeStamp" style={{cursor: "pointer"}} onClick={() => {
+                    let newTimeDisplay = props.timeDisplay === 'millis' ? 'msm' : "millis";
+                    props.setTimeDisplay(newTimeDisplay);
+                    window.localStorage.setItem("timeDisplay", newTimeDisplay);
+                }
+            }>
+                { props.timeDisplay === 'millis' ?
+                    props.data.current.length > 0 ? props.data.current[props.timeSliderValue][0] : "#######"
+                    : props.data.current.length > 0 ? getTimeStringFromMillis(props.data.current[props.timeSliderValue][0]) : "##:##.###"
+                } 
             </div>
         </div>
     )
