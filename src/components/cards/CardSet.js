@@ -2,7 +2,6 @@ import CardItem from './CardItem'
 import './CardSet.css'
 
 export default function CardSet(props) {
-    console.log(props.outputTypes.current)
     return props.data.current.length > 0 && props.cardsPos !== 'hidden' && (
         <div className="cardSet" style={{
             position: "absolute",
