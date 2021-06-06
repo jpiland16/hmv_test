@@ -23,7 +23,8 @@
     "serve-index": "^1.9.1",
     "three": "^0.128.0",
     "walkdir": "^0.4.1",
-    "web-vitals": "^1.1.2"
+    "web-vitals": "^1.1.2",
+    "zustand": "^3.5.1"
   },
   "scripts": {
     "start": "react-scripts start",
