@@ -13,7 +13,7 @@ export default function CardSet(props) {
             height: props.cardsPos === 'bottom' ? "25vw" : "calc(100% - 48px)",
             width: props.cardsPos === 'bottom' ?
                 props.menuIsOpen && props.getWindowDimensions()[0] > 768 ? "60vw" : "100vw"
-                : "68vw",
+                : "28vw",
             overflowX: props.cardsPos === 'bottom' ? "scroll" : "hidden",
             overflowY: props.cardsPos === 'bottom' ? "hidden" : "scroll"
         }}>

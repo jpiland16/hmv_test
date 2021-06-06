@@ -67,7 +67,6 @@ TransitionComponent.propTypes = {
      */
     in: PropTypes.bool,
 };
-
 const StyledTreeItem = withStyles((theme) => ({
     iconContainer: {
         '& .close': {
@@ -79,12 +78,15 @@ const StyledTreeItem = withStyles((theme) => ({
         paddingLeft: 18,
         borderLeft: `1px dashed ${fade(theme.palette.text.primary, 0.4)}`,
     },
+    label: {
+      fontWeight: (props) => (props.bold === "true" ? "bold" : "initial")
+    }
 }))((props) => <TreeItem {...props} TransitionComponent={TransitionComponent} />);
 
 const useStyles = makeStyles({
     root: {
         flexGrow: 1,
-    },
+    }
 });
 
 export default function CustomizedTreeView(props) {
@@ -129,11 +131,12 @@ export default function CustomizedTreeView(props) {
                 label={nodes.name} 
                 onContextMenu={ (event) => handleContextMenu(event, nodes.id, isFolder) } 
                 onClick={ (event) => { 
-                        props.setSelectedFile(nodes.id) 
+                        if (!isFolder) props.setSelectedFile(nodes.id, nodes.name) 
                 } }
+                bold={props.selectedFile.indexOf(nodes.id) !== -1 ? "true" : "false"}
                 style={{
                         whiteSpace: "nowrap",
-                        opacity: nodes.name.substr(-4) === ".dat" || isFolder ? 1 : 0.5,
+                        opacity: props.checkFileName(nodes.name) || isFolder ? 1 : 0.5,
                         WebkitTouchCallout: "none",
                         WebkitUserSelect: "none",
                         MozUserSelect: "none",
@@ -168,6 +171,7 @@ export default function CustomizedTreeView(props) {
         <TreeView
             className={classes.root}
             expanded={props.searchFileText === "" ? props.expandedItems : getAllIds(makeRoot(props.fileList.current))}
+            selected={props.selectedFile}
             defaultCollapseIcon={<MinusSquare />}
             defaultExpandIcon={<PlusSquare />}
             defaultEndIcon={<CloseSquare />}

@@ -1,0 +1,25 @@
+.topBar {
+    -ms-overflow-style: "none";
+    scrollbar-width: "none";
+    position: absolute;
+    top: 0px;
+    left: 48px;
+    z-index: 1;
+    height: 36px;
+    padding: 6px;
+    display: flex;
+    align-items: center;
+}
+
+.topBtn {
+    opacity: 0.6;
+}
+
+.fileName {
+    display: inline;
+    cursor: pointer;
+}
+
+.fileName:hover {
+    text-decoration: underline;
+}
