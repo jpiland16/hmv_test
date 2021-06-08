@@ -5,6 +5,8 @@ import Sam20210526 from './Sam20210526/GeneratedOrientation'
 import Jonathan20210527 from './Jonathan20210527/RequestFile2'
 import Sophie20210530 from './Sophie20210530/test1'
 import Sam20210531 from './Sam20210531/OrientationStudy.js'
+import Sam20210531_2 from './Sam20210531/DefaultOrientation.js'
+import Sam20210605 from './Sam20210605/GyroIntegration.js'
 
 import Tooltip from '@material-ui/core/Tooltip'
 import Button from '@material-ui/core/Button'
@@ -48,8 +50,14 @@ export default function Labs(props) {
             <LabOpener title="Sophie 5/30/2021" {...props}>
                 <Sophie20210530 {...props} />
             </LabOpener>
-            <LabOpener title="Sam 5/31/2021" {...props}>
+            <LabOpener title="Sam 5/31/2021: Using generated data" {...props}>
                 <Sam20210531 {...props}/>
+            </LabOpener>
+            <LabOpener title="Sam 5/31/2021: Default orientation" {...props}>
+                <Sam20210531_2 {...props}/>
+            </LabOpener>
+            <LabOpener title="Sam 6/05/2021: Gyro integration" {...props}>
+                <Sam20210605 {...props}/>
             </LabOpener>
             
         </div>
