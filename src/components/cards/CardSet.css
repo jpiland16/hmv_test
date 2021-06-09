@@ -5,9 +5,6 @@
     scrollbar-width: none;
     position: absolute;
     z-index: 1;
-    bottom: 48px;
-    background-color: rgba(0, 0, 0, 0.05);
-    border-radius: 2px;
 }
 
 .cardSet::-webkit-scrollbar {

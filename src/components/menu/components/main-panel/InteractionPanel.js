@@ -14,7 +14,7 @@ export default function InteractionPanel(props) {
                 <MyAccount              display={props.selectedPanel === 2 ? 'block' : 'none'}/>
                 <Settings    {...props} display={props.selectedPanel === 3 ? 'block' : 'none'}/>
                 <Labs        {...props} display={props.selectedPanel === 4 ? 'block' : 'none'}/>
-                <About                  display={props.selectedPanel === 5 ? 'block' : 'none'}/>
+                <About       {...props} display={props.selectedPanel === 5 ? 'block' : 'none'}/>
         </div>
     );
 }

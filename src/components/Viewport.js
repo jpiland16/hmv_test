@@ -50,7 +50,8 @@ export default function Viewport(props) {
     const useGlobalQs = React.useRef(true); // Use global quaternions by default
     const [ useRipple, setUseRipple ] = React.useState(false); // Limbs move independently by default
     const [ playing, setPlaying ] = React.useState(false); // Paused by default
-    const [ cardsPos, setCardsPos ] = React.useState(window.localStorage.getItem("cardsPos") || 'hidden');
+    const [ cardsPos, setCardsPos ] = React.useState(window.localStorage.getItem("cardsPos") || 'right');
+    const [ timeDisplay, setTimeDisplay ] = React.useState(window.localStorage.getItem("timeDisplay") || 'msm');
     const [ downloadPercent, setDownloadPercent ] = React.useState(0);
     const [ downloading, setDownloading ] = React.useState(false);
 
@@ -446,6 +447,8 @@ export default function Viewport(props) {
                 checkFileName={isFileNameValid}
                 cardsPos={cardsPos}
                 setCardsPos={setCardsPos}
+                timeDisplay={timeDisplay}
+                setTimeDisplay={setTimeDisplay}
 
                 modelLoaded={modelLoaded}
                 sliderValues={sliderValues}
@@ -497,6 +500,8 @@ export default function Viewport(props) {
             />
 
             <PlayBar 
+                timeDisplay={timeDisplay}
+                setTimeDisplay={setTimeDisplay}
                 lineNumberRef={lineNumberRef}
                 playTimerId={playTimerId}
                 playing={playing}
@@ -533,6 +538,7 @@ export default function Viewport(props) {
 
             <Animator
                 batchUpdate={batchUpdateObject}
+                selectedFile={selectedFile}
 
                 useGlobalQs={useGlobalQs}
                 useRipple={useRipple}
