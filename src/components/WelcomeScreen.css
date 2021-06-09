@@ -2,3 +2,21 @@
     font-weight: bold;
     font-size: 50px;
 }
+
+#mysection {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.toplayer {
+  position: absolute;
+  top: 75%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index:2;
+}
+
+.file {
+  width:0;
+}
