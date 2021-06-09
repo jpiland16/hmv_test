@@ -5,46 +5,36 @@ import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import InputLabel from '@material-ui/core/InputLabel';
-import Input from '@material-ui/core/Input';
-import FormControl from '@material-ui/core/FormControl';
-import Select from '@material-ui/core/Select';
 import {useHistory} from 'react-router-dom'
 
-const useStyles = makeStyles((theme) => ({
-  container: {
-    display: 'flex',
-    flexWrap: 'wrap',
-  },
-  formControl: {
-    margin: theme.spacing(1),
-    minWidth: 120,
-  },
-}));
+
 
 export default function UploadDialog() {
-  const classes = useStyles();
   const [open, setOpen] = React.useState(false);
   const history = useHistory() 
+  let fileName
 
   const handleClickOpen = () => {
     setOpen(true);
   };
 
   const handleUpload = () => {
-    setOpen(false);
+    
     let el = document.getElementById("myFile");
     let files = el.files;
 
     if(files.length>0){
-      const formData = new FormData();
-      let fileName=files[0].name;
-      for (let i = 0; i < files.length; i++) {
-        formData.append('file' + i, files[i]);
-        formData.append('file' + i + 'params', "some parameters");
+      fileName=files[0].name
     }
 
+    const formData = new FormData();
+      
+    for (let i = 0; i < files.length; i++) {
+        formData.append('file' + i, files[i]);
+        formData.append('file' + i + 'params', "some parameters");
+
     let x = new XMLHttpRequest();
+
     x.onload = () => {
         console.log("Finished");
 
@@ -55,9 +45,15 @@ export default function UploadDialog() {
     }
     x.open("POST", "/api/upload-file");
     x.send(formData);
-      history.push(`/visualizer?file=/user-uploads/${fileName}`) 
-      }
+    }
   
+  };
+  
+  const handleOK = () => {
+    setOpen(false);
+    if(fileName){
+    history.push(`/visualizer?file=/user-uploads/${fileName}`)
+    }
   };
 
   const handleCancel = () => {
@@ -72,13 +68,14 @@ export default function UploadDialog() {
         <DialogTitle>Upload Dataset:</DialogTitle>
         <DialogContent>
             <input type="file" id="myFile" multiple/>
+            <Button variant="contained" color='primary' onClick={handleUpload}>Upload</Button>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCancel} color="primary">
             Cancel
           </Button>
-          <Button onClick={handleUpload} color="primary">
-            Upload
+          <Button onClick={handleOK} color="primary">
+            OK
           </Button>
         </DialogActions>
       </Dialog>
