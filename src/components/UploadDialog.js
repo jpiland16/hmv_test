@@ -1,5 +1,4 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -19,12 +18,13 @@ export default function UploadDialog() {
   };
 
   const handleUpload = () => {
-    
+    console.log('log');
     let el = document.getElementById("myFile");
     let files = el.files;
 
     if(files.length>0){
       fileName=files[0].name
+      console.log(fileName)
     }
 
     const formData = new FormData();
@@ -37,7 +37,6 @@ export default function UploadDialog() {
 
     x.onload = () => {
         console.log("Finished");
-
         let x2 = new XMLHttpRequest();
         x2.open('GET', "/api/scan-all-files");
         x2.send();

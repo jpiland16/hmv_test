@@ -15,7 +15,6 @@ let parentOf = {};
 let globalQs = {};
 let sliderValuesShadowCopy = {};
 let outgoingRequest = false;
-let firstLoad = true;
 let lastFiles = [];
 
 export default function Viewport(props) {
@@ -71,16 +70,20 @@ export default function Viewport(props) {
 
     const files = React.useRef([]);
 
+
     React.useEffect(() => {
         if(bones) {
-            if(firstLoad) {
+            console.log('firstLoad')
+            console.log(props.firstLoad)
+            if(props.firstLoad) {
                 if (files.current.length === 0) {
                     getFileList();
                 }
+                console.log('selectedFile')
                 if (selectedFile !== "") {
                     onSelectFileChange(selectedFile);
                 }
-                firstLoad = false;
+                props.setFirstLoad(false);
             } else {
                 files.current = lastFiles;
             }
@@ -99,6 +102,7 @@ export default function Viewport(props) {
     }
 
     function downloadFile(fname) {
+        console.log('downloading')
         outgoingRequest = true;
         setDownloading(true);
         setDownloadPercent(0);
