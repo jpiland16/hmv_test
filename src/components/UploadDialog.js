@@ -6,6 +6,8 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import {useHistory} from 'react-router-dom';
 import LinearProgress from '@material-ui/core/LinearProgress';
+import Box from '@material-ui/core/Box'
+import Grid from '@material-ui/core/Grid';
 
 
 
@@ -13,8 +15,8 @@ export default function UploadDialog() {
   const [open, setOpen] = React.useState(false);
   const history = useHistory() 
   let fileName
-  let uploading=false
-  let uploadPercent=0
+  const [uploading, setUploading]= React.useState(false)
+  const [uploadPercent, setUploadPercent]= React.useState(0)
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -24,8 +26,8 @@ export default function UploadDialog() {
     console.log('log');
     let el = document.getElementById("myFile");
     let files = el.files;
-    uploading=true
-    uploadPercent=0;
+    setUploading(true);
+    setUploadPercent(0);
 
     if(files.length>0){
       fileName=files[0].name
@@ -47,19 +49,23 @@ export default function UploadDialog() {
       let x2 = new XMLHttpRequest();
       x2.open('GET', "/api/scan-all-files");
       x2.send();
-      x.onprogress = (event) => {
-        uploadPercent=Math.min(100, Math.round(event.loaded / event.total * 100));
-    }
+    //   x.onprogress = (event) => {
+    //     uploadPercent=Math.min(100, Math.round(event.loaded / event.total * 100));
+    // }
       x2.onload=handleOK();
-
-
+  }
+  x.onprogress = (event) => {
+    setUploadPercent(Math.min(100, Math.round(event.loaded / event.total * 100)));
+    console.log(uploadPercent)
   }
     }
+    
   
   };
   
   const handleOK = () => {
     setOpen(false);
+    setUploading(false);
     if(fileName){
     history.push(`/visualizer?file=/user-uploads/${fileName}`)
     }
@@ -76,9 +82,12 @@ export default function UploadDialog() {
       <Dialog disableBackdropClick disableEscapeKeyDown open={open} >
         <DialogTitle>Upload Dataset:</DialogTitle>
         <DialogContent>
-            <input type="file" id="myFile" multiple/>
-            {/* <Button variant="contained" color='primary' onClick={handleUpload}>Upload</Button> */}
-            {uploading && (<LinearProgress variant="determinate" value={uploadPercent} />)}
+                <input type="file" id="myFile" multiple/>
+                {uploading && (
+                  <Box mt={2}>
+                  <LinearProgress variant="determinate" value={uploadPercent}/>
+                  </Box>
+                  )}
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCancel} color="primary">
