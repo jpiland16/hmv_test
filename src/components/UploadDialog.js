@@ -42,8 +42,11 @@ export default function UploadDialog() {
         x2.send();
 
     }
-    x.open("POST", "/api/upload-file");
+    console.log('open')
+    x.open("POST", "/api/upload-file", false);
+    console.log('send')
     x.send(formData);
+    handleOK();
     }
   
   };
@@ -51,6 +54,7 @@ export default function UploadDialog() {
   const handleOK = () => {
     setOpen(false);
     if(fileName){
+      //window.location.href(`/visualizer?file=/user-uploads/${fileName}`)
     history.push(`/visualizer?file=/user-uploads/${fileName}`)
     }
   };
@@ -67,14 +71,14 @@ export default function UploadDialog() {
         <DialogTitle>Upload Dataset:</DialogTitle>
         <DialogContent>
             <input type="file" id="myFile" multiple/>
-            <Button variant="contained" color='primary' onClick={handleUpload}>Upload</Button>
+            {/* <Button variant="contained" color='primary' onClick={handleUpload}>Upload</Button> */}
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCancel} color="primary">
             Cancel
           </Button>
-          <Button onClick={handleOK} color="primary">
-            OK
+          <Button onClick={handleUpload} color="primary">
+            Upload
           </Button>
         </DialogActions>
       </Dialog>
