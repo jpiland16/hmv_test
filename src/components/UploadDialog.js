@@ -4,7 +4,8 @@ import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import {useHistory} from 'react-router-dom'
+import {useHistory} from 'react-router-dom';
+import LinearProgress from '@material-ui/core/LinearProgress';
 
 
 
@@ -12,6 +13,8 @@ export default function UploadDialog() {
   const [open, setOpen] = React.useState(false);
   const history = useHistory() 
   let fileName
+  let uploading=false
+  let uploadPercent=0
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -21,6 +24,8 @@ export default function UploadDialog() {
     console.log('log');
     let el = document.getElementById("myFile");
     let files = el.files;
+    uploading=true
+    uploadPercent=0;
 
     if(files.length>0){
       fileName=files[0].name
@@ -35,18 +40,20 @@ export default function UploadDialog() {
 
     let x = new XMLHttpRequest();
 
-    x.onload = () => {
-        console.log("Finished");
-        let x2 = new XMLHttpRequest();
-        x2.open('GET', "/api/scan-all-files");
-        x2.send();
-
-    }
-    console.log('open')
-    x.open("POST", "/api/upload-file", false);
-    console.log('send')
+    x.open("POST", "/api/upload-file");
     x.send(formData);
-    handleOK();
+    x.onload = () => {
+      console.log("Finished");
+      let x2 = new XMLHttpRequest();
+      x2.open('GET', "/api/scan-all-files");
+      x2.send();
+      x.onprogress = (event) => {
+        uploadPercent=Math.min(100, Math.round(event.loaded / event.total * 100));
+    }
+      x2.onload=handleOK();
+
+
+  }
     }
   
   };
@@ -54,7 +61,6 @@ export default function UploadDialog() {
   const handleOK = () => {
     setOpen(false);
     if(fileName){
-      //window.location.href(`/visualizer?file=/user-uploads/${fileName}`)
     history.push(`/visualizer?file=/user-uploads/${fileName}`)
     }
   };
@@ -72,6 +78,7 @@ export default function UploadDialog() {
         <DialogContent>
             <input type="file" id="myFile" multiple/>
             {/* <Button variant="contained" color='primary' onClick={handleUpload}>Upload</Button> */}
+            {uploading && (<LinearProgress variant="determinate" value={uploadPercent} />)}
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCancel} color="primary">
