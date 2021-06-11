@@ -73,13 +73,10 @@ export default function Viewport(props) {
 
     React.useEffect(() => {
         if(bones) {
-            console.log('firstLoad')
-            console.log(props.firstLoad)
             if(props.firstLoad) {
                 if (files.current.length === 0) {
                     getFileList();
                 }
-                console.log('selectedFile')
                 if (selectedFile !== "") {
                     onSelectFileChange(selectedFile);
                 }
@@ -102,7 +99,6 @@ export default function Viewport(props) {
     }
 
     function downloadFile(fname) {
-        console.log('downloading')
         outgoingRequest = true;
         setDownloading(true);
         setDownloadPercent(0);

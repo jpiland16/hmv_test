@@ -63,7 +63,7 @@ function animate() {
   let elapsed = new Date().getTime() - starttime;
   window.requestAnimationFrame(animate);
   let frameNumber = Math.round(elapsed/(1000/rate));
-  if (frameNumber === frameId)
+  if (frameNumber == frameId)
     return;
   frameId = frameNumber;
   if (model) {
@@ -100,7 +100,7 @@ React.useEffect(() => {
     stop();
   }
   
-});
+}, []);
 
     return (
       <div id='visualizationBase'
