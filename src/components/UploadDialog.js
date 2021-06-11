@@ -49,15 +49,13 @@ export default function UploadDialog() {
       let x2 = new XMLHttpRequest();
       x2.open('GET', "/api/scan-all-files");
       x2.send();
-    //   x.onprogress = (event) => {
-    //     uploadPercent=Math.min(100, Math.round(event.loaded / event.total * 100));
-    // }
+      x2.onprogress = (event) => {
+        setUploadPercent(Math.min(100, Math.round(event.loaded / event.total * 100)));
+        console.log(uploadPercent)
+      }
       x2.onload=handleOK();
   }
-  x.onprogress = (event) => {
-    setUploadPercent(Math.min(100, Math.round(event.loaded / event.total * 100)));
-    console.log(uploadPercent)
-  }
+  
     }
     
   
