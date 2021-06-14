@@ -6,6 +6,8 @@ const { count } = require('console');
 const { exec } = require('child_process');
 const formidable = require('formidable');
 
+const fileProcessor = require('./src/server_side/FileProcessor');
+
 function walkDirectory(dir) {
     let myPromise = new Promise(function(myResolve, myReject) {
         let thisDirFiles = [];
@@ -77,6 +79,13 @@ function onProjectUpdate() {
     console.log("Pull operation requested at " + new Date().toUTCString());
     exec("git pull > git.log && npm run build > build.log")
 }
+
+app.post("/api/post", (req, res) => {
+    console.log("Received post request.");
+    fileProcessor.processFile(req, (data) => {
+        res.json({ message: data });
+    });
+})
 
 app.get("/api/*", (req, res) => {
     let requestedResource = req.url.substr(5);
@@ -192,4 +201,5 @@ scanAllFiles();
 
 const PORT = process.env.PORT || 80
 
+console.log("Listening on port " + PORT + "...");
 app.listen(PORT);

@@ -11,6 +11,7 @@
     "@testing-library/user-event": "^12.8.3",
     "babel-preset-react": "^6.24.1",
     "express": "^4.17.1",
+    "filereader": "^0.10.3",
     "formidable": "^1.2.2",
     "material-design-icons": "^3.0.1",
     "react": "^17.0.2",
@@ -49,5 +50,6 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  }
+  },
+  "proxy": "http://localhost:80"
 }

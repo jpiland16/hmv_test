@@ -41,6 +41,8 @@ const AUTO_RIPPLE = true;
 const REPEAT = true;
 const FPS = 20;
 
+// const boneList = ["BACK", "RUA", "RLA", "LUA", "LLA"];
+const boneList = ["BACK", "RLA", "LLA"];
 
 const inputArray = inputData.split("\n");
 
@@ -69,34 +71,19 @@ export default function GeneratedData(props) {
             linesArray[i] = inputArray[i].split(" ");
             indicesArray[i] = ""+i;
         }
-        props.data.current = indicesArray;
         props.repeat.current = REPEAT;
         props.FPS.current = FPS;
+        props.data.current = indicesArray;
         props.lastIndex.current = -1;
     }
 
     React.useEffect(() => {
         props.useGlobalQs.current = USE_GLOBAL;
         if (props.timeSliderValue !== props.lastIndex.current) { // We need to update the model, because the timeSlider has moved
-
-            let clockwise_down_quat = new THREE.Quaternion();
-            clockwise_down_quat.setFromAxisAngle(new THREE.Vector3(0, 0, -1), Math.PI/2);
-            let set_y_up_quat = new THREE.Quaternion();
-            set_y_up_quat.setFromAxisAngle(new THREE.Quaternion(1, 0, 0), Math.PI/2);
-            
-            let align_arm_quat = new THREE.Quaternion();
-            align_arm_quat.multiplyQuaternions(set_y_up_quat, clockwise_down_quat);
-
-            let lineQuat = getQuaternionFromLine(props.timeSliderValue);
-            
-            let transformed_q = new THREE.Quaternion();
-            transformed_q.multiplyQuaternions(quat_o_t, lineQuat);
-
-            let final_q = new THREE.Quaternion().multiplyQuaternions(transformed_q, align_arm_quat); //FIRST align the arm, THEN apply the movement
-
-            let q = final_q;
-            props.batchUpdate(TARGET_BONE, [q.x, q.y, q.z, q.w]);
-            props.lastIndex.current = props.timeSliderValue;
+            boneList.forEach(bone => {
+                props.lastIndex.current = props.timeSliderValue;
+                props.batchUpdate(bone, [0, 0, 0, 1]);
+            })
         }
     });
 
