@@ -333,7 +333,7 @@ export default function Viewport(props) {
         
         if (childrenOf[boneId]) affectedByInheritance.push(...childrenOf[boneId])
 
-        if (playTimerId.current === 0) { // (Don't bother doing this when viewing pre-recorded data.)
+        if (playTimerId.current === 0 && (props.dev && selectedFile === "")) { // (Don't bother doing this when viewing pre-recorded data, or if we aren't in dev mode and running tests.)
             while (affectedByInheritance.length > 0) {
                 let currentBone = affectedByInheritance.shift();
                 if (childrenOf[currentBone]) affectedByInheritance.push(...childrenOf[currentBone])

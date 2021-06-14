@@ -2,8 +2,8 @@ import React from 'react'
 import * as THREE from 'three'
 
 const boneList = {
-    'BACK': 46,
     'ROOT': 46,
+    'BACK': 46,
     'RUA': 59,
     'RLA': 72,
     'LUA': 85,
