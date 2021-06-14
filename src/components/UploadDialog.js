@@ -7,7 +7,6 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import {useHistory} from 'react-router-dom';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import Box from '@material-ui/core/Box'
-import Grid from '@material-ui/core/Grid';
 
 
 
@@ -23,7 +22,6 @@ export default function UploadDialog() {
   };
 
   const handleUpload = () => {
-    console.log('log');
     let el = document.getElementById("myFile");
     let files = el.files;
     setUploading(true);
@@ -49,10 +47,6 @@ export default function UploadDialog() {
       let x2 = new XMLHttpRequest();
       x2.open('GET', "/api/scan-all-files");
       x2.send();
-      x2.onprogress = (event) => {
-        setUploadPercent(Math.min(100, Math.round(event.loaded / event.total * 100)));
-        console.log(uploadPercent)
-      }
       x2.onload=handleOK();
   }
   
@@ -83,7 +77,7 @@ export default function UploadDialog() {
                 <input type="file" id="myFile" multiple/>
                 {uploading && (
                   <Box mt={2}>
-                  <LinearProgress variant="determinate" value={uploadPercent}/>
+                  <LinearProgress variant="indeterminate" value={uploadPercent}/>
                   </Box>
                   )}
         </DialogContent>

@@ -244,6 +244,14 @@ export default function Viewport(props) {
         setParent(bones, "LUA", "BACK");
         setParent(bones, "LLA", "LUA");
         setParent(bones, "BACK", "ROOT");
+        
+        setParent(bones, "RSHOE","RLL")
+        setParent(bones, "RLL", "RUL");
+        setParent(bones, "RUL", "ROOT");
+
+        setParent(bones, "LSHOE", "LLL")
+        setParent(bones, 'LLL','LUL')
+        setParent(bones, "LUL","ROOT");
 
         let boneList = Object.getOwnPropertyNames(bones);
         for (let i = 0; i < boneList.length; i++) {
@@ -392,18 +400,42 @@ export default function Viewport(props) {
                 z: 0.509,
                 w: 0.547
             },
-            LSHOE: {
-                x: 0.495,
-                y: -0.015,
-                z: 0.008,
-                w: 0.869
+            RUL: {
+                x: 0.001,
+                y:-0.029,
+                z: 0.999,
+                w: 0.044,
+            },
+            RLL: {
+                x:0.001,
+                y:-0.035,
+                z:0.999,
+                w: 0.04,
             },
             RSHOE: {
-                x: 0.497,
-                y: 0.014,
-                z: -0.008,
-                w: 0.867
-            }
+                x: 0.006,
+                y: 0.467,
+                z: 0.883,
+                w: 0.043
+            },
+            LUL: {
+                x:-0.001,
+                y:-0.032,
+                z: 0.999,
+                w: -0.044,
+            },
+            LLL: {
+                x:-0.001,
+                y:-0.034,
+                z:0.999,
+                w:-0.04,
+            },
+            LSHOE: {
+                x: -0.006,
+                y: 0.465,
+                z: 0.884,
+                w: -0.043
+            },
         }
 
         let boneNames = Object.getOwnPropertyNames(resetValues);
