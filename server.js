@@ -1,10 +1,14 @@
 const express = require('express');
+const helmet = require('helmet')   
 const app = express();
 const serveIndex = require('serve-index');
 const fs = require('fs');
 const { count } = require('console');
 const { exec } = require('child_process');
 const formidable = require('formidable');
+
+
+app.use(helmet()); //adds security related HTTP headers
 
 function walkDirectory(dir) {
     let myPromise = new Promise(function(myResolve, myReject) {
@@ -187,6 +191,7 @@ app.use('*',  (req, res)=> {
                   </html>`)
     }
 });
+
 
 scanAllFiles();
 
