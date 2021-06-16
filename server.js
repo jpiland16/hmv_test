@@ -10,6 +10,9 @@ const formidable = require('formidable');
 
 app.use(helmet()); //adds security related HTTP headers
 
+app.use(express.static(`${__dirname}/build`));
+app.use(express.static(`${__dirname}/public`));
+
 function walkDirectory(dir) {
     let myPromise = new Promise(function(myResolve, myReject) {
         let thisDirFiles = [];
@@ -170,8 +173,6 @@ app.get('/files/*', (req, res) => {
     }
 });
 
-app.use(express.static(`${__dirname}/build`));
-
 app.use('*',  (req, res)=> {
     if (fs.existsSync("./build/index.html")) {
         res.sendFile("/build/index.html", {
@@ -197,6 +198,5 @@ scanAllFiles();
 
 const PORT = process.env.PORT || 80
 
-app.use(express.static(`${__dirname}/public`));
 
 app.listen(PORT);
