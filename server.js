@@ -1,5 +1,5 @@
 const express = require('express');
-const helmet = require('helmet')   
+//const helmet = require('helmet')   
 const app = express();
 const serveIndex = require('serve-index');
 const fs = require('fs');
@@ -8,7 +8,7 @@ const { exec } = require('child_process');
 const formidable = require('formidable');
 
 
-app.use(helmet()); //adds security related HTTP headers
+//app.use(helmet()); //adds security related HTTP headers
 
 app.use(express.static(`${__dirname}/build`));
 app.use(express.static(`${__dirname}/public`));
