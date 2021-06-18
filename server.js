@@ -1,17 +1,10 @@
 const express = require('express');
-//const helmet = require('helmet')   
 const app = express();
 const serveIndex = require('serve-index');
 const fs = require('fs');
 const { count } = require('console');
 const { exec } = require('child_process');
 const formidable = require('formidable');
-
-
-//app.use(helmet()); //adds security related HTTP headers
-
-app.use(express.static(`${__dirname}/build`));
-app.use(express.static(`${__dirname}/public`));
 
 function walkDirectory(dir) {
     let myPromise = new Promise(function(myResolve, myReject) {
@@ -173,6 +166,8 @@ app.get('/files/*', (req, res) => {
     }
 });
 
+app.use(express.static(`${__dirname}/build`));
+
 app.use('*',  (req, res)=> {
     if (fs.existsSync("./build/index.html")) {
         res.sendFile("/build/index.html", {
@@ -193,10 +188,8 @@ app.use('*',  (req, res)=> {
     }
 });
 
-
 scanAllFiles();
 
 const PORT = process.env.PORT || 80
-
 
 app.listen(PORT);

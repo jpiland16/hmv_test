@@ -113,6 +113,8 @@ function loadModel() {
                 //console.log("Done loading")
                 myResolve();
             }, function ( xhr ) {
+                document.getElementById("pctDownloaded").innerText = "(" + Math.round(xhr.loaded / xhr.total * 100) + "% loaded)"
+                // console.log(Math.round(xhr.loaded / xhr.total * 100) + "% loaded")
                 // setModelDownloadProgress(Math.min(100, Math.round(xhr.loaded / xhr.total * 100)))
             }, function ( error ) {
                 console.error( error );
@@ -164,6 +166,7 @@ export default function Visualizer(props) {
                     <div className="loading">
                         <CircularProgress /><br />
                         Please wait while the model is loading...
+                        <div id="pctDownloaded"></div>
                     </div> 
                 }
             </div>
