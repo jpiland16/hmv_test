@@ -9,7 +9,7 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import Button from '@material-ui/core/Button'
 import SyncIcon from '@material-ui/icons/Sync'
-import { useSpring, animated } from 'react-spring/web.cjs'; // web.cjs is required for IE 11 support
+import { useSpring, animated } from 'react-spring'; // web.cjs is required for IE 11 support
 import './ChooseFiles.css'
 import { Typography } from '@material-ui/core';
 
