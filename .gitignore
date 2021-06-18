@@ -26,6 +26,8 @@ yarn-error.log*
 /files/**
 !/files/demo
 !/files/demo/**
+!/files/meta
+!files/meta/**
 !/files/figures
 !/files/figures/**
 !/files/testPostRequest.html

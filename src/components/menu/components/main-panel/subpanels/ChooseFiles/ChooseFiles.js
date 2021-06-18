@@ -131,12 +131,12 @@ export default function CustomizedTreeView(props) {
                 label={nodes.name} 
                 onContextMenu={ (event) => handleContextMenu(event, nodes.id, isFolder) } 
                 onClick={ (event) => { 
-                        if (!isFolder) props.setSelectedFile(nodes.id, nodes.name) 
+                        if (!isFolder) props.setSelectedFile(nodes.id) 
                 } }
                 bold={props.selectedFile.indexOf(nodes.id) !== -1 ? "true" : "false"}
                 style={{
                         whiteSpace: "nowrap",
-                        opacity: props.checkFileName(nodes.name) || isFolder ? 1 : 0.5,
+                        opacity: props.checkFileName(nodes.id) || isFolder ? 1 : 0.5,
                         WebkitTouchCallout: "none",
                         WebkitUserSelect: "none",
                         MozUserSelect: "none",

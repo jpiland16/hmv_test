@@ -39,7 +39,7 @@ function addModels() {
             scene.add(model);
         }, 
         xhr => {
-                  console.log((xhr.loaded / xhr.total) * 100 + "% loaded");
+                  // console.log((xhr.loaded / xhr.total) * 100 + "% loaded");
                 },
                 // called when loading has errors
                 error => {

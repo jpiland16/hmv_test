@@ -16,8 +16,25 @@ let globalQs = {};
 let sliderValuesShadowCopy = {};
 let outgoingRequest = false;
 let lastFiles = [];
+let fileMap = null;
 
 export default function Viewport(props) {
+
+     /* CONTENTS OF THIS FILE (Viewport.js) +3
+      *
+      *  - Initial URL parameter checks (lines 36 - 51)
+      *  - Application state initialization (lines 57 - 74)
+      *  - Application refs initialization (lines 80 - 91)
+      *  - Post-render effects (lines 97 - 112)
+      *  - File operations (lines 118 - 155)
+      *  - Network file retrieval (lines 163 - 258) +4
+      *  - Window size retrieval (lines 261 - 282)
+      *  - Manipulation of the 3D model (lines 289 - 343)
+      *  - Quaternion math (lines 349 - 373) 
+      *  - Programmatic updates to the 3D model (lines 379 - 522)
+      *  - Three.JS getter methods (lines 528 - 534)
+      *  - Render return (lines 540 - 678)
+      */
     
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
@@ -35,7 +52,11 @@ export default function Viewport(props) {
             charPos++;
         }
     }
-    
+
+    /*   ------------------------
+     *   STATE (React.useState())
+     *   ------------------------ */  
+
     const [ selectedPanel, setSelectedPanel ] = React.useState(0);
     const [ expandedItems, setExpandedItems ] = React.useState(initialExpandedItems);
     const [ selectedFile, setSelectedFile ] = React.useState(initialSelectedFile);
@@ -44,32 +65,37 @@ export default function Viewport(props) {
     const [ bones, setBones ] = React.useState(null);
     const [ sliderValues, setSliderValues ] = React.useState(null);
     const [ modelNeedsUpdating, setModelNeedsUpdating ] = React.useState(false);
-    const [ menuIsOpen, setMenuIsOpen ] = React.useState(false); // Menu is closed by default
-    const [ menuIsPinned, setMenuIsPinned ] = React.useState(true); // Menu is pinned by default
-    const useGlobalQs = React.useRef(true); // Use global quaternions by default
-    const [ useRipple, setUseRipple ] = React.useState(false); // Limbs move independently by default
-    const [ playing, setPlaying ] = React.useState(false); // Paused by default
+    const [ menuIsOpen, setMenuIsOpen ] = React.useState(false);                 // Menu is closed by default
+    const [ menuIsPinned, setMenuIsPinned ] = React.useState(true);              // Menu is pinned by default
+    const [ useRipple, setUseRipple ] = React.useState(false);                   // Limbs move independently by default
+    const [ timeSliderValue, setTimeSliderValue ] = React.useState(0);           // Initial position is 0
+    const [ playing, setPlaying ] = React.useState(false);                       // Paused by default
     const [ cardsPos, setCardsPos ] = React.useState(window.localStorage.getItem("cardsPos") || 'right');
-    const [ timeDisplay, setTimeDisplay ] = React.useState(window.localStorage.getItem("timeDisplay") || 'msm');
+    const [ timeDisplay, setTimeDisplay ] = React.useState(window.localStorage.getItem("timeDisplay") || 'msm')
     const [ downloadPercent, setDownloadPercent ] = React.useState(0);
     const [ downloading, setDownloading ] = React.useState(false);
+    const [ openLab, setOpenLab ] = React.useState("");
+    
+    /*   ---------------------
+     *   REFS (React.useRef())
+     *   --------------------- */  
 
+    const useGlobalQs = React.useRef(true); // Use global quaternions by default
     const camera = React.useRef(undefined);
     const orbitControls = React.useRef(undefined);
-
-    const [ openLab, setOpenLab ] = React.useState("");
-    const [ timeSliderValue, setTimeSliderValue ] = React.useState(0);
     const outputTypes = React.useRef([]);
     const data = React.useRef([]);
     const FPS = React.useRef(30);
     const repeat = React.useRef(false);
     const lastIndex = React.useRef(-1);
-    
     const playTimerId = React.useRef(0);
     const lineNumberRef = React.useRef(0); // Start from beginning of file by default
-
+    const fileMetadata = React.useRef(null)
     const files = React.useRef([]);
 
+    /*   -------------------
+     *   POST-RENDER EFFECTS
+     *   ------------------- */  
 
     React.useEffect(() => {
         if(bones) {
@@ -77,9 +103,13 @@ export default function Viewport(props) {
                 if (files.current.length === 0) {
                     getFileList();
                 }
-                if (selectedFile !== "") {
-                    onSelectFileChange(selectedFile);
-                }
+                getMap().then(() => {
+                    if (selectedFile !== "") {
+                        if (isFileNameValid(selectedFile)) {
+                            onSelectFileChange(selectedFile);
+                        }
+                    }
+                }, () => { });
                 props.setFirstLoad(false);
             } else {
                 files.current = lastFiles;
@@ -87,16 +117,128 @@ export default function Viewport(props) {
         }
     });
 
+    /*  --------------------------------
+     *  FILE OPERATIONS (User-initiated)
+     *  -------------------------------- */
+
     function isFileNameValid(fname) {
-        return fname.substr(-4) === ".dat";
+        return fileMap && Object.getOwnPropertyNames(fileMap).indexOf(fname) >= 0
     }
 
-    function clickFile(id, name) {
-        if(isFileNameValid(name)) {
+    function clickFile(id) {
+        if(isFileNameValid(id)) {
             onSelectFileChange(id);
             window.history.replaceState(null, null, "?file=" + id);
         }
     }
+
+    function onSelectFileChange(mySelectedFile) {
+        // IMPORTANT! This method should only be called if mySelectedFile 
+        // has been VERIFIED as a valid file, or if we need to clear/reset the model. (i.e. mySelectedFile === "")
+        if (!outgoingRequest) {
+            setSelectedFile(mySelectedFile);                    
+            data.current = [];                                        // Allow either refresh or disable
+            outputTypes.current = []                                  // Clear all graphs
+            setTimeSliderValue(0);                                    // Move to start
+            lineNumberRef.current = 0;                                // (same as above)
+            setUseRipple(true)                                        // For the initialization of the model
+            if (modelLoaded) {
+                resetModel()                                          // Same as above
+                setUseRipple(false)           
+                if (playTimerId.current !== 0) {                      // Stop playback if it is occuring
+                        window.clearInterval(playTimerId.current);   
+                        playTimerId.current = 0;
+                        setPlaying(false);
+                } 
+                if (getCamera()) {
+                    getCamera().position.x = 0;
+                    getCamera().position.y = 0;
+                    getCamera().position.z = 3;
+                    getCamera().up.set(0, 1, 0);
+                    getControls().update();
+                }  
+            }
+            if (mySelectedFile !== "") {
+                downloadMetafile(mySelectedFile).then(() => {
+                    downloadFile(mySelectedFile)
+                }, () => {})
+            }
+        }
+    }
+
+    /*   ----------------------
+     *   NETWORK FILE RETRIEVAL
+     *   ---------------------- */
+
+    // PARENT XHR METHOD
+
+    async function doXHR(method, url) {
+        return new Promise(function(myResolve, myReject) {
+            let x = new XMLHttpRequest();
+            x.open(method, url);
+            x.onload = () => {
+                myResolve(x);
+            }
+            x.onerror = () => { myReject(x); }
+            x.send()
+        });
+    }
+    
+    // NETWORK METHODS THAT SHOULD ONLY BE CALLED ONCE
+
+    async function getFileList() {
+        doXHR("GET", "/api/get-file-list").then(
+            (xhrr) => {
+                let res;
+                try {
+                    res = JSON.parse(xhrr.responseText);
+                } catch (e) {
+                    console.warn("Error in processing files...");
+                    console.error(e);
+                    res = [{
+                        id: '/demo',
+                        name: 'demo',
+                        children: [{
+                          id: '/demo/S4-ADL4.dat',
+                          name: 'S4-ADL4.dat'
+                        }],
+                    }]
+                }
+                files.current = res;
+                lastFiles = res;
+            },
+            (errXhrr) => {
+                console.error("XHR Error");
+                console.log(errXhrr.status);
+                console.log(errXhrr.statusText);
+                console.log(errXhrr.responseText);
+            }
+        )
+    }
+
+    async function getMap() {
+        const mapPath = (window.location.href.substring(0, 22) === "http://localhost:3000/" ? 
+        "https://raw.githubusercontent.com/jpiland16/hmv_test/master" :
+        "") + "/files/meta/map.json"
+        return new Promise((myResolve, myReject) => {
+            doXHR('GET', mapPath).then(
+                (xhrr) => {
+                    try {
+                        fileMap = JSON.parse(xhrr.responseText)
+                        myResolve()
+                    } catch (e) {
+                        console.error("File map not found!")
+                        myReject()
+                    }
+                }, (errXhrr) => {
+                    console.log(errXhrr)
+                    myReject()
+                }
+            )
+        });
+    }
+
+    // NETWORK METHODS THAT MAY BE CALLED MULTIPLE TIMES
 
     function downloadFile(fname) {
         outgoingRequest = true;
@@ -131,75 +273,33 @@ export default function Viewport(props) {
         x.send();
     }
 
-    function onSelectFileChange(mySelectedFile) {
-        if (!outgoingRequest) {
-            setSelectedFile(mySelectedFile);                    
-            data.current = [];           // Allow either refresh or disable
-            outputTypes.current = []     // Clear all graphs
-            setTimeSliderValue(0);       // Move to start
-            lineNumberRef.current = 0;   // (same as above)
-            setUseRipple(true)           // For the initialization of the model
-            if (modelLoaded) {
-                resetModel()                                          // Same as above
-                setUseRipple(false)           
-                if (playTimerId.current !== 0) {                      // Stop playback if it is occuring
-                        window.clearInterval(playTimerId.current);   
-                        playTimerId.current = 0;
-                        setPlaying(false);
-                } 
-                if (getCamera()) {
-                    getCamera().position.x = 0;
-                    getCamera().position.y = 0;
-                    getCamera().position.z = 3;
-                    getCamera().up.set(0, 1, 0);
-                    getControls().update();
-                }  
-            }
-            if (mySelectedFile !== "") downloadFile(mySelectedFile)
+    function downloadMetafile(selectedFilename) {
+        let path = "/files/meta/" + fileMap[selectedFilename] + ".json"
+        if (window.location.href.substring(0, 22) === "http://localhost:3000/") {
+            path = "https://raw.githubusercontent.com/jpiland16/hmv_test/master" + path
         }
-    }
 
-    async function doXHR(method, url) {
-        return new Promise(function(myResolve, myReject) {
-            let x = new XMLHttpRequest();
-            x.open(method, url);
-            x.onload = () => {
-                myResolve(x);
-            }
-            x.onerror = () => { myReject(x); }
-            x.send()
+        return new Promise((myResolve, myReject) => {
+            doXHR('GET', path).then(
+                (xhrr) => {
+                    try {
+                        fileMetadata.current = JSON.parse(xhrr.responseText)
+                        myResolve()
+                    } catch (e) {
+                        console.error("Metafile '" + path + "' not found!")
+                        myReject()
+                    }
+                }, (errXhrr) => {
+                    console.log(errXhrr)
+                    myReject()
+                }
+            )
         });
     }
-    
-    async function getFileList() {
-        doXHR("GET", "/api/get-file-list").then(
-            (xhrr) => {
-                let res;
-                try {
-                    res = JSON.parse(xhrr.responseText);
-                } catch (e) {
-                    console.warn("Error in processing files...");
-                    console.error(e);
-                    res = [{
-                        id: '/demo',
-                        name: 'demo',
-                        children: [{
-                          id: '/demo/S4-ADL4.dat',
-                          name: 'S4-ADL4.dat'
-                        }],
-                    }]
-                }
-                files.current = res;
-                lastFiles = res;
-            },
-            (errXhrr) => {
-                console.error("XHR Error");
-                console.log(errXhrr.status);
-                console.log(errXhrr.statusText);
-                console.log(errXhrr.responseText);
-            }
-        )
-    }
+
+    /*  ---------------------
+     *  WINDOW SIZE RETRIEVAL
+     *  --------------------- */
 
     function getWindowDimensions() {
             const { innerWidth: width, innerHeight: height } = window;
@@ -223,6 +323,11 @@ export default function Viewport(props) {
       
         return windowDimensions;
     }
+
+
+    /*  ----------------------------
+     *  MANIPULATION OF THE 3D MODEL
+     *  ---------------------------- */
 
     const setParent = (bones, childName, parentName) => {
         //console.log(childName + " is a child of " + parentName);
@@ -280,6 +385,10 @@ export default function Viewport(props) {
 
     }
 
+    /*  ---------------
+     *  QUATERNION MATH
+     *  --------------- */
+
     function getGlobalFromLocal(bones, localQ, currentBoneName) {
         let globalQ = new THREE.Quaternion();
         globalQ.copy(localQ); 
@@ -305,6 +414,10 @@ export default function Viewport(props) {
         localQ.multiply(globalQ);
         return localQ;
     }
+
+    /*  --------------------------
+     *  PROGRAMMATIC MODEL UPDATES
+     *  -------------------------- */
 
     function updateSingleQValue(boneId, qIndex, newValue) {
         let newSliderValues = { ...sliderValues }; // Create shallow clone of old model state
@@ -451,6 +564,10 @@ export default function Viewport(props) {
         setModelNeedsUpdating(true);
     }
 
+    /*  ---------------------------------
+     *  THREE.JS REFERENCE GETTER METHODS
+     *  --------------------------------- */
+
     function getCamera() {
         return camera.current;
     }
@@ -458,6 +575,10 @@ export default function Viewport(props) {
     function getControls() {
         return orbitControls.current;
     }
+
+    /*  ----------------------------------------
+     *  RETURN OF THE RENDER - PROPS -> CHILDREN
+     *  ---------------------------------------- */
 
     return (
         <div className="myView">
@@ -582,7 +703,8 @@ export default function Viewport(props) {
                 timeSliderValue={timeSliderValue}
                 setTimeSliderValue={setTimeSliderValue}
                 setPlaying={setPlaying}
-
+                
+                fileMetadata={fileMetadata}
                 outputTypes={outputTypes}
                 openLab={openLab}
                 setOpenLab={setOpenLab}
