@@ -48,7 +48,7 @@ export default function Welcome(props) {
       </AppBar>
       <Container>
         <HomeAnimation/>
-        <div class="toplayer">
+        <div className="toplayer">
           <Grid container spacing={2}>
             <Grid item>
               <Button color='primary' variant= 'contained' id = "submitButton" onClick={()=>launchVisualizer()}>Launch Visualizer</Button>

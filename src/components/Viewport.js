@@ -93,6 +93,104 @@ export default function Viewport(props) {
     const fileMetadata = React.useRef(null)
     const files = React.useRef([]);
 
+    const propertySet = {
+
+        // -- MENU OPTIONS --
+
+            // META-MENU PROPERTIES
+            menuIsOpen: menuIsOpen,
+            setMenuIsOpen: setMenuIsOpen,
+            menuIsPinned: menuIsPinned,
+            setMenuIsPinned: setMenuIsPinned,
+            selectedPanel: selectedPanel,
+            setSelectedPanel: setSelectedPanel,
+
+            // FILE SELECTION PROPERTIES
+            expandedItems: expandedItems,
+            setExpandedItems: setExpandedItems,
+            selectedFile: selectedFile,
+            setSelectedFile: clickFile, // NOTE! Need to check validity of file first.
+            checkFileName: isFileNameValid,
+            fileList: files,
+
+            // FILE SEARCH PROPERTIES
+            searchFileText: searchFileText,
+            setSearchFileText: setSearchFileText,
+
+            // CARD SETTINGS
+            cardsPos: cardsPos,
+            setCardsPos: setCardsPos,
+
+            // TIME-DISPLAY OPTIONS (for the time in bottom right of the screen)
+            timeDisplay: timeDisplay,
+            setTimeDisplay: setTimeDisplay,
+
+        // -- MOVING THE 3-D MODEL -- 
+
+            // MODEL PROPERTIES
+            modelLoaded: modelLoaded,
+            setModelLoaded: setModelLoaded,
+            bones: bones,
+            setBones: onLoadBones,
+            resetModel: resetModel,
+
+            // MODEL MANIPULATION
+            sliderValues: sliderValues,
+            updateModel: updateSingleQValue,
+            batchUpdate: batchUpdateObject,
+            modelNeedsUpdating: modelNeedsUpdating,
+            setModelNeedsUpdating: setModelNeedsUpdating,
+
+            // THREE.JS OBJECTS
+            camera: camera,
+            getCamera: getCamera,
+            orbitControls: orbitControls,
+            getControls: getControls,
+
+            // QUATERNION PROPERTIES
+            useGlobalQs: useGlobalQs,
+            useRipple: useRipple,
+            setUseRipple: setUseRipple,
+            refreshGlobalLocal: setSliderPositions,
+
+        // -- FILE VIEWING & PLAYBACK --
+
+            // FILE DOWNLOADS
+            downloading: downloading,
+            downloadPercent: downloadPercent,
+
+            // DATA
+            data: data,
+            fileMetadata: fileMetadata,
+
+            // PLAYBACK FEATURES
+            outputTypes: outputTypes,
+
+            // PLAYBACK OPTIONS
+            playing: playing,
+            setPlaying: setPlaying,
+            playTimerId: playTimerId, // The ID of the window.setInterval()
+            lineNumberRef: lineNumberRef, // Current line number of `data` to view
+            timeSliderValue: timeSliderValue,
+            setTimeSliderValue: setTimeSliderValue,
+            FPS: FPS,
+            repeat: repeat,
+            lastIndex: lastIndex,        
+
+        // -- WINDOW PROPERTIES --
+            getWindowDimensions: useWindowDimensions,
+
+        // -- DEVELOPMENT OPTIONS --
+        
+            // LAB OPTIONS
+            openLab: openLab,
+            setOpenLab: setOpenLab,
+
+            // DEV MODE
+            dev: props.dev
+
+    }
+
     /*   -------------------
      *   POST-RENDER EFFECTS
      *   ------------------- */  
@@ -582,141 +680,12 @@ export default function Viewport(props) {
 
     return (
         <div className="myView">
-            <Menu 
-                isOpen={menuIsOpen}
-                setIsOpen={setMenuIsOpen}
-                isPinned={menuIsPinned}
-                setIsPinned={setMenuIsPinned}
-                selectedPanel={selectedPanel}
-                setSelectedPanel={setSelectedPanel}
-
-                expandedItems={expandedItems} 
-                setExpandedItems={setExpandedItems} 
-                selectedFile={selectedFile}
-                setSelectedFile={clickFile}
-                getWindowDimensions={useWindowDimensions}
-                searchFileText={searchFileText}
-                setSearchFileText={setSearchFileText}
-                checkFileName={isFileNameValid}
-                cardsPos={cardsPos}
-                setCardsPos={setCardsPos}
-                timeDisplay={timeDisplay}
-                setTimeDisplay={setTimeDisplay}
-
-                modelLoaded={modelLoaded}
-                sliderValues={sliderValues}
-                updateModel={updateSingleQValue}
-                batchUpdate={batchUpdateObject}
-                bones={bones}
-                resetModel={resetModel}
-
-                useGlobalQs={useGlobalQs}
-                useRipple={useRipple}
-                setUseRipple={setUseRipple}
-                refreshGlobalLocal={setSliderPositions}
-
-                fileList={files}
-
-                playTimerId={playTimerId}
-                lineNumberRef={lineNumberRef}
-                timeSliderValue={timeSliderValue}
-                setTimeSliderValue={setTimeSliderValue}
-                setPlaying={setPlaying}
-
-                outputTypes={outputTypes}
-                openLab={openLab}
-                setOpenLab={setOpenLab}
-                data={data}
-                lastIndex={lastIndex}
-                FPS={FPS}
-                repeat={repeat}
-
-                getCamera={getCamera}
-                getControls={getControls}
-                
-                dev={props.dev}
-            />
-
-            <Visualizer 
-                downloadPercent={downloadPercent}
-                downloading={downloading}
-                camera={camera}
-                orbitControls={orbitControls}
-                modelLoaded={modelLoaded}
-                setModelLoaded={setModelLoaded}
-                setBones={onLoadBones}
-                modelNeedsUpdating={modelNeedsUpdating}
-                setModelNeedsUpdating={setModelNeedsUpdating}
-                onClick = {
-                    (event) => !menuIsPinned && setMenuIsOpen(false)
-                }
-            />
-
-            <PlayBar 
-                timeDisplay={timeDisplay}
-                setTimeDisplay={setTimeDisplay}
-                lineNumberRef={lineNumberRef}
-                playTimerId={playTimerId}
-                playing={playing}
-                setPlaying={setPlaying}
-                timeSliderValue={timeSliderValue}
-                setTimeSliderValue={setTimeSliderValue}
-                FPS={FPS}
-                repeat={repeat}
-                data={data}
-                getWindowDimensions={useWindowDimensions}
-                menuIsOpen={menuIsOpen}
-                disabled={data.current.length === 0}
-            />
-
-            <CardSet 
-                timeSliderValue={timeSliderValue}
-                data={data}
-                cardsPos={cardsPos}
-                menuIsOpen={menuIsOpen}
-                getWindowDimensions={useWindowDimensions}
-                outputTypes={outputTypes}
-            />
-
-            <TopActionBar
-                selectedFile={selectedFile}
-                setSelectedFile={onSelectFileChange}
-                modelLoaded={modelLoaded}
-                cardsPos={cardsPos}
-                getWindowDimensions={useWindowDimensions}
-                menuIsOpen={menuIsOpen}
-                setMenuIsOpen={setMenuIsOpen}
-                setSelectedPanel={setSelectedPanel}
-            />
-
-            <Animator
-                batchUpdate={batchUpdateObject}
-                selectedFile={selectedFile}
-
-                useGlobalQs={useGlobalQs}
-                useRipple={useRipple}
-                setUseRipple={setUseRipple}
-                refreshGlobalLocal={setSliderPositions}
-
-                playTimerId={playTimerId}
-                lineNumberRef={lineNumberRef}
-                timeSliderValue={timeSliderValue}
-                setTimeSliderValue={setTimeSliderValue}
-                setPlaying={setPlaying}
-                
-                fileMetadata={fileMetadata}
-                outputTypes={outputTypes}
-                openLab={openLab}
-                setOpenLab={setOpenLab}
-                data={data}
-                lastIndex={lastIndex}
-                FPS={FPS}
-                repeat={repeat}
-
-                getCamera={getCamera}
-                getControls={getControls}
-            />
-
+            <Menu {...propertySet} />
+            <Visualizer {...propertySet} onClick = { (event) => !menuIsPinned && setMenuIsOpen(false) } />
+            <PlayBar {...propertySet} disabled={data.current.length === 0} />
+            <CardSet {...propertySet} />
+            <TopActionBar {...propertySet} />
+            <Animator {...propertySet} />
         </div>
     )
 }
