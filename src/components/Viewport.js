@@ -8,6 +8,9 @@ import CardSet from './cards/CardSet'
 import * as THREE from 'three'
 import Animator from './Animator';
 
+import { getLocalFromGlobal, getGlobalFromLocal } from './viewport-workers/MathOps'
+import { resetModel } from './viewport-workers/Reset'
+
 // Window resize code: see https://stackoverflow.com/questions/36862334/get-viewport-window-height-in-reactjs
 
 let childrenOf = {};
@@ -110,6 +113,7 @@ export default function Viewport(props) {
             setExpandedItems: setExpandedItems,
             selectedFile: selectedFile,
             setSelectedFile: clickFile, // NOTE! Need to check validity of file first.
+            onSelectFileChange: onSelectFileChange,
             checkFileName: isFileNameValid,
             fileList: files,
 
@@ -132,7 +136,8 @@ export default function Viewport(props) {
             setModelLoaded: setModelLoaded,
             bones: bones,
             setBones: onLoadBones,
-            resetModel: resetModel,
+            resetModel: reset,
+            parentOf: parentOf,
 
             // MODEL MANIPULATION
             sliderValues: sliderValues,
@@ -148,6 +153,7 @@ export default function Viewport(props) {
             getControls: getControls,
 
             // QUATERNION PROPERTIES
+            globalQs: globalQs,
             useGlobalQs: useGlobalQs,
             useRipple: useRipple,
             setUseRipple: setUseRipple,
@@ -215,6 +221,10 @@ export default function Viewport(props) {
         }
     });
 
+    function reset() {
+        resetModel(propertySet)
+    }
+
     /*  --------------------------------
      *  FILE OPERATIONS (User-initiated)
      *  -------------------------------- */
@@ -241,7 +251,7 @@ export default function Viewport(props) {
             lineNumberRef.current = 0;                                // (same as above)
             setUseRipple(true)                                        // For the initialization of the model
             if (modelLoaded) {
-                resetModel()                                          // Same as above
+                resetModel(propertySet)                               // Same as above
                 setUseRipple(false)           
                 if (playTimerId.current !== 0) {                      // Stop playback if it is occuring
                         window.clearInterval(playTimerId.current);   
@@ -459,7 +469,7 @@ export default function Viewport(props) {
         let boneList = Object.getOwnPropertyNames(bones);
         for (let i = 0; i < boneList.length; i++) {
             let boneQ = bones[boneList[i]].quaternion; // This is the "local" quaternion
-            let globalQ = getGlobalFromLocal(bones, boneQ, boneList[i]);
+            let globalQ = getGlobalFromLocal(propertySet, bones, boneQ, boneList[i]);
             globalQs[boneList[i]] = globalQ;
         }
 
@@ -475,7 +485,7 @@ export default function Viewport(props) {
             let boneName = boneList[i];
             let sliderQ = useGlobalQs ? 
                 globalQs[boneName] :
-                getLocalFromGlobal(globalQs[boneName], boneName);
+                getLocalFromGlobal(propertySet, globalQs[boneName], boneName);
             newSliderPositions[boneName] = [sliderQ.x, sliderQ.y, sliderQ.z, sliderQ.w];           
         }
         
@@ -487,31 +497,7 @@ export default function Viewport(props) {
      *  QUATERNION MATH
      *  --------------- */
 
-    function getGlobalFromLocal(bones, localQ, currentBoneName) {
-        let globalQ = new THREE.Quaternion();
-        globalQ.copy(localQ); 
-
-        while (parentOf[currentBoneName]) {
-            globalQ.premultiply(bones[parentOf[currentBoneName]].quaternion)
-            currentBoneName = parentOf[currentBoneName];
-        }
-
-        return globalQ;
-    }
-
-    function getLocalFromGlobal(globalQ, currentBoneName) {
-        let localQ = new THREE.Quaternion();
-
-        while (parentOf[currentBoneName]) {
-            let parentQ = new THREE.Quaternion();
-            parentQ.copy(bones[parentOf[currentBoneName]].quaternion);
-            localQ.multiply(parentQ.invert())
-            currentBoneName = parentOf[currentBoneName];
-        }
-
-        localQ.multiply(globalQ);
-        return localQ;
-    }
+    
 
     /*  --------------------------
      *  PROGRAMMATIC MODEL UPDATES
@@ -530,10 +516,10 @@ export default function Viewport(props) {
         
         let newGlobalQ = useGlobalQs.current ? 
             newQ :
-            getGlobalFromLocal(bones, newQ, boneId);
+            getGlobalFromLocal(propertySet, bones, newQ, boneId);
 
         let newLocalQ = useGlobalQs.current ?
-            getLocalFromGlobal(newQ, boneId) :
+            getLocalFromGlobal(propertySet, newQ, boneId) :
             newQ;
 
         globalQs[boneId] = newGlobalQ;
@@ -552,7 +538,7 @@ export default function Viewport(props) {
                     // We don't have to "DO" anything to the model. This is default behavior.
                     // Just update the sliders.
                     let currLocalQ = bones[currentBone].quaternion;
-                    let currGlobalQ = getGlobalFromLocal(bones, currLocalQ, currentBone);
+                    let currGlobalQ = getGlobalFromLocal(propertySet, bones, currLocalQ, currentBone);
                     let sliderQ = useGlobalQs.current ? currGlobalQ : currLocalQ;
                     newSliderValues[currentBone] = [sliderQ.x, sliderQ.y, sliderQ.z, sliderQ.w];
                     globalQs[currentBone] = currGlobalQ;
@@ -560,7 +546,7 @@ export default function Viewport(props) {
                     // This is NOT the default behavior.
                     let oldGlobalQ = globalQs[currentBone];
                     // Note: scope
-                    let newLocalQ = getLocalFromGlobal(oldGlobalQ, currentBone);
+                    let newLocalQ = getLocalFromGlobal(propertySet, oldGlobalQ, currentBone);
                     let sliderQ = useGlobalQs.current ? oldGlobalQ : newLocalQ;
                     bones[currentBone].quaternion.set(newLocalQ.x, newLocalQ.y, newLocalQ.z, newLocalQ.w);
                     newSliderValues[currentBone] = [sliderQ.x, sliderQ.y, sliderQ.z, sliderQ.w];
@@ -573,94 +559,7 @@ export default function Viewport(props) {
         setModelNeedsUpdating(true);
     }
 
-    function resetModel() {
-        const resetValues = {
-            ROOT: {
-                x: 0,
-                y: 0,
-                z: 0,
-                w: 1
-            },
-            BACK: {
-                x: -0.06,
-                y: 0,
-                z: 0,
-                w: 0.998
-            },
-            LUA: {
-                x: -0.472,
-                y: -0.468,
-                z: 0.561,
-                w: -0.494
-            },
-            LLA: {
-                x: -0.471,
-                y: -0.466,
-                z: 0.51,
-                w: -0.549
-            },
-            RUA: {
-                x: 0.471,
-                y: -0.471,
-                z: 0.561,
-                w: 0.492
-            },
-            RLA: {
-                x: 0.471,
-                y: -0.468,
-                z: 0.509,
-                w: 0.547
-            },
-            RUL: {
-                x: 0.001,
-                y:-0.029,
-                z: 0.999,
-                w: 0.044,
-            },
-            RLL: {
-                x:0.001,
-                y:-0.035,
-                z:0.999,
-                w: 0.04,
-            },
-            RSHOE: {
-                x: 0.006,
-                y: 0.467,
-                z: 0.883,
-                w: 0.043
-            },
-            LUL: {
-                x:-0.001,
-                y:-0.032,
-                z: 0.999,
-                w: -0.044,
-            },
-            LLL: {
-                x:-0.001,
-                y:-0.034,
-                z:0.999,
-                w:-0.04,
-            },
-            LSHOE: {
-                x: -0.006,
-                y: 0.465,
-                z: 0.884,
-                w: -0.043
-            },
-        }
-
-        let boneNames = Object.getOwnPropertyNames(resetValues);
-
-        for (let i = 0; i < boneNames.length; i++) {
-            let q = resetValues[boneNames[i]];
-            globalQs[boneNames[i]] = new THREE.Quaternion(q.x, q.y, q.z, q.w);
-            let lq = getLocalFromGlobal(globalQs[boneNames[i]], boneNames[i]);
-            bones[boneNames[i]].quaternion.set(lq.x, lq.y, lq.z, lq.w);
-        }
-        
-        setSliderPositions(bones, useGlobalQs.current)
-        setModelNeedsUpdating(true);
-    }
+    
 
     /*  ---------------------------------
      *  THREE.JS REFERENCE GETTER METHODS
