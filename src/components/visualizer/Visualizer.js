@@ -132,7 +132,7 @@ export default function Visualizer(props) {
         props.modelLoaded || (createScene(thisElementRef.current, props).then(
             () => {
                 props.setModelLoaded(true)
-                props.setBones(bones) 
+                props.onLoadBones(bones) 
                 props.camera.current = camera;    
                 props.orbitControls.current = controls;
             }, 

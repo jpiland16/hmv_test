@@ -11,6 +11,7 @@ import Animator from './Animator';
 import { getMap, getFileList, downloadFile, downloadMetafile } from './viewport-workers/NetOps'
 import { onSelectFileChange, isFileNameValid, clickFile} from './viewport-workers/FileOps'
 import { getLocalFromGlobal, getGlobalFromLocal } from './viewport-workers/MathOps'
+import { setSliderPositions, onLoadBones } from './viewport-workers/BoneOps'
 import { resetModel } from './viewport-workers/Reset'
 
 // Window resize code: see https://stackoverflow.com/questions/36862334/get-viewport-window-height-in-reactjs
@@ -124,12 +125,15 @@ export default function Viewport(props) {
             modelLoaded: modelLoaded,
             setModelLoaded: setModelLoaded,
             bones: bones,
-            setBones: onLoadBones,
+            setBones: setBones,
+            onLoadBones: loadBones,
             resetModel: reset,
             parentOf: parentOf,
+            childrenOf: childrenOf,
 
             // MODEL MANIPULATION
             sliderValues: sliderValues,
+            setSliderValues: setSliderValues,
             updateModel: updateSingleQValue,
             batchUpdate: batchUpdateObject,
             modelNeedsUpdating: modelNeedsUpdating,
@@ -146,7 +150,7 @@ export default function Viewport(props) {
             useGlobalQs: useGlobalQs,
             useRipple: useRipple,
             setUseRipple: setUseRipple,
-            refreshGlobalLocal: setSliderPositions,
+            refreshGlobalLocal: resetSliders,
 
         // -- FILE VIEWING & PLAYBACK --
 
@@ -176,6 +180,10 @@ export default function Viewport(props) {
             FPS: FPS,
             repeat: repeat,
             lastIndex: lastIndex,        
+
+        // -- MATH --
+            getGlobalFromLocal: getGlobalFromLocal,
+            getLocalFromGlobal: getLocalFromGlobal,
 
         // -- WINDOW PROPERTIES --
             getWindowDimensions: useWindowDimensions,
@@ -217,7 +225,7 @@ export default function Viewport(props) {
         }
     });
 
-    // REDIRECTORS TO IMPORTED FUNCTIONS
+    // REDIRECTORS TO IMPORTED FUNCTIONS, using needed properties
 
     function reset() {
         resetModel(propertySet)
@@ -233,6 +241,14 @@ export default function Viewport(props) {
 
     function selectChange(file) {
         onSelectFileChange(propertySet, file)
+    }
+
+    function resetSliders(bones, useGlobal) {
+        setSliderPositions(propertySet, bones, useGlobal)
+    }
+
+    function loadBones(bones) {
+        onLoadBones(propertySet, bones)
     }
 
     /*  ---------------------
@@ -260,67 +276,6 @@ export default function Viewport(props) {
         }, []);
       
         return windowDimensions;
-    }
-
-
-    /*  ----------------------------
-     *  MANIPULATION OF THE 3D MODEL
-     *  ---------------------------- */
-
-    const setParent = (bones, childName, parentName) => {
-        //console.log(childName + " is a child of " + parentName);
-        parentOf[childName] = parentName;
-
-        if (!childrenOf[parentName]) {
-            childrenOf[parentName] = [];
-        }
-        childrenOf[parentName].push(childName);
-
-        bones[parentName].attach(bones[childName])
-    }
-
-    function onLoadBones(bones) {
-        setBones(bones);
-
-        setParent(bones, "RUA", "BACK");
-        setParent(bones, "RLA", "RUA");
-        setParent(bones, "LUA", "BACK");
-        setParent(bones, "LLA", "LUA");
-        setParent(bones, "BACK", "ROOT");
-        
-        setParent(bones, "RSHOE","RLL")
-        setParent(bones, "RLL", "RUL");
-        setParent(bones, "RUL", "ROOT");
-
-        setParent(bones, "LSHOE", "LLL")
-        setParent(bones, 'LLL','LUL')
-        setParent(bones, "LUL","ROOT");
-
-        let boneList = Object.getOwnPropertyNames(bones);
-        for (let i = 0; i < boneList.length; i++) {
-            let boneQ = bones[boneList[i]].quaternion; // This is the "local" quaternion
-            let globalQ = getGlobalFromLocal(propertySet, bones, boneQ, boneList[i]);
-            globalQs[boneList[i]] = globalQ;
-        }
-
-        setSliderPositions(bones, useGlobalQs.current);
-    }
-
-    function setSliderPositions(bones, useGlobalQs) {
-
-        let boneList = Object.getOwnPropertyNames(bones);
-        let newSliderPositions = { };
-
-        for (let i = 0; i < boneList.length; i++) {
-            let boneName = boneList[i];
-            let sliderQ = useGlobalQs ? 
-                globalQs[boneName] :
-                getLocalFromGlobal(propertySet, globalQs[boneName], boneName);
-            newSliderPositions[boneName] = [sliderQ.x, sliderQ.y, sliderQ.z, sliderQ.w];           
-        }
-        
-        setSliderValues(newSliderPositions);
-
     }    
 
     /*  --------------------------
