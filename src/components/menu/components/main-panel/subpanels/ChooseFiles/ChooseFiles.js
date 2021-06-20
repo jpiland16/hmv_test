@@ -131,7 +131,7 @@ export default function CustomizedTreeView(props) {
                 label={nodes.name} 
                 onContextMenu={ (event) => handleContextMenu(event, nodes.id, isFolder) } 
                 onClick={ (event) => { 
-                        if (!isFolder) props.setSelectedFile(nodes.id) 
+                        if (!isFolder) props.clickFile(nodes.id) 
                 } }
                 bold={props.selectedFile.indexOf(nodes.id) !== -1 ? "true" : "false"}
                 style={{

@@ -8,6 +8,7 @@ import CardSet from './cards/CardSet'
 import * as THREE from 'three'
 import Animator from './Animator';
 
+import { onSelectFileChange, isFileNameValid, clickFile} from './viewport-workers/FileOps'
 import { getLocalFromGlobal, getGlobalFromLocal } from './viewport-workers/MathOps'
 import { resetModel } from './viewport-workers/Reset'
 
@@ -19,25 +20,8 @@ let globalQs = {};
 let sliderValuesShadowCopy = {};
 let outgoingRequest = false;
 let lastFiles = [];
-let fileMap = null;
 
 export default function Viewport(props) {
-
-     /* CONTENTS OF THIS FILE (Viewport.js) +3
-      *
-      *  - Initial URL parameter checks (lines 36 - 51)
-      *  - Application state initialization (lines 57 - 74)
-      *  - Application refs initialization (lines 80 - 91)
-      *  - Post-render effects (lines 97 - 112)
-      *  - File operations (lines 118 - 155)
-      *  - Network file retrieval (lines 163 - 258) +4
-      *  - Window size retrieval (lines 261 - 282)
-      *  - Manipulation of the 3D model (lines 289 - 343)
-      *  - Quaternion math (lines 349 - 373) 
-      *  - Programmatic updates to the 3D model (lines 379 - 522)
-      *  - Three.JS getter methods (lines 528 - 534)
-      *  - Render return (lines 540 - 678)
-      */
     
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
@@ -112,10 +96,12 @@ export default function Viewport(props) {
             expandedItems: expandedItems,
             setExpandedItems: setExpandedItems,
             selectedFile: selectedFile,
-            setSelectedFile: clickFile, // NOTE! Need to check validity of file first.
-            onSelectFileChange: onSelectFileChange,
-            checkFileName: isFileNameValid,
+            setSelectedFile: setSelectedFile,
+            clickFile: click, 
+            onSelectFileChange: selectChange,
+            checkFileName: validateFileName,
             fileList: files,
+            fileMap: null,
 
             // FILE SEARCH PROPERTIES
             searchFileText: searchFileText,
@@ -164,6 +150,9 @@ export default function Viewport(props) {
             // FILE DOWNLOADS
             downloading: downloading,
             downloadPercent: downloadPercent,
+            downloadFile: downloadFile,
+            downloadMetafile: downloadMetafile,
+            outgoingRequest: outgoingRequest, 
 
             // DATA
             data: data,
@@ -209,8 +198,8 @@ export default function Viewport(props) {
                 }
                 getMap().then(() => {
                     if (selectedFile !== "") {
-                        if (isFileNameValid(selectedFile)) {
-                            onSelectFileChange(selectedFile);
+                        if (isFileNameValid(propertySet, selectedFile)) {
+                            onSelectFileChange(propertySet, selectedFile);
                         }
                     }
                 }, () => { });
@@ -221,57 +210,22 @@ export default function Viewport(props) {
         }
     });
 
+    // REDIRECTORS TO IMPORTED FUNCTIONS
+
     function reset() {
         resetModel(propertySet)
     }
 
-    /*  --------------------------------
-     *  FILE OPERATIONS (User-initiated)
-     *  -------------------------------- */
-
-    function isFileNameValid(fname) {
-        return fileMap && Object.getOwnPropertyNames(fileMap).indexOf(fname) >= 0
+    function validateFileName(fname) {
+        return isFileNameValid(propertySet, fname)
     }
 
-    function clickFile(id) {
-        if(isFileNameValid(id)) {
-            onSelectFileChange(id);
-            window.history.replaceState(null, null, "?file=" + id);
-        }
+    function click(id) {
+        clickFile(propertySet, id)
     }
 
-    function onSelectFileChange(mySelectedFile) {
-        // IMPORTANT! This method should only be called if mySelectedFile 
-        // has been VERIFIED as a valid file, or if we need to clear/reset the model. (i.e. mySelectedFile === "")
-        if (!outgoingRequest) {
-            setSelectedFile(mySelectedFile);                    
-            data.current = [];                                        // Allow either refresh or disable
-            outputTypes.current = []                                  // Clear all graphs
-            setTimeSliderValue(0);                                    // Move to start
-            lineNumberRef.current = 0;                                // (same as above)
-            setUseRipple(true)                                        // For the initialization of the model
-            if (modelLoaded) {
-                resetModel(propertySet)                               // Same as above
-                setUseRipple(false)           
-                if (playTimerId.current !== 0) {                      // Stop playback if it is occuring
-                        window.clearInterval(playTimerId.current);   
-                        playTimerId.current = 0;
-                        setPlaying(false);
-                } 
-                if (getCamera()) {
-                    getCamera().position.x = 0;
-                    getCamera().position.y = 0;
-                    getCamera().position.z = 3;
-                    getCamera().up.set(0, 1, 0);
-                    getControls().update();
-                }  
-            }
-            if (mySelectedFile !== "") {
-                downloadMetafile(mySelectedFile).then(() => {
-                    downloadFile(mySelectedFile)
-                }, () => {})
-            }
-        }
+    function selectChange(file) {
+        onSelectFileChange(propertySet, file)
     }
 
     /*   ----------------------
@@ -332,7 +286,7 @@ export default function Viewport(props) {
             doXHR('GET', mapPath).then(
                 (xhrr) => {
                     try {
-                        fileMap = JSON.parse(xhrr.responseText)
+                        propertySet.fileMap = JSON.parse(xhrr.responseText)
                         myResolve()
                     } catch (e) {
                         console.error("File map not found!")
@@ -382,7 +336,7 @@ export default function Viewport(props) {
     }
 
     function downloadMetafile(selectedFilename) {
-        let path = "/files/meta/" + fileMap[selectedFilename] + ".json"
+        let path = "/files/meta/" + propertySet.fileMap[selectedFilename] + ".json"
         if (window.location.href.substring(0, 22) === "http://localhost:3000/") {
             path = "https://raw.githubusercontent.com/jpiland16/hmv_test/master" + path
         }
@@ -491,13 +445,7 @@ export default function Viewport(props) {
         
         setSliderValues(newSliderPositions);
 
-    }
-
-    /*  ---------------
-     *  QUATERNION MATH
-     *  --------------- */
-
-    
+    }    
 
     /*  --------------------------
      *  PROGRAMMATIC MODEL UPDATES
