@@ -170,14 +170,14 @@ export default function CustomizedTreeView(props) {
             </Button>
         <TreeView
             className={classes.root}
-            expanded={props.searchFileText === "" ? props.expandedItems : getAllIds(makeRoot(props.fileList.current))}
+            expanded={props.searchFileText === "" ? props.expandedItems : getAllIds(makeRoot(props.files.current))}
             selected={props.selectedFile}
             defaultCollapseIcon={<MinusSquare />}
             defaultExpandIcon={<PlusSquare />}
             defaultEndIcon={<CloseSquare />}
             onNodeToggle={(event, nodeIds) => props.setExpandedItems(nodeIds)}
         >
-            {renderTree(makeRoot(props.fileList.current))}
+            {renderTree(makeRoot(props.files.current))}
         </TreeView>
         <Menu
             id="simple-menu"

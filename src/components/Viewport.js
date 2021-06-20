@@ -8,6 +8,7 @@ import CardSet from './cards/CardSet'
 import * as THREE from 'three'
 import Animator from './Animator';
 
+import { getMap, getFileList, downloadFile, downloadMetafile } from './viewport-workers/NetOps'
 import { onSelectFileChange, isFileNameValid, clickFile} from './viewport-workers/FileOps'
 import { getLocalFromGlobal, getGlobalFromLocal } from './viewport-workers/MathOps'
 import { resetModel } from './viewport-workers/Reset'
@@ -19,7 +20,8 @@ let parentOf = {};
 let globalQs = {};
 let sliderValuesShadowCopy = {};
 let outgoingRequest = false;
-let lastFiles = [];
+const lastFiles = [null]; // Wrapped in array to be mutable
+const fileMap = [null]; // Wrapped in an array to be mutable
 
 export default function Viewport(props) {
     
@@ -100,8 +102,9 @@ export default function Viewport(props) {
             clickFile: click, 
             onSelectFileChange: selectChange,
             checkFileName: validateFileName,
-            fileList: files,
-            fileMap: null,
+            files: files,
+            lastFiles: lastFiles,
+            fileMap: fileMap,
 
             // FILE SEARCH PROPERTIES
             searchFileText: searchFileText,
@@ -149,7 +152,9 @@ export default function Viewport(props) {
 
             // FILE DOWNLOADS
             downloading: downloading,
+            setDownloading: setDownloading,
             downloadPercent: downloadPercent,
+            setDownloadPercent: setDownloadPercent,
             downloadFile: downloadFile,
             downloadMetafile: downloadMetafile,
             outgoingRequest: outgoingRequest, 
@@ -194,9 +199,9 @@ export default function Viewport(props) {
         if(bones) {
             if(props.firstLoad) {
                 if (files.current.length === 0) {
-                    getFileList();
+                    getFileList(propertySet);
                 }
-                getMap().then(() => {
+                getMap(propertySet).then(() => {
                     if (selectedFile !== "") {
                         if (isFileNameValid(propertySet, selectedFile)) {
                             onSelectFileChange(propertySet, selectedFile);
@@ -205,7 +210,9 @@ export default function Viewport(props) {
                 }, () => { });
                 props.setFirstLoad(false);
             } else {
-                files.current = lastFiles;
+                if (files.current && files.current.length === 0) {
+                    files.current = propertySet.lastFiles[0];
+                }
             }
         }
     });
@@ -226,137 +233,6 @@ export default function Viewport(props) {
 
     function selectChange(file) {
         onSelectFileChange(propertySet, file)
-    }
-
-    /*   ----------------------
-     *   NETWORK FILE RETRIEVAL
-     *   ---------------------- */
-
-    // PARENT XHR METHOD
-
-    async function doXHR(method, url) {
-        return new Promise(function(myResolve, myReject) {
-            let x = new XMLHttpRequest();
-            x.open(method, url);
-            x.onload = () => {
-                myResolve(x);
-            }
-            x.onerror = () => { myReject(x); }
-            x.send()
-        });
-    }
-    
-    // NETWORK METHODS THAT SHOULD ONLY BE CALLED ONCE
-
-    async function getFileList() {
-        doXHR("GET", "/api/get-file-list").then(
-            (xhrr) => {
-                let res;
-                try {
-                    res = JSON.parse(xhrr.responseText);
-                } catch (e) {
-                    console.warn("Error in processing files...");
-                    console.error(e);
-                    res = [{
-                        id: '/demo',
-                        name: 'demo',
-                        children: [{
-                          id: '/demo/S4-ADL4.dat',
-                          name: 'S4-ADL4.dat'
-                        }],
-                    }]
-                }
-                files.current = res;
-                lastFiles = res;
-            },
-            (errXhrr) => {
-                console.error("XHR Error");
-                console.log(errXhrr.status);
-                console.log(errXhrr.statusText);
-                console.log(errXhrr.responseText);
-            }
-        )
-    }
-
-    async function getMap() {
-        const mapPath = (window.location.href.substring(0, 22) === "http://localhost:3000/" ? 
-        "https://raw.githubusercontent.com/jpiland16/hmv_test/master" :
-        "") + "/files/meta/map.json"
-        return new Promise((myResolve, myReject) => {
-            doXHR('GET', mapPath).then(
-                (xhrr) => {
-                    try {
-                        propertySet.fileMap = JSON.parse(xhrr.responseText)
-                        myResolve()
-                    } catch (e) {
-                        console.error("File map not found!")
-                        myReject()
-                    }
-                }, (errXhrr) => {
-                    console.log(errXhrr)
-                    myReject()
-                }
-            )
-        });
-    }
-
-    // NETWORK METHODS THAT MAY BE CALLED MULTIPLE TIMES
-
-    function downloadFile(fname) {
-        outgoingRequest = true;
-        setDownloading(true);
-        setDownloadPercent(0);
-        let x = new XMLHttpRequest();
-        x.open("GET", (window.location.href.substring(0, 22) === "http://localhost:3000/" ? 
-            "https://raw.githubusercontent.com/jpiland16/hmv_test/master/files" : "/files")
-            + fname);
-
-        x.onload = () => {
-            let inputArray = x.responseText.split("\n");
-            let linesArray = [];
-
-            for (let i = 0; i < inputArray.length - 1; i++) {
-                linesArray[i] = inputArray[i].split(" ");
-            }
-
-            data.current = linesArray;
-            setDownloading(false);
-            outgoingRequest = false;
-        }
-
-        x.onprogress = (event) => {
-            setDownloadPercent(Math.min(100, Math.round(event.loaded / event.total * 100)));
-        }
-
-        x.onerror = (error) => {
-            console.log(error);
-        }
-
-        x.send();
-    }
-
-    function downloadMetafile(selectedFilename) {
-        let path = "/files/meta/" + propertySet.fileMap[selectedFilename] + ".json"
-        if (window.location.href.substring(0, 22) === "http://localhost:3000/") {
-            path = "https://raw.githubusercontent.com/jpiland16/hmv_test/master" + path
-        }
-
-        return new Promise((myResolve, myReject) => {
-            doXHR('GET', path).then(
-                (xhrr) => {
-                    try {
-                        fileMetadata.current = JSON.parse(xhrr.responseText)
-                        myResolve()
-                    } catch (e) {
-                        console.error("Metafile '" + path + "' not found!")
-                        myReject()
-                    }
-                }, (errXhrr) => {
-                    console.log(errXhrr)
-                    myReject()
-                }
-            )
-        });
     }
 
     /*  ---------------------

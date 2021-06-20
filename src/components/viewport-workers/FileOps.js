@@ -1,5 +1,5 @@
 export function isFileNameValid(props, fname) {
-    return props.fileMap && Object.getOwnPropertyNames(props.fileMap).indexOf(fname) >= 0
+    return props.fileMap[0] && Object.getOwnPropertyNames(props.fileMap[0]).indexOf(fname) >= 0
 }
 
 export function clickFile(props, id) {
@@ -37,8 +37,8 @@ export function onSelectFileChange(props, mySelectedFile) {
             }  
         }
         if (mySelectedFile !== "") {
-            props.downloadMetafile(mySelectedFile).then(() => {
-                props.downloadFile(mySelectedFile)
+            props.downloadMetafile(props, mySelectedFile).then(() => {
+                props.downloadFile(props, mySelectedFile)
             }, () => {})
         }
     }
