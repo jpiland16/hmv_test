@@ -27,8 +27,8 @@ export function onSelectFileChange(props, mySelectedFile) {
                     props.playTimerId.current = 0;
                     props.setPlaying(false);
             } 
-            let cam;
-            if (cam = props.getCamera()) {
+            let cam = props.getCamera();
+            if (cam) {
                 cam.position.x = 0;
                 cam.position.y = 0;
                 cam.position.z = 3;

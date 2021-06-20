@@ -1,27 +1,24 @@
 import './Viewport.css'
 import Menu from './menu/Menu'
 import React from 'react'
-import Visualizer from './visualizer/Visualizer';
+import Visualizer from './visualizer/Visualizer'
 import PlayBar from './PlayBar'
 import TopActionBar from './TopActionBar'
 import CardSet from './cards/CardSet'
-import * as THREE from 'three'
-import Animator from './Animator';
+import Animator from './Animator'
 
 import { getMap, getFileList, downloadFile, downloadMetafile } from './viewport-workers/NetOps'
 import { onSelectFileChange, isFileNameValid, clickFile} from './viewport-workers/FileOps'
+import { updateSingleQValue, batchUpdateObject } from './viewport-workers/ModelOps'
 import { getLocalFromGlobal, getGlobalFromLocal } from './viewport-workers/MathOps'
 import { setSliderPositions, onLoadBones } from './viewport-workers/BoneOps'
 import { resetModel } from './viewport-workers/Reset'
 
-// Window resize code: see https://stackoverflow.com/questions/36862334/get-viewport-window-height-in-reactjs
-
 let childrenOf = {};
 let parentOf = {};
 let globalQs = {};
-let sliderValuesShadowCopy = {};
 let outgoingRequest = false;
-const lastFiles = [null]; // Wrapped in array to be mutable
+const lastFiles = [null]; // Wrapped in an array to be mutable
 const fileMap = [null]; // Wrapped in an array to be mutable
 
 export default function Viewport(props) {
@@ -38,7 +35,7 @@ export default function Viewport(props) {
         let charPos = 1;
         while (charPos < fpath.length) {
             if (fpath.charAt(charPos) === '/')
-            initialExpandedItems.push(fpath.substring(0, charPos)) // don't include the slash
+                initialExpandedItems.push(fpath.substring(0, charPos)) // don't include the slash
             charPos++;
         }
     }
@@ -100,9 +97,9 @@ export default function Viewport(props) {
             setExpandedItems: setExpandedItems,
             selectedFile: selectedFile,
             setSelectedFile: setSelectedFile,
-            clickFile: click, 
-            onSelectFileChange: selectChange,
-            checkFileName: validateFileName,
+            clickFile: (id) => clickFile(propertySet, id), 
+            onSelectFileChange: (file) => onSelectFileChange(propertySet, file),
+            checkFileName: (fname) => isFileNameValid(propertySet, fname),
             files: files,
             lastFiles: lastFiles,
             fileMap: fileMap,
@@ -126,16 +123,16 @@ export default function Viewport(props) {
             setModelLoaded: setModelLoaded,
             bones: bones,
             setBones: setBones,
-            onLoadBones: loadBones,
-            resetModel: reset,
+            onLoadBones: (bones) => onLoadBones(propertySet, bones),
+            resetModel: () => { resetModel(propertySet) },
             parentOf: parentOf,
             childrenOf: childrenOf,
 
             // MODEL MANIPULATION
             sliderValues: sliderValues,
             setSliderValues: setSliderValues,
-            updateModel: updateSingleQValue,
-            batchUpdate: batchUpdateObject,
+            updateModel: (boneId, qIndex, newValue) => updateSingleQValue(propertySet, boneId, qIndex, newValue),
+            batchUpdate: (boneId, slideArray) => batchUpdateObject(propertySet, boneId, slideArray),
             modelNeedsUpdating: modelNeedsUpdating,
             setModelNeedsUpdating: setModelNeedsUpdating,
 
@@ -150,7 +147,7 @@ export default function Viewport(props) {
             useGlobalQs: useGlobalQs,
             useRipple: useRipple,
             setUseRipple: setUseRipple,
-            refreshGlobalLocal: resetSliders,
+            refreshGlobalLocal: (bones, useGlobal) => setSliderPositions(propertySet, bones, useGlobal),
 
         // -- FILE VIEWING & PLAYBACK --
 
@@ -225,35 +222,11 @@ export default function Viewport(props) {
         }
     });
 
-    // REDIRECTORS TO IMPORTED FUNCTIONS, using needed properties
-
-    function reset() {
-        resetModel(propertySet)
-    }
-
-    function validateFileName(fname) {
-        return isFileNameValid(propertySet, fname)
-    }
-
-    function click(id) {
-        clickFile(propertySet, id)
-    }
-
-    function selectChange(file) {
-        onSelectFileChange(propertySet, file)
-    }
-
-    function resetSliders(bones, useGlobal) {
-        setSliderPositions(propertySet, bones, useGlobal)
-    }
-
-    function loadBones(bones) {
-        onLoadBones(propertySet, bones)
-    }
-
     /*  ---------------------
      *  WINDOW SIZE RETRIEVAL
      *  --------------------- */
+
+    // Window resize code: see https://stackoverflow.com/questions/36862334/get-viewport-window-height-in-reactjs
 
     function getWindowDimensions() {
             const { innerWidth: width, innerHeight: height } = window;
@@ -276,69 +249,7 @@ export default function Viewport(props) {
         }, []);
       
         return windowDimensions;
-    }    
-
-    /*  --------------------------
-     *  PROGRAMMATIC MODEL UPDATES
-     *  -------------------------- */
-
-    function updateSingleQValue(boneId, qIndex, newValue) {
-        let newSliderValues = { ...sliderValues }; // Create shallow clone of old model state
-        newSliderValues[boneId][qIndex] = newValue;
-        setSliderValues(newSliderValues);
-    }
-
-    function batchUpdateObject(boneId, slideArray) {
-        let newSliderValues = Object.getOwnPropertyNames(sliderValuesShadowCopy).length > 0 ? {...sliderValuesShadowCopy} : { ...sliderValues }; // Create shallow clone of old model state
-        newSliderValues[boneId] = slideArray;
-        let newQ = new THREE.Quaternion(slideArray[0], slideArray[1], slideArray[2], slideArray[3]);
-        
-        let newGlobalQ = useGlobalQs.current ? 
-            newQ :
-            getGlobalFromLocal(propertySet, bones, newQ, boneId);
-
-        let newLocalQ = useGlobalQs.current ?
-            getLocalFromGlobal(propertySet, newQ, boneId) :
-            newQ;
-
-        globalQs[boneId] = newGlobalQ;
-
-        bones[boneId].quaternion.set(newLocalQ.x, newLocalQ.y, newLocalQ.z, newLocalQ.w);
-    
-        let affectedByInheritance = [];
-        
-        if (childrenOf[boneId]) affectedByInheritance.push(...childrenOf[boneId])
-
-        if (playTimerId.current === 0 && (props.dev && selectedFile === "")) { // (Don't bother doing this when viewing pre-recorded data, or if we aren't in dev mode and running tests.)
-            while (affectedByInheritance.length > 0) {
-                let currentBone = affectedByInheritance.shift();
-                if (childrenOf[currentBone]) affectedByInheritance.push(...childrenOf[currentBone])
-                if (useRipple) {
-                    // We don't have to "DO" anything to the model. This is default behavior.
-                    // Just update the sliders.
-                    let currLocalQ = bones[currentBone].quaternion;
-                    let currGlobalQ = getGlobalFromLocal(propertySet, bones, currLocalQ, currentBone);
-                    let sliderQ = useGlobalQs.current ? currGlobalQ : currLocalQ;
-                    newSliderValues[currentBone] = [sliderQ.x, sliderQ.y, sliderQ.z, sliderQ.w];
-                    globalQs[currentBone] = currGlobalQ;
-                } else {
-                    // This is NOT the default behavior.
-                    let oldGlobalQ = globalQs[currentBone];
-                    // Note: scope
-                    let newLocalQ = getLocalFromGlobal(propertySet, oldGlobalQ, currentBone);
-                    let sliderQ = useGlobalQs.current ? oldGlobalQ : newLocalQ;
-                    bones[currentBone].quaternion.set(newLocalQ.x, newLocalQ.y, newLocalQ.z, newLocalQ.w);
-                    newSliderValues[currentBone] = [sliderQ.x, sliderQ.y, sliderQ.z, sliderQ.w];
-                }
-            }
-        }
-
-        sliderValuesShadowCopy = newSliderValues;
-        setSliderValues(newSliderValues);
-        setModelNeedsUpdating(true);
-    }
-
-    
+    }        
 
     /*  ---------------------------------
      *  THREE.JS REFERENCE GETTER METHODS
