@@ -1,7 +1,9 @@
 import Viewport from "./components/Viewport"
 import Welcome from "./components/WelcomeScreen"
+import CalibrationForm from "./components/CalibrationForm"
 import './App.css';
 import { BrowserRouter, Route, Link, Switch } from "react-router-dom";
+import MaterialCalibrationForm from "./components/MaterialCalibrationForm";
 
 export default function App() {
   return (
@@ -15,6 +17,12 @@ export default function App() {
             </Route>
             <Route exact path="/">
                 <Welcome/>
+            </Route>
+            <Route exact path="/uploadformtest">
+                <CalibrationForm/>
+            </Route>
+            <Route exact path="/uploadformtest/material">
+                <MaterialCalibrationForm/>
             </Route>
             <Route>
                 <div>

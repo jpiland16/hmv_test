@@ -7,6 +7,7 @@ const { exec } = require('child_process');
 const formidable = require('formidable');
 
 const fileProcessor = require('./src/server_side/FileProcessor');
+const formProcessor = require('./src/server_side/FormFileProcessor');
 
 function walkDirectory(dir) {
     let myPromise = new Promise(function(myResolve, myReject) {
@@ -83,6 +84,34 @@ function onProjectUpdate() {
 app.post("/api/post", (req, res) => {
     console.log("Received post request.");
     fileProcessor.processFile(req, (data) => {
+        res.json({ message: data });
+    });
+})
+
+app.post("/api/postform", (req, res) => {
+    const storagePath = './files/user-uploads/';
+    let currDate = new Date();
+    const directoryName = `${currDate.getMonth()}_${currDate.getDate()}_${currDate.getHours()}_${currDate.getMinutes()}_${currDate.valueOf()}/`;
+    console.log("Received post request.");
+    formProcessor.processFile(req, (data, metadata) => {
+        fs.mkdir(storagePath + directoryName, {recursive: true}, (err) => {
+            if (err) {
+                console.log("Error occured when trying to make new directory!")
+                return;
+            }
+            fs.writeFile(storagePath + directoryName + "quaternion_data.dat", data, (err) => {
+                if (err) {
+                    console.log(err);
+                    return;
+                }
+            })
+            fs.writeFile(storagePath + directoryName + "metadata.json", JSON.stringify(metadata), (err) => {
+                if (err) {
+                    console.log(err);
+                    return;
+                }
+            })
+        })
         res.json({ message: data });
     });
 })
@@ -199,7 +228,7 @@ app.use('*',  (req, res)=> {
 
 scanAllFiles();
 
-const PORT = process.env.PORT || 80
+const PORT = process.env.PORT || 5000
 
 console.log("Listening on port " + PORT + "...");
 app.listen(PORT);

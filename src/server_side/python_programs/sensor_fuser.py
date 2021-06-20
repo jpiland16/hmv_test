@@ -45,7 +45,7 @@ count = 0
 print("# Number of quaternions: {0}")
 print("{0}".format(len(quat_list)))
 while count < len(quat_list):
-    print("{:.3f} {:.3f} {:.3f} {:.3f}\n".format(quat_list[count][0], quat_list[count][1], quat_list[count][2], quat_list[count][3]))  # Quats are in wxyz format
+    print("{:.3f} {:.3f} {:.3f} {:.3f}".format(quat_list[count][0], quat_list[count][1], quat_list[count][2], quat_list[count][3]))  # Quats are in wxyz format
     if count % 50 == 0:
         pass
     count += 1

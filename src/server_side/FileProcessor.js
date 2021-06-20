@@ -29,7 +29,7 @@ function handleUploadedFile(event, fields, callback) {
     );
     console.log("Python string params: " + pyStringParams);
     // var pyProcess = spawn('python', ['pyprogs/testprog.py', pyStringParams], { cwd: process.cwd() + "\\src\\server_side"});
-    var pyProcess = spawn('python', ['src/server_side/pyprogs/sensor_fuser.py', pyStringParams]);
+    var pyProcess = spawn('python', ['src/server_side/python_programs/sensor_fuser.py', pyStringParams]);
     console.log("Generated python process pid: " + pyProcess.pid);
     console.log("Current path: " + process.cwd());
     var pyOutput = "";
