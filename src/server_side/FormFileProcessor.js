@@ -50,13 +50,12 @@ function parseFormFields(fields) {
 }
 
 function handleUploadedFile(event, fields, callback) {
-    // console.log("File contents: " + event.target.result);
     // There's no real reason to rename the parameters here, besides conforming to the Python interface.
     let sensors = JSON.parse(fields.sensorData);
     console.log(sensors);
     let sensorColumns = [];
     for (let i = 0; i < sensors.length; i ++) {
-        sensorColumns.push({ start_column: sensors[i].startColumn });
+        sensorColumns.push({ start_column: sensors[i].startColumn, data_type: sensors[i].dataType });
     }
     let pyStringParams = JSON.stringify(
         {
@@ -66,7 +65,7 @@ function handleUploadedFile(event, fields, callback) {
     );
     console.log("Python string params: " + pyStringParams);
     // var pyProcess = spawn('python', ['pyprogs/testprog.py', pyStringParams], { cwd: process.cwd() + "\\src\\server_side"});
-    var pyProcess = spawn('python', ['src/server_side/python_programs/multi_sensor_fuser.py', pyStringParams]);
+    var pyProcess = spawn('python', ['src/server_side/python_programs/multi_sensor_fuser_obj.py', pyStringParams]);
     console.log("Generated python process pid (greater than 0 on success): " + pyProcess.pid);
     console.log("Current path: " + process.cwd());
     var pyOutput = "";

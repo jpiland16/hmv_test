@@ -6,6 +6,8 @@ import { Input } from '@material-ui/core';
 import { FormHelperText } from '@material-ui/core';
 import { TextField } from '@material-ui/core';
 import { MenuItem } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles'
+import { Grid } from '@material-ui/core';
 
 
 function listWithNewVal(list, index, key, newVal) {
@@ -18,17 +20,20 @@ function listWithNewVal(list, index, key, newVal) {
   return newList;
 }
 
+const useStyles = {
+  fontSize: '15px',
+  textAlign: 'center'
+}
 
 // https://goshakkk.name/array-form-inputs/
 class MaterialCalibrationForm extends React.Component {
-
   constructor() {
     super();
     this.state = {
       name: "",
       boneOptions: ["RUA", "RLA", "LUA", "LLA", "BACK", "ROOT"],
       typeOptions: ["Quaternion", "Accel+Gyro+Magnet"],
-      sensors: [{ dataType: "", bone: "", startColumn: 0 }],
+      sensors: [{ dataType: "Quaternion", bone: "RUA", startColumn: "" }],
       timeColumn: 0
     };
   }
@@ -66,7 +71,7 @@ class MaterialCalibrationForm extends React.Component {
 
   addSensor = () => {
     this.setState({
-      sensors: this.state.sensors.concat([{ bone: "", startColumn: 0 }])
+      sensors: this.state.sensors.concat([{ dataType: "Quaternion", bone: "RUA", startColumn: "" }])
     });
   }
 
@@ -75,6 +80,7 @@ class MaterialCalibrationForm extends React.Component {
   }
 
   deleteSensor = (removedIndex) => () => {
+    console.log(`Deleting sensor with index ${removedIndex}`);
     this.setState({
       sensors: this.state.sensors.filter((sensor, currIndex) => currIndex !== removedIndex)
     })
@@ -108,22 +114,113 @@ class MaterialCalibrationForm extends React.Component {
 
   render() {
     return (
-      <FormControl>
-        <input type="file" id="myFile"></input>
-        <TextField 
-          type="number"
-          onChange={this.handleTimecolChange}
-          InputProps={{
-            inputProps: {
-              id: "timeColumn",
-              name: "timeColumn",
-              defaultValue: "0",
-              min: "0",
-              placeholder: "Column number"
-            }
-          }}
-          required>
-        </TextField>
+      <FormControl onSubmit={this.handleSubmit}>
+        <Grid>
+          <Grid container xs={12} spacing={2} justify="flex-start" alignItems="center">
+            <Grid item xs={6}>
+              <input type="file" id="myFile"></input>
+            </Grid>
+            
+            <Grid item xs={4}>
+              <TextField 
+                type="number"
+                label="Time column"
+                onChange={this.handleTimecolChange}
+                InputProps={{
+                  inputProps: {
+                    id: "timeColumn",
+                    name: "timeColumn",
+                    defaultValue: "0",
+                    min: "0",
+                    placeholder: "Column number"
+                  }
+                }}
+                required>
+            </TextField>
+          </Grid>
+        </Grid>
+        <hr/>
+        <p>Sensors</p>
+        <Grid container spacing={1}>
+        {this.state.sensors.map((sensor, index) => (
+          <Grid container item xs={12} spacing={3} justify="flex-start" alignItems="center">
+            <Grid item xs={2}>
+              <TextField
+                id="bone_select"
+                select
+                label="Bone"
+                value={sensor.bone}
+                onChange={this.handleBoneChange(index)}
+              >
+                {this.state.boneOptions.map((boneName) => (
+                  <MenuItem key={boneName} value={boneName}>{boneName}</MenuItem>
+                ))}
+              </TextField>
+            </Grid>
+            <Grid item xs={4}>
+              <TextField
+                id="datatype_select"
+                select
+                label="Data type"
+                value={sensor.dataType}
+                onChange={this.handleDataTypeChange(index)}
+              >
+                {this.state.typeOptions.map((typeName) => (
+                  <MenuItem key={typeName} value={typeName}>{typeName}</MenuItem>
+                ))}
+              </TextField>
+            </Grid>
+            <Grid item xs={4}>
+              <TextField 
+                type="number"
+                label="Start column"
+                onChange={this.handleStartcolChange(index)}
+                value={sensor.startColumn}
+                InputProps={{
+                  inputProps: {
+                    id: "startColumn"+index,
+                    name: "startColumn",
+                    min: "0",
+                    placeholder: "Start column"
+                  }
+                }}
+                required>
+              </TextField>
+            </Grid>
+            <Grid item xs={2}>
+              <Button
+                onClick={this.deleteSensor(index)}
+              >
+                Remove
+              </Button>
+            </Grid>
+          </Grid>
+      ))}
+        <Grid container justify="center">
+          <Grid item xs={3}>
+            <Button
+              onClick={this.addSensor}
+            >
+              Add sensor
+            </Button>
+          </Grid>
+        </Grid>
+      </Grid>
+      <hr/>
+      <Grid container xs={12} spacing={2} justify="center" alignItems="center">
+        <Grid item xs={3}>
+          <Button type="submit" className="button-submit">Submit</Button>
+        </Grid>
+      </Grid>
+      <hr/>
+      <Button onClick={this.printState}>(PRINT STATE)</Button>
+      <Button type="button" onClick={this.handleSubmit}>(SEND HTTP REQUEST)</Button>
+      {this.state.sensors.map((shareholder, index) => (
+        <div>
+          <p>{index}: Bone={shareholder.bone}, Data type={shareholder.dataType}, Start column={shareholder.startColumn} </p>
+        </div>
+      ))}
+      </Grid>
       </FormControl>
       // <form onSubmit={this.handleSubmit}>
       //   <h4>Dataset file</h4>
