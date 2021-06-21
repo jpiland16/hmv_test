@@ -2,12 +2,13 @@ import React from 'react';
 import { Button } from '@material-ui/core';
 import { FormControl } from '@material-ui/core';
 import { InputLabel } from '@material-ui/core';
-import { Input } from '@material-ui/core';
 import { FormHelperText } from '@material-ui/core';
 import { TextField } from '@material-ui/core';
 import { MenuItem } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles'
 import { Grid } from '@material-ui/core';
+import { Input } from '@material-ui/core';
+import { Alert } from '@material-ui/lab';
 
 
 function listWithNewVal(list, index, key, newVal) {
@@ -34,7 +35,10 @@ class MaterialCalibrationForm extends React.Component {
       boneOptions: ["RUA", "RLA", "LUA", "LLA", "BACK", "ROOT"],
       typeOptions: ["Quaternion", "Accel+Gyro+Magnet"],
       sensors: [{ dataType: "Quaternion", bone: "RUA", startColumn: "" }],
-      timeColumn: 0
+      timeColumn: 0,
+      validity: {
+        noSensors: false
+      }
     };
   }
 
@@ -71,7 +75,10 @@ class MaterialCalibrationForm extends React.Component {
 
   addSensor = () => {
     this.setState({
-      sensors: this.state.sensors.concat([{ dataType: "Quaternion", bone: "RUA", startColumn: "" }])
+      sensors: this.state.sensors.concat([{ dataType: "Quaternion", bone: "RUA", startColumn: "" }]),
+      validity: {
+        noSensors: (this.state.sensors.length+1 < 1)
+      }
     });
   }
 
@@ -82,7 +89,10 @@ class MaterialCalibrationForm extends React.Component {
   deleteSensor = (removedIndex) => () => {
     console.log(`Deleting sensor with index ${removedIndex}`);
     this.setState({
-      sensors: this.state.sensors.filter((sensor, currIndex) => currIndex !== removedIndex)
+      sensors: this.state.sensors.filter((sensor, currIndex) => currIndex !== removedIndex),
+      validity: {
+        noSensors: (this.state.sensors.length-1 < 1)
+      }
     })
   }
 
@@ -112,17 +122,36 @@ class MaterialCalibrationForm extends React.Component {
     this.setState({ sensors: listWithNewVal(this.state.sensors, index, "dataType", event.target.value) });
   }
 
+  customValidityFunction = (event) => {
+    event.preventDefault();
+    console.log("Invalid thingy detected!!!");
+  }
+
+  NoSensorsError(props) {
+    console.log(props.noSensors);
+    if (props.noSensors) {
+      return <Alert severity="warning" hidden={true}>Please add specifications for one or more sensors.</Alert>;
+    }
+    return null;
+  }
+
   render() {
     return (
-      <FormControl onSubmit={this.handleSubmit}>
+      <form onSubmit={this.handleSubmit}>
         <Grid>
           <Grid container xs={12} spacing={2} justify="flex-start" alignItems="center">
             <Grid item xs={6}>
-              <input type="file" id="myFile"></input>
+              {/* <input type="file" id="myFile" 
+                required
+                onInvalid={this.customValidityFunction}
+              >
+              </input> */}
+              {/* <Input type="file" id="myFile" required onInvalid={this.customValidityFunction}></Input> */}
+              <Input type="file" id="myFile" required></Input>
             </Grid>
             
             <Grid item xs={4}>
-              <TextField 
+              <TextField
                 type="number"
                 label="Time column"
                 onChange={this.handleTimecolChange}
@@ -142,6 +171,11 @@ class MaterialCalibrationForm extends React.Component {
         <hr/>
         <p>Sensors</p>
         <Grid container spacing={1}>
+        <Grid container xs={12} spacing={2} justify="center" alignItems="center">
+          <Grid item xs={12}>
+            <this.NoSensorsError noSensors={this.state.validity.noSensors}></this.NoSensorsError>
+          </Grid>
+        </Grid>
         {this.state.sensors.map((sensor, index) => (
           <Grid container item xs={12} spacing={3} justify="flex-start" alignItems="center">
             <Grid item xs={2}>
@@ -209,7 +243,7 @@ class MaterialCalibrationForm extends React.Component {
       <hr/>
       <Grid container xs={12} spacing={2} justify="center" alignItems="center">
         <Grid item xs={3}>
-          <Button type="submit" className="button-submit">Submit</Button>
+          <Button type="submit" className="button-submit" disabled={this.state.validity.noSensors}>Submit</Button>
         </Grid>
       </Grid>
       <hr/>
@@ -221,60 +255,7 @@ class MaterialCalibrationForm extends React.Component {
         </div>
       ))}
       </Grid>
-      </FormControl>
-      // <form onSubmit={this.handleSubmit}>
-      //   <h4>Dataset file</h4>
-      //   <input type="file" id="myFile"></input>
-      //   <p>Which column is used to represent time?</p>
-      //   <input type="number" id="timeColumn" name="timeColumn"
-      //     value="0"
-      //     min="0"
-      //     onChange={this.handleTimecolChange}
-      //     placeholder="Column number"
-      //     required>
-      //   </input>
-      //   <h4>Sensors</h4>
-      //   {this.state.sensors.map((sensor, index) => (
-      //     <div>
-      //       <select name="bones" id="bone" defaultValue="" onChange={this.handleBoneChange(index)} required>
-      //         <option disabled value="">Choose bone...</option>
-      //         {this.state.boneOptions.map((boneName) => (
-      //           <option value={boneName}>{boneName}</option>
-      //         ))}
-      //       </select>
-      //       <select name="dataType" id="dataType" defaultValue= "" onChange={this.handleDataTypeChange(index)} required>
-      //         <option disabled value="">Choose data type...</option>
-      //         {this.state.typeOptions.map((typeName) => (
-      //           <option value={typeName}>{typeName}</option>
-      //         ))}
-      //       </select>
-      //       <input type="number" id="startColumn" name="startColumn" 
-      //         min="0"
-      //         onChange={this.handleStartcolChange(index)}
-      //         placeholder="Column number"
-      //         required
-      //       />
-      //       <button
-      //         type="button"
-      //         onClick={this.deleteSensor(index)}
-      //       >Remove</button>
-      //     </div>
-          
-      //   ))}
-      //   <button type="button" onClick={this.addSensor} className="small">
-      //     Add sensor
-      //   </button>
-      //   <button type="button" onClick={this.printState}>(PRINT STATE)</button>
-      //   <button type="button" onClick={this.handleSubmit}>(SEND HTTP REQUEST)</button>
-      //   <input type="submit"/>
-      //   <hr/>
-      //   {this.state.sensors.map((shareholder, index) => (
-      //     <div>
-      //       <p>{index}: Bone={shareholder.bone}, Start column={shareholder.startColumn} </p>
-      //     </div>
-          
-      //   ))}
-      // </form>
+      </form>
     )
   }
 
