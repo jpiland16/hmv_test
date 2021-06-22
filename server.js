@@ -198,8 +198,8 @@ app.use('*',  (req, res)=> {
 scanAllFiles();
 
 const options = {
-    cert: fs.readFileSync('./sslcert/server-crt.pem'),
-    key: fs.readFileSync('./sslcert/server-key.pem')
+    cert: fs.readFileSync('./sslcert/fullchain.pem'),
+    key: fs.readFileSync('./sslcert/privkey.pem')
 };
 
 //const PORT = process.env.PORT || 80
