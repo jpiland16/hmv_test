@@ -202,9 +202,11 @@ const options = {
     key: fs.readFileSync('./sslcert/privkey.pem')
 };
 
-const PORT = process.env.PORT || 80
+// const PORT = process.env.PORT || 80
 
 
-app.listen(PORT);
+// app.listen(PORT);
 
-https.createServer(options, app).listen(8443);
+https.createServer(options, app).listen(443);
+
+//app.listen(443)
