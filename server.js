@@ -1,5 +1,5 @@
 const express = require('express');
-const helmet = require('helmet')   
+//const helmet = require('helmet')   
 const app = express();
 const serveIndex = require('serve-index');
 const https=require('https');
@@ -9,7 +9,7 @@ const { exec } = require('child_process');
 const formidable = require('formidable');
 
 
-app.use(helmet()); //adds security related HTTP headers
+//app.use(helmet()); //adds security related HTTP headers
 
 app.use(express.static(`${__dirname}/build`));
 app.use(express.static(`${__dirname}/public`));
@@ -202,10 +202,10 @@ const options = {
     key: fs.readFileSync('./sslcert/privkey.pem')
 };
 
-// const PORT = process.env.PORT || 80
+const PORT = process.env.PORT || 80
 
 
-// app.listen(PORT);
+app.listen(PORT);
 
 https.createServer(options, app).listen(443);
 
