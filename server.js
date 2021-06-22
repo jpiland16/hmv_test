@@ -1,14 +1,15 @@
 const express = require('express');
-//const helmet = require('helmet')   
+const helmet = require('helmet')   
 const app = express();
 const serveIndex = require('serve-index');
+const https=require('https');
 const fs = require('fs');
 const { count } = require('console');
 const { exec } = require('child_process');
 const formidable = require('formidable');
 
 
-//app.use(helmet()); //adds security related HTTP headers
+app.use(helmet()); //adds security related HTTP headers
 
 app.use(express.static(`${__dirname}/build`));
 app.use(express.static(`${__dirname}/public`));
@@ -196,7 +197,14 @@ app.use('*',  (req, res)=> {
 
 scanAllFiles();
 
+const options = {
+    cert: fs.readFileSync('./sslcert/fullchain.pem'),
+    key: fs.readFileSync('./sslcert/privkey.pem')
+};
+
 const PORT = process.env.PORT || 80
 
 
 app.listen(PORT);
+
+https.createServer(options, app).listen(8443);
