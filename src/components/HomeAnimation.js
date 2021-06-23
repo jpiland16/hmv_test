@@ -1,3 +1,4 @@
+import { Typography } from "@material-ui/core";
 import React from "react";
 import * as THREE from "three";
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
@@ -50,7 +51,12 @@ function addModels() {
   };
 
 function renderScene() {
-    if (renderer) renderer.render(scene, camera);
+    if (renderer)
+      renderer.render(scene, camera);
+    let staticImage = document.getElementById("staticImage")
+    if (model && staticImage) {
+      staticImage.style.opacity = "0"
+    }
   };
 
 function start() {
@@ -103,7 +109,19 @@ React.useEffect(() => {
 }, []);
 
     return (
-      <div id='visualizationBase'
-      ref={thisElementRef}/>
+      <div id='visualizationBase' ref={thisElementRef} style={{textAlign: "center", backgroundColor: "lightskyblue"}}>
+          <Typography 
+            style={{position: "absolute", bottom: "16px", right: "16px", cursor: "pointer", textDecoration: "underline", opacity: "60%"}}
+            onClick={() => window.location.href = "/files/contact-form.html"}>
+              Contact us
+          </Typography>
+          <img src="/img/static-model.png" style={{
+              height: "80%", 
+              marginTop: "14.75vh",  
+              left: "calc(50vw - 36.3vh + 4px)",
+              transition: "opacity 0.5s linear",
+              position: "absolute",
+            }} id="staticImage"/>
+      </div>
     );
 }
