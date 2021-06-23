@@ -6,17 +6,25 @@ import InfoIcon from '@material-ui/icons/Info'
 import Tooltip from '@material-ui/core/Tooltip'
 import Zoom from '@material-ui/core/Zoom'
 import FileCopyIcon from '@material-ui/icons/FileCopy';
+import HomeIcon from '@material-ui/icons/Home';
 import TuneIcon from '@material-ui/icons/Tune';
 import CategoryIcon from '@material-ui/icons/Category'
 
 export default function SideActionBar(props) {
     return (
-        <div className="sidebar">             
-            <Zoom in={props.visible} style={{ transitionDelay: props.visible ? '50ms' : '0ms' }}>
-                <Tooltip title="Choose files" placement="right">
+        <div className="sidebar">  
+            <Zoom in={props.visible} style={{ transitionDelay: props.visible ? '0ms' : '0ms' }}>
+                <Tooltip title="Return to the home page" placement="right">
                     <IconButton style={{
                         marginTop: "48px"
-                    }} color={props.selectedPanel === 0 ? "primary" : "default"} onClick={() => props.setSelected(0)}>
+                    }} color={props.selectedPanel === -1 ? "primary" : "default"} onClick={() => window.location.href = "/"}>
+                        <HomeIcon />
+                    </IconButton>
+                </Tooltip>
+            </Zoom>           
+            <Zoom in={props.visible} style={{ transitionDelay: props.visible ? '50ms' : '0ms' }}>
+                <Tooltip title="Choose files" placement="right">
+                    <IconButton color={props.selectedPanel === 0 ? "primary" : "default"} onClick={() => props.setSelected(0)}>
                         <FileCopyIcon />
                     </IconButton>
                 </Tooltip>

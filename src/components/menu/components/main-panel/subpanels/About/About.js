@@ -11,6 +11,10 @@ export default function About(props) {
              - Samuel Thompson <br />
              - Sophie Williams <br />
 
+            <br />
+            <a href="/files/contact-form.html">Click here to send feedback</a>
+            <br />
+
             <h2>Notes</h2>
             The quaternions are constrained to be unit quaternions. This is why you may notice other sliders moving when you adjust one value.
 
