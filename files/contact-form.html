@@ -1,0 +1,100 @@
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>
+            Contact Us
+        </title>
+        <style>
+            html, body {
+                margin: 0; 
+                height: 100%; 
+                overflow: hidden;
+            }
+
+            html, body, textarea, button, input {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            }
+
+            #email {
+                padding: 10px;
+            }
+
+            #message {
+                height: max(200px, 70%);
+                padding: 10px;
+            }
+
+            #form {
+                width: min(90%, 600px);
+                margin: 0 auto;
+            }
+
+            #center {
+                width: 100%;
+            }
+
+            .formElements {
+                width: 100%;
+                margin: 10px 0px;
+            }
+
+        </style>
+
+        <script>
+            function send() {
+                let message = document.getElementById("message").value
+                let emailElement = document.getElementById("email")
+                let emailEntered = emailElement.value !== ""
+                let emailIsValid = emailEntered && emailElement.checkValidity()
+                let warnMessage = emailEntered ? "the email address you entered was invalid" : "you did not enter an email address"
+                if (emailIsValid || window.confirm("It looks like " + warnMessage + ". This means we may not be able to contact you regarding your request," + 
+                    " unless you have provided contact information in the message body. Do you want to send the message anyway?")) {
+                        const formData = new FormData();
+
+                        
+                        formData.append('email', emailElement.value);
+                        formData.append('message', message);
+
+                        let x = new XMLHttpRequest();
+
+                        x.onload = () => {
+                            if (x.status == 200) {
+                                // The message was received
+                                document.getElementById("form").innerHTML = "Your message was received. You can now <a href='/'>return to the home page</a>."
+                            } else {
+                                window.alert("The message was not received. Please try again.")
+                            }
+                        }
+
+                        x.open("POST", "/api/send-message");
+                        x.send(formData);
+
+                    }
+            }
+
+            function editMessage() {
+                document.getElementById("sendButton").disabled = document.getElementById("message").value === ""
+            }
+
+            function sendClose() {
+                let x = new XMLHttpRequest();
+                x.open("GET", "/api/close-user")
+                x.send()
+            }
+        </script>
+
+    </head>
+
+    <body onbeforeunload="sendClose()">
+        <div id="center">
+            <div id="form">
+                <p class="formElements">We value your feedback. Please leave us a message using the form below.</p>
+                <input id="email" class="formElements" type="email" placeholder="Email address (optional)"/>
+                <textarea id="message" class="formElements" placeholder="Enter your message" oninput="editMessage()"></textarea> <br />
+                <button disabled onclick="send()" id="sendButton">Send message</button>
+            </div>
+        </div>
+    </body>
+
+</html>

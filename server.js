@@ -4,15 +4,12 @@ const app = express();
 const serveIndex = require('serve-index');
 const https=require('https');
 const fs = require('fs');
-const { count } = require('console');
 const { exec } = require('child_process');
 const formidable = require('formidable');
+const { onContactUs } = require('./sendEmail')
 
 
 //app.use(helmet()); //adds security related HTTP headers
-
-app.use(express.static(`${__dirname}/build`));
-app.use(express.static(`${__dirname}/public`));
 
 function walkDirectory(dir) {
     let myPromise = new Promise(function(myResolve, myReject) {
@@ -90,7 +87,6 @@ app.get("/api/*", (req, res) => {
     let requestedResource = req.url.substr(5);
     switch (requestedResource) {
         case "scan-all-files":
-            //res.sendFile(`${__dirname}/scanning.html`);
             let d = new Date();
             scanAllFiles().then((files) => {
                     const [ totalCount, fileCount ] = countItems({ children: files });
@@ -120,13 +116,30 @@ app.get("/api/*", (req, res) => {
             break;
         default:
             res.send("Unexpected resource requested: " + requestedResource);
-    
+            console.log(`Unknown request: ${requestedResource}`)
     }
 });
 
 app.post('/api/pull', (req, res) => {
     res.sendStatus(200);
     onProjectUpdate();
+});
+
+
+app.post('/api/send-message', (req, res) => {
+    var form = new formidable.IncomingForm();
+    form.parse(req, function(err, fields, files) {
+        if (err) {
+            console.error("There was an error receiving the message. Check log for details.")
+            console.log(err);
+            res.status(503).send('message not received');
+        } else {
+            message = fields.message
+            email = fields.email
+            onContactUs(email, message)
+            res.status(200).send('message received')
+        }
+    })
 });
 
 app.post('/api/upload-file', (req, res) => {
@@ -174,26 +187,31 @@ app.get('/files/*', (req, res) => {
     }
 });
 
+app.use(express.static(`${__dirname}/build`));
+
 app.use('*',  (req, res)=> {
     if (fs.existsSync("./build/index.html")) {
         res.sendFile("/build/index.html", {
             "root": __dirname
         });
     } else {
-        res.send(`<html>
-                    <head>
-                        <title>
-                            Wesite under maintenance
-                        </title>
-                    </head>
-                    <body>
-                        The website is currently being rebuilt. Please refresh the page in 1-2 minutes.
-                        <a href='https://github.com/jpiland16/hmv_test#hmv_test---launch-website'>Contact the developers</a> if you believe this message is in error.
-                    </body>
-                  </html>`)
+        sendMaintenancePage(res)
     }
 });
 
+function sendMaintenancePage(res) {
+    res.send(`<html>
+                <head>
+                    <title>
+                        Wesite under maintenance
+                    </title>
+                </head>
+                <body>
+                    The website is currently being rebuilt. Please refresh the page in 1-2 minutes.
+                    <a href='/files/contact-form.html'>Contact the developers</a> if you believe this message is in error.
+                </body>
+              </html>`)
+}
 
 scanAllFiles();
 
