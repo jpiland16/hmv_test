@@ -9,7 +9,7 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import Button from '@material-ui/core/Button'
 import SyncIcon from '@material-ui/icons/Sync'
-import { useSpring, animated } from 'react-spring/web.cjs'; // web.cjs is required for IE 11 support
+import { useSpring, animated } from 'react-spring'; // web.cjs is required for IE 11 support
 import './ChooseFiles.css'
 import { Typography } from '@material-ui/core';
 
@@ -131,12 +131,12 @@ export default function CustomizedTreeView(props) {
                 label={nodes.name} 
                 onContextMenu={ (event) => handleContextMenu(event, nodes.id, isFolder) } 
                 onClick={ (event) => { 
-                        if (!isFolder) props.setSelectedFile(nodes.id, nodes.name) 
+                        if (!isFolder) props.clickFile(nodes.id) 
                 } }
                 bold={props.selectedFile.indexOf(nodes.id) !== -1 ? "true" : "false"}
                 style={{
                         whiteSpace: "nowrap",
-                        opacity: props.checkFileName(nodes.name) || isFolder ? 1 : 0.5,
+                        opacity: props.checkFileName(nodes.id) || isFolder ? 1 : 0.5,
                         WebkitTouchCallout: "none",
                         WebkitUserSelect: "none",
                         MozUserSelect: "none",
@@ -170,14 +170,14 @@ export default function CustomizedTreeView(props) {
             </Button>
         <TreeView
             className={classes.root}
-            expanded={props.searchFileText === "" ? props.expandedItems : getAllIds(makeRoot(props.fileList.current))}
+            expanded={props.searchFileText === "" ? props.expandedItems : getAllIds(makeRoot(props.files.current))}
             selected={props.selectedFile}
             defaultCollapseIcon={<MinusSquare />}
             defaultExpandIcon={<PlusSquare />}
             defaultEndIcon={<CloseSquare />}
             onNodeToggle={(event, nodeIds) => props.setExpandedItems(nodeIds)}
         >
-            {renderTree(makeRoot(props.fileList.current))}
+            {renderTree(makeRoot(props.files.current))}
         </TreeView>
         <Menu
             id="simple-menu"

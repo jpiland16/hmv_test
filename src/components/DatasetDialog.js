@@ -9,7 +9,6 @@ import InputLabel from '@material-ui/core/InputLabel';
 import Input from '@material-ui/core/Input';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
-import {useHistory} from 'react-router-dom'
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -25,7 +24,6 @@ const useStyles = makeStyles((theme) => ({
 export default function DialogSelect() {
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
-  const history = useHistory() 
   const [subValue, setSubValue] = React.useState('S1');
   const [triValue, setTriValue]= React.useState('Drill');
 
@@ -43,7 +41,7 @@ export default function DialogSelect() {
 
   const handleOK = () => {
     setOpen(false);
-    history.push(`/visualizer?file=/opportunity-dataset/dataset/${subValue}-${triValue}.dat`) 
+    window.location.href = (`/visualizer?file=/opportunity-dataset/dataset/${subValue}-${triValue}.dat`) 
   
   };
 
@@ -86,6 +84,8 @@ export default function DialogSelect() {
                 <option value={'ADL2'}>2</option>
                 <option value={'ADL3'}>3</option>
                 <option value={'ADL4'}>4</option>
+                <option value={'ADL5'}>5</option>
+
               </Select>
             </FormControl>
           </form>

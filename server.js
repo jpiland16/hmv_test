@@ -1,4 +1,5 @@
 const express = require('express');
+//const helmet = require('helmet')   
 const app = express();
 const serveIndex = require('serve-index');
 const http = require('http')
@@ -16,6 +17,12 @@ const io = new Server(httpServer, {
 
 const fileProcessor = require('./src/server_side/FileProcessor');
 const formProcessor = require('./src/server_side/FormFileProcessor');
+
+
+//app.use(helmet()); //adds security related HTTP headers
+
+app.use(express.static(`${__dirname}/build`));
+app.use(express.static(`${__dirname}/public`));
 
 function walkDirectory(dir) {
     let myPromise = new Promise(function(myResolve, myReject) {
@@ -278,8 +285,6 @@ app.get('/files/*', (req, res) => {
         res.send(`File or directory "${path}" not found!`);
     }
 });
-
-app.use(express.static(`${__dirname}/build`));
 
 app.use('*',  (req, res)=> {
     if (fs.existsSync("./build/index.html")) {

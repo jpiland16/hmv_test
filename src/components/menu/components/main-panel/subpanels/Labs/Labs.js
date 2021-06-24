@@ -8,6 +8,7 @@ import Sam20210531 from './Sam20210531/OrientationStudy.js'
 import Sophie20210603 from './Sophie20210603/test2.js'
 import Sam20210605 from './Sam20210605/GyroIntegration.js'
 import Sam20210611 from './Sam20210611/ServerSideProcessing.js'
+import Jonathan20210608 from './Jonathan20210608/UseAccel'
 
 import Tooltip from '@material-ui/core/Tooltip'
 import Button from '@material-ui/core/Button'
@@ -64,7 +65,9 @@ export default function Labs(props) {
             <LabOpener title="Sam 6/11/2021: Server-side processing" {...props}>
                 <Sam20210611 {...props}/>
             </LabOpener>
-            
+            <LabOpener title="Jonathan 6/8/2021: testing BT accelerometer data" {...props}>
+                <Jonathan20210608 {...props} />
+            </LabOpener>
         </div>
     )
 }

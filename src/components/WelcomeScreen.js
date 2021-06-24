@@ -11,7 +11,8 @@ import HomeAnimation from './HomeAnimation'
 import Grid from '@material-ui/core/Grid';
 import UploadDialog from './UploadDialog';
 
-export default function Welcome() {
+export default function Welcome(props) {
+  props.setFirstLoad(true)
   const history = useHistory()
   const pattern = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
   let current=0;
@@ -47,7 +48,7 @@ export default function Welcome() {
       </AppBar>
       <Container>
         <HomeAnimation/>
-        <div class="toplayer">
+        <div className="toplayer">
           <Grid container spacing={2}>
             <Grid item>
               <Button color='primary' variant= 'contained' id = "submitButton" onClick={()=>launchVisualizer()}>Launch Visualizer</Button>

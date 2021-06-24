@@ -1,20 +1,9 @@
 import React from 'react'
 import * as THREE from 'three'
 
-const boneList = {
-    'BACK': 46,
-    'ROOT': 46,
-    'RUA': 59,
-    'RLA': 72,
-    'LUA': 85,
-    'LLA': 98
-};
-
 const USE_GLOBAL = true;
 const REPEAT = false;
 const FPS = 30;
-
-const s = Math.sqrt(2) / 2;
 
 export default function Animator(props) {
 
@@ -37,19 +26,19 @@ export default function Animator(props) {
                 columnCount: 6
             }];
 
-            if (props.timeSliderValue !== props.lastIndex.current && props.data.current.length > 0) { // We need to update the model, because the timeSlider has moved
-                let boneNames = Object.getOwnPropertyNames(boneList);
-            // let quaternion
-                for (let i = 0; i < boneNames.length; i++) {
-                    let columnStart = boneList[boneNames[i]];
+            if (props.timeSliderValue !== props.lastIndex.current // We need to update the model, because the timeSlider has moved
+                    && props.data.current.length > 0 && props.fileMetadata.current !== null) { // Make sure we have the data we need
+                
+                let targets = props.fileMetadata.current.targets;
+                let GTQ = props.fileMetadata.current.globalTransformQuaternion
 
-                    let q1; //this quaternion rotates the limb to the identity quaternion in OPPORTUNITY world
-                    if(i <= 1){ //if the bone is BACK or ROOT
-                        q1 = new THREE.Quaternion(s, -s, 0, 0);
-                    } else{ //if the bone is an arm
-                        q1 = new THREE.Quaternion(s, s, 0, 0);
-                    }
+                for (let i = 0; i < targets.length; i++) {
+                    let boneName = targets[i].bone
+                    let columnStart = targets[i].column;
+                    let LTQ = targets[i].localTransformQuaternion;
 
+                    let q1 = new THREE.Quaternion(LTQ.x, LTQ.y, LTQ.z, LTQ.w); // this quaternion rotates the limb to the identity quaternion in OPPORTUNITY world
+                    
                     let q2=new THREE.Quaternion(
                         props.data.current[props.timeSliderValue][columnStart + 1] / 1000, // X
                         props.data.current[props.timeSliderValue][columnStart + 2] / 1000, // Y
@@ -58,12 +47,12 @@ export default function Animator(props) {
                     )
 
                     let targetQ = new THREE.Quaternion()
-                    targetQ.multiplyQuaternions(q2,q1) //adds the OPP quaternion to the new "identity quaternion"
+                    targetQ.multiplyQuaternions(q2,q1) // adds the OPP quaternion to the new "identity quaternion"
 
-                    targetQ.premultiply(new THREE.Quaternion(s, 0, 0, -s)) //rotates body to stand upright
+                    targetQ.premultiply(new THREE.Quaternion(GTQ.x, GTQ.y, GTQ.z, GTQ.w)) // rotates body to stand upright
                     
                     props.lastIndex.current = props.timeSliderValue;
-                    props.batchUpdate(boneNames[i], [targetQ.x, targetQ.y, targetQ.z, targetQ.w]);
+                    props.batchUpdate(boneName, [targetQ.x, targetQ.y, targetQ.z, targetQ.w]);
                 }
             }
 

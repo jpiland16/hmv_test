@@ -2,22 +2,26 @@ import Viewport from "./components/Viewport"
 import Welcome from "./components/WelcomeScreen"
 import CalibrationForm from "./components/CalibrationForm"
 import './App.css';
-import { BrowserRouter, Route, Link, Switch } from "react-router-dom";
 import MaterialCalibrationForm from "./components/MaterialCalibrationForm";
 import FileViewer from "./components/FileViewer";
+import { BrowserRouter, Route, Switch } from "react-router-dom";
+import React from 'react';
 
 export default function App() {
+
+    const [firstLoad, setFirstLoad]=React.useState(true)
+
   return (
   <BrowserRouter>
         <Switch>
             <Route exact path="/visualizer">
-                <Viewport dev={false}/>
+                <Viewport dev={false} firstLoad={firstLoad} setFirstLoad={setFirstLoad}/>
             </Route>
             <Route exact path="/visualizer/dev">
-                <Viewport dev={true}/>
+                <Viewport dev={true} firstLoad={firstLoad} setFirstLoad={setFirstLoad}/>
             </Route>
             <Route exact path="/">
-                <Welcome/>
+                <Welcome setFirstLoad={setFirstLoad}/>
             </Route>
             <Route exact path="/uploadformtest">
                 <CalibrationForm/>
