@@ -101,7 +101,9 @@ export default function CustomizedTreeView(props) {
             event.preventDefault();
             event.stopPropagation();
             setFilePath(path);
-            setAnchorEl(event.currentTarget);
+            // Don't show the menu for private folders, because we have denied access to serve-index
+            if (!isFolder || path.substring(0, 16) != "/private-uploads")
+                setAnchorEl(event.currentTarget);
     };
 
     const handleClose = () => {
@@ -124,7 +126,7 @@ export default function CustomizedTreeView(props) {
     }
 
     const renderTree = function (nodes) {
-        const isFolder = !(!nodes.children || nodes.children.length === 0);
+        const isFolder = (nodes.children && nodes.children.length !== 0);
         const thisNode = <StyledTreeItem 
                 key={nodes.id} 
                 nodeId={nodes.id} 

@@ -16,7 +16,6 @@
                 }
 
                 let token = window.localStorage.getItem("token") || undefined
-                console.log(token)
 
                 if (!token) {
                     let x = new XMLHttpRequest()
@@ -32,7 +31,6 @@
                 }
 
                 function onTokenReady() {
-                    console.log(token)
                     formData.append('token', token)
 
                     let x1 = new XMLHttpRequest();

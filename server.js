@@ -7,48 +7,10 @@ const fs = require('fs');
 const { exec } = require('child_process');
 const formidable = require('formidable');
 const { onContactUs } = require('./sendEmail')
-const { generateToken, getFilesWithPrivate } = require('./tokenproc')
+const { generateToken, getFilesWithPrivate, walkDirectory } = require('./files-help')
 
 
 //app.use(helmet()); //adds security related HTTP headers
-
-function walkDirectory(dir) {
-    let myPromise = new Promise(function(myResolve, myReject) {
-        let thisDirFiles = [];
-        fs.readdir(dir,{withFileTypes: true}, async function(err, fileList) {
-            if (err) {
-                myReject(err);
-            } else {
-                for (let i = 0; i < fileList.length; i++) {
-                    let item = fileList[i];
-                    if (item.isDirectory()) {
-                        //console.log("Adding dir  " + item.name);
-                        try {
-                            let subDirFiles = await walkDirectory(dir + "/" + item.name);
-                            thisDirFiles.push({
-                                name: item.name,
-                                id: dir.substr(7) + "/" + item.name,
-                                children:  subDirFiles
-                            });
-                        } catch (error) {
-                            myReject(error);
-                        }
-                        //console.log("Finish dir  " + item.name);
-                    } else {
-                        //console.log("Adding file " + item.name);
-                        thisDirFiles.push({
-                            name: item.name,
-                            id: dir.substr(7) + "/" + item.name
-                        })
-                    }
-                }
-                //console.log("Done with directory " + dir);
-                myResolve(thisDirFiles);
-            }
-        })
-    });
-    return myPromise;
-}
 
 async function scanAllFiles() {
     return new Promise(async function (myResolve, myReject) {
@@ -161,7 +123,7 @@ app.post('/api/send-message', (req, res) => {
 
 app.post('/api/upload-file', (req, res) => {
     // See https://stackoverflow.com/questions/60107387/nodejs-express-file-upload-with-xmlhttprequest-not-working
-    const path = './private';
+    const path = './privt/private-uploads';
 
     var form = new formidable.IncomingForm();
     form.uploadDir = path;
@@ -191,6 +153,21 @@ app.post('/api/upload-file', (req, res) => {
             res.send('complete').end();
          }
     });
+});
+
+app.get('/files/private-uploads/*', (req, res) => {
+    let path = decodeURI(req.url.substr(7));
+    let fileRoot = `${__dirname}/privt`;
+    if (fs.existsSync(fileRoot + "/" + path)) {
+        // Have to watch out for index.html here, hence the check to make sure path is not a directory
+        if (fs.lstatSync(fileRoot + "/" + path).isDirectory()) {
+            res.status(403).send("Access Denied");
+        } else {
+            res.sendFile(path, {root: fileRoot});
+        }
+    } else {
+        res.send(`File or directory "${path}" not found!`);
+    }
 });
 
 app.use('/files', serveIndex(__dirname + '/files', {

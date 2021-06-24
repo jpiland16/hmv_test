@@ -24,7 +24,7 @@ yarn-error.log*
 
 # other
 sslcert/
-/private
+/privt
 /files/**
 !/files/demo
 !/files/demo/**
