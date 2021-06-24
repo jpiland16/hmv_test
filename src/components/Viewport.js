@@ -7,8 +7,8 @@ import TopActionBar from './TopActionBar'
 import CardSet from './cards/CardSet'
 import Animator from './Animator'
 
-import { getMap, getFileList, downloadFile, downloadMetafile } from './viewport-workers/NetOps'
 import { onSelectFileChange, isFileNameValid, clickFile} from './viewport-workers/FileOps'
+import { getFileList, downloadFile, downloadMetafile } from './viewport-workers/NetOps'
 import { updateSingleQValue, batchUpdateObject } from './viewport-workers/ModelOps'
 import { getLocalFromGlobal, getGlobalFromLocal } from './viewport-workers/MathOps'
 import { setSliderPositions, onLoadBones } from './viewport-workers/BoneOps'
@@ -19,7 +19,6 @@ let parentOf = {};
 let globalQs = {};
 let outgoingRequest = false;
 const lastFiles = [null]; // Wrapped in an array to be mutable
-const fileMap = [null]; // Wrapped in an array to be mutable
 
 export default function Viewport(props) {
     
@@ -99,10 +98,9 @@ export default function Viewport(props) {
             setSelectedFile: setSelectedFile,
             clickFile: (id) => clickFile(propertySet, id), 
             onSelectFileChange: (file) => onSelectFileChange(propertySet, file),
-            checkFileName: (fname) => isFileNameValid(propertySet, fname),
+            checkFileName: (fname) => isFileNameValid(fname),
             files: files,
             lastFiles: lastFiles,
-            fileMap: fileMap,
 
             // FILE SEARCH PROPERTIES
             searchFileText: searchFileText,
@@ -206,13 +204,9 @@ export default function Viewport(props) {
                 if (files.current.length === 0) {
                     getFileList(propertySet);
                 }
-                getMap(propertySet).then(() => {
-                    if (selectedFile !== "") {
-                        if (isFileNameValid(propertySet, selectedFile)) {
-                            onSelectFileChange(propertySet, selectedFile);
-                        }
-                    }
-                }, () => { });
+                if (isFileNameValid(selectedFile)) {
+                    onSelectFileChange(propertySet, selectedFile);
+                }
                 props.setFirstLoad(false);
             } else {
                 if (files.current && files.current.length === 0) {

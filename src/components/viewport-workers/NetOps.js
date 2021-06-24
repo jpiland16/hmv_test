@@ -44,28 +44,6 @@ export async function getFileList(props) {
     )
 }
 
-export async function getMap(props) {
-    const mapPath = (window.location.href.substring(0, 22) === "http://localhost:3000/" ? 
-    "https://raw.githubusercontent.com/jpiland16/hmv_test/master" :
-    "") + "/files/meta/map.json"
-    return new Promise((myResolve, myReject) => {
-        doXHR('GET', mapPath).then(
-            (xhrr) => {
-                try {
-                    props.fileMap[0] = JSON.parse(xhrr.responseText)
-                    myResolve()
-                } catch (e) {
-                    console.error("File map not found!")
-                    myReject()
-                }
-            }, (errXhrr) => {
-                console.log(errXhrr)
-                myReject()
-            }
-        )
-    });
-}
-
 // NETWORK METHODS THAT MAY BE CALLED MULTIPLE TIMES
 
 export function downloadFile(props, fname) {
@@ -102,7 +80,7 @@ export function downloadFile(props, fname) {
 }
 
 export function downloadMetafile(props, selectedFilename) {
-    let path = "/files/meta/" + props.fileMap[0][selectedFilename] + ".json"
+    let path = "files" + selectedFilename.substring(0, selectedFilename.lastIndexOf("/")) + "/metadata.json"
     if (window.location.href.substring(0, 22) === "http://localhost:3000/") {
         path = "https://raw.githubusercontent.com/jpiland16/hmv_test/master" + path
     }

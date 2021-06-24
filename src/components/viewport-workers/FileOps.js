@@ -1,9 +1,9 @@
-export function isFileNameValid(props, fname) {
-    return props.fileMap[0] && Object.getOwnPropertyNames(props.fileMap[0]).indexOf(fname) >= 0
+export function isFileNameValid(fname) {
+    return fname.substr(-4) === ".dat"
 }
 
 export function clickFile(props, id) {
-    if(isFileNameValid(props, id)) {
+    if (isFileNameValid(id)) {
         onSelectFileChange(props, id);
         window.history.replaceState(null, null, "?file=" + id);
     }
