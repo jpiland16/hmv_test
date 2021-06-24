@@ -215,15 +215,12 @@ function sendMaintenancePage(res) {
 
 scanAllFiles();
 
-const options = {
-    cert: fs.readFileSync('./sslcert/fullchain.pem'),
-    key: fs.readFileSync('./sslcert/privkey.pem')
+const options = { //fullchain and privkey are used for the vm and server-crt and server-key are used locally
+    cert: fs.existsSync('./sslcert/fullchain.pem') ? fs.readFileSync('./sslcert/fullchain.pem') : fs.readFileSync('./sslcert/server-crt.pem'),
+    key: fs.existsSync('./sslcert/privkey.pem') ? fs.readFileSync('./sslcert/privkey.pem') : fs.readFileSync('./sslcert/server-key.pem')
 };
 
-//const PORT = process.env.PORT || 80
-
-
-//app.listen(PORT);
+app.use(express.static(`${__dirname}/public`, {dotfiles: 'allow'}))
 
 https.createServer(options, app).listen(443);
 
