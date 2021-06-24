@@ -2,21 +2,45 @@ const formidable = require('formidable');
 const FileReader = require('filereader');
 const { spawn } = require('child_process');
 
-const processFile = (form, callback) => {
+const processFile = (form, callback, onError) => {
+    console.log("onError: " + onError);
     console.log("Processing a file sent by a POST request.");
     const formParser = formidable();
-    formParser.parse(form, (err, fields, files) => {
-        handleForm(err, fields, files, (data, metadata) => callback(data, metadata));
-    });
+    try {
+        // formParser.on()
+        formParser.parse(form, (err, fields, files) => {
+            handleForm(err, fields, files, (data, metadata) => callback(data, metadata), onError);
+        });
+    }
+    catch (e) {
+        console.log(e);
+    }
+
 };
 
-function handleForm(err, fields, files, callback) {
+function handleForm(err, fields, files, callback, onError) {
+    // console.log(err);
+    if (err) {
+        console.log(err);
+    }
     console.log(fields);
     const reader = new FileReader();
     reader.addEventListener('load', (event) => {
-        handleUploadedFile(event, fields, (data) => callback(data, parseFormFields(fields)));
+        try {
+            handleUploadedFile(event, fields, (data) => callback(data, parseFormFields(fields)), onError);
+        } catch (e) {
+            console.log("handleUploadedFile threw an error!");
+            console.log(e);
+        }
     });
-    reader.readAsText(files.file);
+    reader.addEventListener('error', (err) => {
+        console.log(err);
+    });
+    try {
+        reader.readAsText(files.file);
+    } catch (e) {
+        onError("Failed to read incoming file. We should probably notify the client.")
+    }
 }
 
 function parseFormFields(fields) {
@@ -49,7 +73,7 @@ function parseFormFields(fields) {
     return metadata;
 }
 
-function handleUploadedFile(event, fields, callback) {
+function handleUploadedFile(event, fields, callback, onError) {
     // There's no real reason to rename the parameters here, besides conforming to the Python interface.
     let sensors = JSON.parse(fields.sensorData);
     console.log(sensors);
@@ -69,6 +93,7 @@ function handleUploadedFile(event, fields, callback) {
     console.log("Generated python process pid (greater than 0 on success): " + pyProcess.pid);
     console.log("Current path: " + process.cwd());
     var pyOutput = "";
+    var errorOutput;
     pyProcess.stdout.on('data', (pyData) => {
         console.log("Data from python file: " + pyData);
         let responseMessage = pyData.toString('utf8');
@@ -76,12 +101,15 @@ function handleUploadedFile(event, fields, callback) {
     });    
     pyProcess.stderr.on('data', (pyData) => {
         console.log("Error from python file: " + pyData);
+        console.log("We should probably report this to the client somehow.");
+        pyProcess.kill();
+        errorOutput = pyData;
     });
-    pyProcess.stdout.on('close', () => {
-        console.log("Python process stdout closed.");
-    })
     pyProcess.stdout.on('end', () => {
-        // console.log(pyProcess.stdout);
+        if (errorOutput) {
+            onError(errorOutput);
+            return;
+        }
         console.log("Sending data back from server side: " + pyOutput);
         callback(pyOutput);
     })

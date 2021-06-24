@@ -24,13 +24,14 @@ sensor_columns = cl_params['sensor_columns']
 # Each sensor gets its own handler, which then produces the final quaternions
 quat_list = []
 if len(sensor_columns) < 1:
-    print("No sensor info was received!")
-    exit()
+    # sys.stderr.write("No sensor info was received!")
+    sys.exit("No sensor info was received.")
 for sensor_info in sensor_columns:
     sensor = get_handler(sensor_info['data_type'])
     if (sensor == None):
-        print("Invalid data type given for a sensor!")
-        exit()
+        # sys.stderr.write("Invalid data type given for a sensor!")
+        # exit()
+        sys.exit("Invalid data type given for a sensor.")
     quat_list.append(sensor.get_quaternions(lines, int(sensor_info['start_column']), time_column))
 
 print("# Number of quaternions: {0}".format(len(quat_list)))

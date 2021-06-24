@@ -1,10 +1,18 @@
 const express = require('express');
 const app = express();
 const serveIndex = require('serve-index');
+const http = require('http')
+const httpServer = http.createServer(app);
 const fs = require('fs');
 const { count } = require('console');
 const { exec } = require('child_process');
 const formidable = require('formidable');
+const { Server } = require('socket.io');
+const io = new Server(httpServer, {
+    cors: {
+        origin: "http://localhost:3000",
+    },
+});
 
 const fileProcessor = require('./src/server_side/FileProcessor');
 const formProcessor = require('./src/server_side/FormFileProcessor');
@@ -86,35 +94,102 @@ app.post("/api/post", (req, res) => {
     fileProcessor.processFile(req, (data) => {
         res.json({ message: data });
     });
-})
+});
 
 app.post("/api/postform", (req, res) => {
     const storagePath = './files/user-uploads/';
     let currDate = new Date();
-    const directoryName = `${currDate.getMonth()}_${currDate.getDate()}_${currDate.getHours()}_${currDate.getMinutes()}_${currDate.valueOf()}/`;
+    const directoryName = `${currDate.getMonth()}_${currDate.getDate()}_${currDate.getHours()}_${currDate.getMinutes()}_${currDate.valueOf()}`;
     console.log("Received post request.");
-    formProcessor.processFile(req, (data, metadata) => {
-        fs.mkdir(storagePath + directoryName, {recursive: true}, (err) => {
-            if (err) {
-                console.log("Error occured when trying to make new directory!")
-                return;
-            }
-            fs.writeFile(storagePath + directoryName + "quaternion_data.dat", data, (err) => {
+    app.locals.currentFiles.set("filename", "Processing") // TODO: This should be a map from file identifier to file status, so we can tell whether we're still working with a file.  
+    let onError = (message) => {
+        // This should be either (a) sent as a response or (b) stored so that it responds to a later GET message.
+        // My inspriation is Gradescope's system, where you upload a file and get taken to a submission viewing screen.
+        console.log("An error occurred while trying to process your submission: " + message);
+    };
+    try {
+        formProcessor.processFile(req, (data, metadata) => {
+            fs.mkdir(storagePath + directoryName, {recursive: true}, (err) => {
                 if (err) {
-                    console.log(err);
+                    console.log("Error occured when trying to make new directory!")
+                    //send update to any file listeners
                     return;
                 }
+                fs.writeFile(storagePath + directoryName + "/quaternion_data.dat", data, (err) => {
+                    if (err) {
+                        console.log(err);
+                        //send update to any file listeners
+                        return;
+                    }
+                    //send update to any file listeners
+                })
+                fs.writeFile(storagePath + directoryName + "/metadata.json", JSON.stringify(metadata), (err) => {
+                    if (err) {
+                        console.log(err);
+                        // send update to any file listeners
+                        // remove all files in the case of any error, using a cleanup() function
+                        return;
+                    }
+                })
             })
-            fs.writeFile(storagePath + directoryName + "metadata.json", JSON.stringify(metadata), (err) => {
-                if (err) {
-                    console.log(err);
-                    return;
-                }
-            })
-        })
-        res.json({ message: data });
-    });
+        }, onError);
+        // notify listeners that file is done, but do not send the resulting file--this isn't a GET request.
+        // We may want to also do some basic validation, but that's handled during file processing.
+        res.json({ status: "File received", fileName: directoryName });
+    } catch (e) {
+        console.log("Cancelled due to error. This should probably be reported to the user when they ask for the resource later.")
+        console.error(e);
+    }
+    
 })
+
+function fileAvailable(targetFile) {
+    let fileRoot = `${__dirname}/files/user-uploads`;
+    let dataFilePath = `${fileRoot}/${targetFile}/quaternion_data.dat`;
+    let metadataPath = `${fileRoot}/${targetFile}/metadata.json`;
+    return (fs.existsSync(dataFilePath) && fs.existsSync(metadataPath));
+}
+
+app.get("/api/uploadedfiles", (req, res) => {
+    // This doesn't really work since we need an asynchronous update from server to client when status changes.
+    console.log("Received GET request for file.")
+    let targetFile = req.query.file;
+    console.log("Target file: " + targetFile);
+    // Disregard access code for now
+    // if ((app.locals.currentFiles.get(targetFile).accessCode !== req.query.accessCode)) {
+    //     res.json({
+    //         status: "Bad access code"
+    //     });
+    //     return;
+    // }
+    let fileRoot = `${__dirname}/files/user-uploads`;
+    let filePath;
+    switch (req.query.type) {
+        case ('data'):
+            filePath = `${fileRoot}/${targetFile}/quaternion_data.dat`
+            break;
+        case ('metadata'):
+            filePath = `${fileRoot}/${targetFile}/metadata.json`
+            break;
+        default:
+            res.sendStatus(400);
+            // res.json({ status: "Invalid file type: should be 'data' or 'metadata'." });
+            return;
+    }
+    console.log("File path: " + filePath);
+    if (fs.existsSync(filePath)) {
+        console.log("The file exists. Let's send it.");
+        res.sendFile(filePath);
+    } else {
+        console.log("File was not found.");
+        res.sendStatus(404);
+        return;
+    }
+    // If the file is done processing and we're good, send the file.
+    //  This includes progress reports based on file download status on the client. is that our job to manage?
+    // If the file is still processing, send a progress report. And then somehow also send the file?
+    // If the file encountered an error, send the error.
+});
 
 app.get("/api/*", (req, res) => {
     let requestedResource = req.url.substr(5);
@@ -226,9 +301,69 @@ app.use('*',  (req, res)=> {
     }
 });
 
+io.use((socket, next) => {
+    console.log("A new socket connection is going through middleware: " + socket)
+    // need identication of some sort
+    const name = socket.handshake.auth.username;
+    if (!name) {
+        console.log("The attempted socket didn't have a username. Aborting connection.");
+        return next(new Error("A name is required to associate with this connection"));
+    }
+    socket.userName = name;
+    next();
+})
+
+//Purely for debugging!
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+//Also for debugging: send timed response to client
+async function executeDelayed(delayMillis, callback) {
+    await sleep(delayMillis);
+    callback();
+}
+
+io.on('connection', (socket) => {
+    //when disconnecting, remove from map (and maybe even delete the associated file)
+    socket.on('disconnect', (reason) => {
+        console.log("Socket was disconnected. Removing them from listener map...");
+        app.locals.fileListeners.delete(socket.handshake.query.file);
+    })
+    socket.on('Debug request', (info) => {
+        console.log("Debug request: client wants message of type " + info.messageType);
+        socket.emit(info.messageType, info.params);
+    });
+    console.log("A new socket connection just started up");
+    console.log("Asking for file: " + socket.handshake.query.file);
+    //use query to map filename to socket in app.locals.fileListeners
+        // if no such file exists, send that information
+    if (!app.locals.currentFiles.has(socket.handshake.query.file) && !fileAvailable(socket.handshake.query.file)) {
+        console.log("The requested file does not exist. Time to notify the client.")
+        socket.emit("File missing", null);
+    }
+    app.locals.fileListeners.set(socket.handshake.query.file, socket);
+    //send current file status to socket
+    executeDelayed(1000, () => {
+        socket.emit('Processing data', {});
+        executeDelayed(1000, () => {
+            socket.emit('File ready', {});
+        })
+    })
+    // await sleep(5000);
+    // socket.emit("file status", { status: "Processing" });
+        // if the status is final, there's no need for a listener relationship
+})
+
 scanAllFiles();
 
 const PORT = process.env.PORT || 5000
 
-console.log("Listening on port " + PORT + "...");
-app.listen(PORT);
+// app.listen(PORT);
+httpServer.listen(PORT, () => {
+    console.log("Listening on port " + PORT + "...");
+    app.locals.currentFiles = new Map();
+    app.locals.currentFiles.set("placeholderfile", { status: "Processing", accessCode: "password" });
+    
+    app.locals.fileListeners = new Map();
+})

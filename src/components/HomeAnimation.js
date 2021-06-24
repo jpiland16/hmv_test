@@ -4,7 +4,7 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 
 let model,scene,renderer,frameId,camera = null;
 let starttime = new Date().getTime();
-let rate = 10; // Hz
+let rate = 60; // Hz
 
 
 

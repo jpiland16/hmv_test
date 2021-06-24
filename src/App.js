@@ -4,6 +4,8 @@ import CalibrationForm from "./components/CalibrationForm"
 import './App.css';
 import { BrowserRouter, Route, Link, Switch } from "react-router-dom";
 import MaterialCalibrationForm from "./components/MaterialCalibrationForm";
+import CalibrationDataTester from "./components/testing/CalibrationDataTester";
+import FileViewer from "./components/FileViewer";
 
 export default function App() {
   return (
@@ -23,6 +25,12 @@ export default function App() {
             </Route>
             <Route exact path="/uploadformtest/material">
                 <MaterialCalibrationForm/>
+            </Route>
+            <Route exact path="/uploadformtest/testing">
+                <CalibrationDataTester/>
+            </Route>            
+            <Route exact path="/uploadformtest/landingpage">
+                <FileViewer/>
             </Route>
             <Route>
                 <div>

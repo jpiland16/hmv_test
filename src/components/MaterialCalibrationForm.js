@@ -9,6 +9,7 @@ import { makeStyles } from '@material-ui/core/styles'
 import { Grid } from '@material-ui/core';
 import { Input } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
+import { withRouter } from "react-router-dom";
 
 
 function listWithNewVal(list, index, key, newVal) {
@@ -42,7 +43,8 @@ class MaterialCalibrationForm extends React.Component {
     };
   }
 
-  handleSubmit = () => {
+  handleSubmit = (event) => {
+    event.preventDefault();
     console.log("Submitted the form.")
     console.log(this.state.sensors);
     console.log("About to send post request.");
@@ -51,25 +53,27 @@ class MaterialCalibrationForm extends React.Component {
     formData.append('sensorData', JSON.stringify(this.state.sensors));
     formData.append('timeColumn', this.state.timeColumn);
   
-    let x = new XMLHttpRequest();
-    x.onload = (event => {
-        console.log("POST request complete!");
-        // console.log(x.response);
-        // quatStorage = handleServerResponse(x.response);
-        let indexList = [];
-        // for (let i = 0; i < quatStorage.length; i ++) {
-        //     indexList[i] = i;
-        // }
-        console.log("Modifying props...");
-        // props.data.current = indexList;
-        // console.log(props);
+    let formPostReq = new XMLHttpRequest();
+    formPostReq.onload = (event => {
+      console.log("POST request complete!");
+      let responseJSON = JSON.parse(formPostReq.response);
+      console.log(responseJSON);
+      if (responseJSON.status !== 'File received') {
+        console.log('The server rejected the POST request. We should notify the user.');
+      }
+      const targetURL = ("/uploadformtest/landingpage?")
+      const params = new URLSearchParams();
+      params.set('filename', responseJSON.fileName);
+      console.log(params.toString());
+      const target = targetURL + params.toString();
+      this.props.history.push(target);
     });
-    x.open("POST", "/api/postform");
+    formPostReq.open("POST", "/api/postform");
     // TODO: Right now the response is in the default 'text' format, but it might
     // be more appropriate to use another format.
-    x.send(formData);
+    formPostReq.send(formData);
     console.log("Post request has been sent: ");
-    console.log(x);
+    console.log(formPostReq);
   }
 
 
@@ -94,11 +98,6 @@ class MaterialCalibrationForm extends React.Component {
         noSensors: (this.state.sensors.length-1 < 1)
       }
     })
-  }
-
-  //Deprecated!
-  handleShareholderNameChange = (index) => (event) => {
-    this.setState({ sensors: listWithNewVal(this.state.sensors, index, "name", event.target.value) });
   }
 
   handleTimecolChange = (event) => {
@@ -261,4 +260,4 @@ class MaterialCalibrationForm extends React.Component {
 
 }
 
-export default MaterialCalibrationForm;
+export default withRouter(MaterialCalibrationForm);
