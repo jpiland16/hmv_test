@@ -15,7 +15,7 @@ async function doXHR(method, url) {
 // NETWORK METHODS THAT SHOULD ONLY BE CALLED ONCE
 
 export async function getFileList(props) {
-    doXHR("GET", "/api/get-file-list").then(
+    doXHR("GET", "/api/get-file-list?token=" + window.localStorage.getItem("token") || "").then(
         (xhrr) => {
             let res;
             try {

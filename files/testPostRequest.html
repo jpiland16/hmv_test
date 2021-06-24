@@ -4,6 +4,7 @@
         <script>
 
             function upload() {
+
                 let el = document.getElementById("myFile");
                 let files = el.files;
 
@@ -14,17 +15,38 @@
                     formData.append('file' + i + 'params', "some parameters");
                 }
 
-                let x = new XMLHttpRequest();
-                x.onload = () => {
-                    console.log("Finished");
+                let token = window.localStorage.getItem("token") || undefined
+                console.log(token)
 
-                    let x2 = new XMLHttpRequest();
-                    x2.open('GET', "/api/scan-all-files");
-                    x2.send();
-
+                if (!token) {
+                    let x = new XMLHttpRequest()
+                    x.open("GET", "/api/generate-token")
+                    x.onload = () => {
+                        token = x.responseText
+                        window.localStorage.setItem("token", token)
+                        onTokenReady()
+                    }
+                    x.send()
+                } else {
+                    onTokenReady()
                 }
-                x.open("POST", "/api/upload-file");
-                x.send(formData);
+
+                function onTokenReady() {
+                    console.log(token)
+                    formData.append('token', token)
+
+                    let x1 = new XMLHttpRequest();
+                    x1.onload = () => {
+                        console.log("Finished");
+
+                        let x2 = new XMLHttpRequest();
+                        x2.open('GET', "/api/scan-all-files");
+                        x2.send();
+
+                    }
+                    x1.open("POST", "/api/upload-file");
+                    x1.send(formData);
+                }
 
             }
 

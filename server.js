@@ -7,6 +7,7 @@ const fs = require('fs');
 const { exec } = require('child_process');
 const formidable = require('formidable');
 const { onContactUs } = require('./sendEmail')
+const { generateToken, getFilesWithPrivate } = require('./tokenproc')
 
 
 //app.use(helmet()); //adds security related HTTP headers
@@ -83,6 +84,22 @@ function onProjectUpdate() {
     exec("git pull > git.log && npm run build > build.log")
 }
 
+app.get("/api/get-file-list", (req, res, next) => {
+    tokenIndex = req.url.indexOf("token=")
+    if (tokenIndex > -1) {
+        token = req.url.substr(tokenIndex + 6)
+        getFilesWithPrivate(token).then((files) => {
+            res.send(JSON.stringify(files))
+        }, (err) => res.sendFile(`${__dirname}/fileList.json`))
+    } else {
+        next()
+    }
+});
+
+app.get("/api/generate-token", (req, res) => {
+    generateToken(64).then((token) => res.send(token));
+})
+
 app.get("/api/*", (req, res) => {
     let requestedResource = req.url.substr(5);
     switch (requestedResource) {
@@ -144,7 +161,7 @@ app.post('/api/send-message', (req, res) => {
 
 app.post('/api/upload-file', (req, res) => {
     // See https://stackoverflow.com/questions/60107387/nodejs-express-file-upload-with-xmlhttprequest-not-working
-    const path = './files/user-uploads/';
+    const path = './private';
 
     var form = new formidable.IncomingForm();
     form.uploadDir = path;
@@ -155,12 +172,17 @@ app.post('/api/upload-file', (req, res) => {
               console.log(err);
               res.send('upload failed')
          } else {
+
+            if (!fs.existsSync(path + "/" + fields["token"])) {
+                fs.mkdirSync(path + "/" + fields["token"])
+            }
+
             let fileIds = Object.getOwnPropertyNames(files);
             for (let i = 0; i < fileIds.length; i++) {
                 let fileId = fileIds[i];
                 console.log(` >>> Attempting to obtain: "${files[fileId].name}" with params: ${fields[fileId + 'params']}`)
                 var oldpath = files[fileId].path;
-                var newpath = path + files[fileId].name;
+                var newpath = path + "/" + fields["token"] + "/" + files[fileId].name;
                 fs.rename(oldpath, newpath, function (err) {
                     if (err) throw err;
                 });
@@ -220,14 +242,7 @@ const options = {
     key: fs.readFileSync('./sslcert/privkey.pem')
 };
 
-//const PORT = process.env.PORT || 80
-
-
-//app.listen(PORT);
-
 https.createServer(options, app).listen(443);
-
-//app.listen(443)
 
 // Redirect from http port 80 to https
 var http = require('http');
