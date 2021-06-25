@@ -184,6 +184,16 @@ app.get('/files/*', (req, res) => {
     }
 });
 
+app.get('/.well-known/*', (req, res) => {
+    let path = req.url;
+    let fileRoot = `${__dirname}/public`;
+    if (fs.existsSync(fileRoot + "/" + path)) {
+        res.sendFile(path, {root: fileRoot});
+    } else {
+        res.send(`File or directory "${path}" not found!`);
+    }
+});
+
 app.use(express.static(`${__dirname}/build`));
 
 app.use('*',  (req, res)=> {
@@ -216,8 +226,6 @@ const options = { //fullchain and privkey are used for the vm and server-crt and
     cert: fs.existsSync('./sslcert/fullchain.pem') ? fs.readFileSync('./sslcert/fullchain.pem') : fs.readFileSync('./sslcert/server-crt.pem'),
     key: fs.existsSync('./sslcert/privkey.pem') ? fs.readFileSync('./sslcert/privkey.pem') : fs.readFileSync('./sslcert/server-key.pem')
 };
-
-app.use(express.static(`${__dirname}/public`, {dotfiles: 'allow'}))
 
 https.createServer(options, app).listen(443);
 
