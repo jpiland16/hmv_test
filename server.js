@@ -212,21 +212,20 @@ function sendMaintenancePage(res) {
 
 scanAllFiles();
 
-app.use(express.static(`${__dirname}/public`, {dotfiles: 'allow'}))
-
 const options = { //fullchain and privkey are used for the vm and server-crt and server-key are used locally
     cert: fs.existsSync('./sslcert/fullchain.pem') ? fs.readFileSync('./sslcert/fullchain.pem') : fs.readFileSync('./sslcert/server-crt.pem'),
     key: fs.existsSync('./sslcert/privkey.pem') ? fs.readFileSync('./sslcert/privkey.pem') : fs.readFileSync('./sslcert/server-key.pem')
 };
 
-app.listen(8080);
-https.createServer(options, app).listen(8443);
+app.use(express.static(`${__dirname}/public`, {dotfiles: 'allow'}))
+
+https.createServer(options, app).listen(443);
 
 //app.listen(443)
 
 // Redirect from http port 80 to https
-// var http = require('http');
-// http.createServer(function (req, res) {
-//     res.writeHead(301, { "Location": "https://" + req.headers['host'] + req.url });
-//     res.end();
-// }).listen(80);
+var http = require('http');
+http.createServer(function (req, res) {
+    res.writeHead(301, { "Location": "https://" + req.headers['host'] + req.url });
+    res.end();
+}).listen(80);
