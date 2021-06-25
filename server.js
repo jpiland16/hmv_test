@@ -8,9 +8,6 @@ const { exec } = require('child_process');
 const formidable = require('formidable');
 const { onContactUs } = require('./sendEmail')
 
-
-//app.use(helmet()); //adds security related HTTP headers
-
 function walkDirectory(dir) {
     let myPromise = new Promise(function(myResolve, myReject) {
         let thisDirFiles = [];
