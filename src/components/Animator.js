@@ -31,6 +31,8 @@ export default function Animator(props) {
                 
                 let targets = props.fileMetadata.current.targets;
                 let GTQ = props.fileMetadata.current.globalTransformQuaternion
+                
+                props.lastIndex.current = props.timeSliderValue;
 
                 for (let i = 0; i < targets.length; i++) {
                     let boneName = targets[i].bone
@@ -50,8 +52,7 @@ export default function Animator(props) {
                     targetQ.multiplyQuaternions(q2,q1) // adds the OPP quaternion to the new "identity quaternion"
 
                     targetQ.premultiply(new THREE.Quaternion(GTQ.x, GTQ.y, GTQ.z, GTQ.w)) // rotates body to stand upright
-                    
-                    props.lastIndex.current = props.timeSliderValue;
+
                     props.batchUpdate(boneName, [targetQ.x, targetQ.y, targetQ.z, targetQ.w]);
                 }
             }

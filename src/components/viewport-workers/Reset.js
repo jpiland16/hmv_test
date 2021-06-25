@@ -88,6 +88,7 @@ export function resetModel(props) {
         props.bones[boneNames[i]].quaternion.set(lq.x, lq.y, lq.z, lq.w);
     }
     
+    props.sliderValuesShadowCopy = {...props.globalQs};
     props.refreshGlobalLocal(props.bones, props.useGlobalQs.current)
     props.setModelNeedsUpdating(true);
 }

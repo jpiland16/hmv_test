@@ -9,18 +9,18 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 let renderer, camera, scene, controls;
 
 let boneNames = {
+    ROOT: "_rootJoint",
+    BACK: "spine_02",
     LUA: "upperarm_l", 
     LLA: "lowerarm_l", 
     RUA: "upperarm_r", 
     RLA: "lowerarm_r", 
-    BACK: "spine_02", /** IMPORTANT */
-    LSHOE: "foot_l", 
-    RSHOE: "foot_r",
-    ROOT: "_rootJoint",
-    RUL: "right_upper_leg",
     LUL: "left_upper_leg",
+    LLL: "left_lower_leg",
+    LSHOE: "foot_l", 
+    RUL: "right_upper_leg",
     RLL: "right_lower_leg",
-    LLL: "left_lower_leg"
+    RSHOE: "foot_r"
 }
 
 let bones = {

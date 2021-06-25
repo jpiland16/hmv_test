@@ -18,6 +18,7 @@ let childrenOf = {};
 let parentOf = {};
 let globalQs = {};
 let outgoingRequest = false;
+let sliderValuesShadowCopy = {};
 const lastFiles = [null]; // Wrapped in an array to be mutable
 const fileMap = [null]; // Wrapped in an array to be mutable
 
@@ -135,6 +136,7 @@ export default function Viewport(props) {
             batchUpdate: (boneId, slideArray) => batchUpdateObject(propertySet, boneId, slideArray),
             modelNeedsUpdating: modelNeedsUpdating,
             setModelNeedsUpdating: setModelNeedsUpdating,
+            sliderValuesShadowCopy: sliderValuesShadowCopy,
 
             // THREE.JS OBJECTS
             camera: camera,

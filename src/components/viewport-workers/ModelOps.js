@@ -1,7 +1,5 @@
 import * as THREE from 'three'
 
-let sliderValuesShadowCopy = {};
-
 export function updateSingleQValue(props, boneId, qIndex, newValue) {
     let newSliderValues = { ...props.sliderValues }; // Create shallow clone of old model state
     newSliderValues[boneId][qIndex] = newValue;
@@ -9,7 +7,7 @@ export function updateSingleQValue(props, boneId, qIndex, newValue) {
 }
 
 export function batchUpdateObject(props, boneId, slideArray) {
-    let newSliderValues = Object.getOwnPropertyNames(sliderValuesShadowCopy).length > 0 ? {...sliderValuesShadowCopy} : { ...props.sliderValues }; // Create shallow clone of old model state
+    let newSliderValues = Object.getOwnPropertyNames(props.sliderValuesShadowCopy).length > 0 ? {...props.sliderValuesShadowCopy} : { ...props.sliderValues }; // Create shallow clone of old model state
     newSliderValues[boneId] = slideArray;
     let newQ = new THREE.Quaternion(slideArray[0], slideArray[1], slideArray[2], slideArray[3]);
     
@@ -53,7 +51,7 @@ export function batchUpdateObject(props, boneId, slideArray) {
         }
     }
 
-    sliderValuesShadowCopy = newSliderValues;
+    props.sliderValuesShadowCopy = newSliderValues;
     props.setSliderValues(newSliderValues);
     props.setModelNeedsUpdating(true);
 }
