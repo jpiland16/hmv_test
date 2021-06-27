@@ -1,0 +1,102 @@
+import React from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
+import * as THREE from 'three'
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
+
+export default function ThreeScene(props) {
+
+    // const [camera, setCamera] = useState(null);
+    console.log("Printing scene info:");
+    console.log(props.sceneInfo);
+
+    function refreshRendererSize(currentScene, width, height, renderer, camera) {
+        renderer.setSize( width, height );
+        camera.aspect = width / height;
+        camera.updateProjectionMatrix();
+        renderer.render(currentScene, camera);
+    }
+
+    /**
+     * Begins a THREE.js render loop on a given scene.
+     * @param parentElement The reference to the DOM element THREE will render to.
+     * @param currentScene The Scene to render.
+     * @param renderer The renderer to use. 
+     */
+    function renderScene(parentElement, currentScene, renderer) {    
+        if (parentElement === null) {
+            console.log("Node is null! No rendering should take place.");
+            return;
+        }
+        console.log(parentElement);
+        if (currentScene === null) {
+            console.log("No scene to render! No rendering should take place.");
+            return;
+        }
+        console.log("Rendering should take place.");
+        const width = parentElement.clientWidth;
+        const height = parentElement.clientHeight;
+
+        let camera = new THREE.PerspectiveCamera( 45, width / height, 0.1, 500 );
+        camera.position.z = 3;
+        camera.position.y = 0;
+
+        // refreshRendererSize(currentScene, width, height);
+        renderer.setSize(width, height);
+
+        // For simplicity, re-render every frame rather than on updates.
+        // For performance, it might be better to render on updates only.
+        let controls = new OrbitControls( camera, renderer.domElement );
+        controls.addEventListener( 'change', () => {
+            renderer.render(currentScene, camera); 
+        });
+        const animate = () => {
+            requestAnimationFrame(animate);
+
+            renderer.render(currentScene, camera);
+        }
+
+        animate();
+    }
+
+    function updateModelPosition() {
+        console.log("Attempting to render the scene.");
+        // if (model != null) {
+        //     model.position.y += 0.25;
+        // }
+        // requestAnimationFrame(()=>{ renderer.render(scene,camera)});
+    }
+
+    // function componentDidMount() {
+    //     this.createScene(this.mount);
+    // }
+
+    // const mountRef = useRef(null);
+    // const [mount, setMount] = React.useState(null);
+
+    let currentDiv;
+
+    const measuredRef = useCallback(node => {
+        currentDiv = node;
+        if (node === null) return;
+        currentDiv.appendChild(props.sceneInfo.renderer.domElement);
+        renderScene(node, props.sceneInfo.scene, props.sceneInfo.renderer);
+    }, []);
+
+    useEffect(() => {
+        if (currentDiv == null) {
+            console.log("No div reference to update!");
+            return;
+        }
+        // renderScene(currentDiv, props.scene, props.renderer);
+        // Maybe add some code to return a function that removes this from the DOM?
+    });
+
+
+    return (
+        <div
+            style={{width: "800px", height: "800px"}}
+            ref={measuredRef}>
+        </div>
+    )
+}

@@ -35,6 +35,7 @@ export default function PlayBar(props) {
     }
 
     const setLineNum = (n) => {
+        console.log("Setting time slider value to " + n);
         props.setTimeSliderValue(n);
         props.lineNumberRef.current = n;
     }

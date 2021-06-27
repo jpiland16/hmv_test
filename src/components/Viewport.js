@@ -2,10 +2,13 @@ import './Viewport.css'
 import Menu from './menu/Menu'
 import React from 'react'
 import Visualizer from './visualizer/Visualizer'
+import FileViewer from './visualizer_experimental/FileViewer'
+import { initializeScene } from './visualizer_experimental/SceneInitializer'
 import PlayBar from './PlayBar'
 import TopActionBar from './TopActionBar'
 import CardSet from './cards/CardSet'
 import Animator from './Animator'
+import StatusMessage from './StatusMessage'
 
 import { getMap, getFileList, downloadFile, downloadMetafile } from './viewport-workers/NetOps'
 import { onSelectFileChange, isFileNameValid, clickFile} from './viewport-workers/FileOps'
@@ -13,6 +16,7 @@ import { updateSingleQValue, batchUpdateObject } from './viewport-workers/ModelO
 import { getLocalFromGlobal, getGlobalFromLocal } from './viewport-workers/MathOps'
 import { setSliderPositions, onLoadBones } from './viewport-workers/BoneOps'
 import { resetModel } from './viewport-workers/Reset'
+import { Alert } from '@material-ui/lab'
 
 let childrenOf = {};
 let parentOf = {};
@@ -22,6 +26,8 @@ const lastFiles = [null]; // Wrapped in an array to be mutable
 const fileMap = [null]; // Wrapped in an array to be mutable
 
 export default function Viewport(props) {
+
+    console.log("Re-rendering viewport.")
     
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
@@ -62,6 +68,8 @@ export default function Viewport(props) {
     const [ downloadPercent, setDownloadPercent ] = React.useState(0);
     const [ downloading, setDownloading ] = React.useState(false);
     const [ openLab, setOpenLab ] = React.useState("");
+    const [ fileStatus, setFileStatus ] = React.useState("Contacting server");
+    const [ sceneInfo, setSceneInfo ] = React.useState({ scene: null, model: null, camera: null, renderer: null });
     
     /*   ---------------------
      *   REFS (React.useRef())
@@ -97,6 +105,8 @@ export default function Viewport(props) {
             setExpandedItems: setExpandedItems,
             selectedFile: selectedFile,
             setSelectedFile: setSelectedFile,
+            fileStatus: fileStatus,
+            setFileStatus: setFileStatus,
             clickFile: (id) => clickFile(propertySet, id), 
             onSelectFileChange: (file) => onSelectFileChange(propertySet, file),
             checkFileName: (fname) => isFileNameValid(propertySet, fname),
@@ -141,6 +151,8 @@ export default function Viewport(props) {
             getCamera: getCamera,
             orbitControls: orbitControls,
             getControls: getControls,
+            sceneInfo: sceneInfo,
+            setSceneInfo: setSceneInfo,
 
             // QUATERNION PROPERTIES
             globalQs: globalQs,
@@ -263,6 +275,10 @@ export default function Viewport(props) {
         return orbitControls.current;
     }
 
+    function VisualizerOrOtherwise(props) {
+        return <Visualizer {...(props.propSet)} onClick = { props.onClick } />;
+    }
+
     /*  ----------------------------------------
      *  RETURN OF THE RENDER - PROPS -> CHILDREN
      *  ---------------------------------------- */
@@ -270,7 +286,8 @@ export default function Viewport(props) {
     return (
         <div className="myView">
             <Menu {...propertySet} />
-            <Visualizer {...propertySet} onClick = { (event) => !menuIsPinned && setMenuIsOpen(false) } />
+            {/* <Visualizer {...propertySet} onClick = { (event) => !menuIsPinned && setMenuIsOpen(false) } /> */}
+            <FileViewer targetFile={"5_27_2_22_1624774962736"} {...propertySet}/>
             <PlayBar {...propertySet} disabled={data.current.length === 0} />
             <CardSet {...propertySet} />
             <TopActionBar {...propertySet} />

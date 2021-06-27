@@ -61,7 +61,7 @@ function parseFormFields(fields) {
         metadata.targets.push({
             bone: sensor.bone,
             type: sensor.dataType,
-            column: i * 4,
+            column: (i * 4) + 1,
             localTransformQuaternion: {
                 x: 0.7071,
                 y: 0.7071,

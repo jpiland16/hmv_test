@@ -9,6 +9,10 @@ export function updateSingleQValue(props, boneId, qIndex, newValue) {
 }
 
 export function batchUpdateObject(props, boneId, slideArray) {
+    if (props.bones === null) {
+        console.log("Unable to update bones because the bone list hasn't been initialized yet.")
+        return;
+    }
     let newSliderValues = Object.getOwnPropertyNames(sliderValuesShadowCopy).length > 0 ? {...sliderValuesShadowCopy} : { ...props.sliderValues }; // Create shallow clone of old model state
     newSliderValues[boneId] = slideArray;
     let newQ = new THREE.Quaternion(slideArray[0], slideArray[1], slideArray[2], slideArray[3]);
