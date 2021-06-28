@@ -16,8 +16,11 @@ let boneNames = {
     LLL: "left_lower_leg"
 }
 
+// Does not need to check for a mapping from filename to metadata in the current scheme, so it always
+// just rubber stamps the file. May be changed later based on other criterion.
 export function isFileNameValid(props, fname) {
-    return props.fileMap[0] && Object.getOwnPropertyNames(props.fileMap[0]).indexOf(fname) >= 0
+    return true;
+    // return props.fileMap[0] && Object.getOwnPropertyNames(props.fileMap[0]).indexOf(fname) >= 0
 }
 
 export function clickFile(props, id) {
@@ -121,6 +124,7 @@ export function onSelectFileChange(props, mySelectedFile) {
                 }
                 props.onLoadBones(bones)
                 // props.batchUpdate("RUA", [0,0,0,1]);
+                props.setTimeSliderValue(0);
                 props.setFileStatus("Complete"); // Determining the next stage by completing the previous stage forces sequential loading. Try using progress flags.
             });
         })

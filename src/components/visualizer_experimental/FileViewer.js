@@ -1,4 +1,5 @@
 import React from 'react'
+import { useEffect, useCallback } from 'react';
 import { Alert } from '@material-ui/lab'
 import { Button } from '@material-ui/core'
 import io from 'socket.io-client'
@@ -35,108 +36,7 @@ class FileViewer extends React.Component {
     componentDidMount() {
         console.log("Target file: ");
         console.log(this.props.targetFile);
-        this.props.onSelectFileChange(this.props.targetFile);
-
-        // This should be extracted out to whatever JSX contains this component, but
-        // right now it's on its own, so it has full exclusive access to the URL.
-        // console.log(this.props.history);
-        // console.log(this.props.history.location.search);
-        // let query = new URLSearchParams(this.props.history.location.search);
-        // for(var key of query.keys()) {
-        //     console.log(key);
-        // }
-        // if (!query.get('filename')) {
-        //     console.log("No filename was specified! We should abort and notify the user.");
-        // }
-        // //This is asynchronous, so we cannot rely on it. How should we ensure that we can always access state? Maybe an instance variable.
-        // // this.fileName = query.get('filename');
-        // this.fileName = this.props.targetFile;
-        // console.log(this.fileName);
-
-        // const URL = "http://localhost:3000";
-        // const socket = io(URL, { 
-        //     autoConnect: false,
-        //     auth: {
-        //         username: "placeholder_username"
-        //     },
-        //     query: {
-        //         "file": this.fileName
-        //         // "file": "badfilebutfile"
-        //     },
-        // });
-
-        // socket.on("Processing data", () => {
-        //     console.log("Received processing data message");
-        //     this.changeStatus("Processing data")();
-        // })
-
-        // socket.on("File ready", () => {
-        //     this.changeStatus("Loading file")();
-        //     this.getFile()
-        //     .then((responses) => {
-        //         console.log(responses[0]);
-        //         console.log(responses[1]);
-        //         this.setState({
-        //             data: responses[0],
-        //             metadata: responses[1],
-        //         })
-        //         this.state.socket.disconnect();
-        //         this.changeStatus("Loading models")();
-        //         initializeScene().then((newSceneInfo)=> { // This call gets us way too nested. This should be extracted as a function.
-        //             this.sceneInfo = {
-        //                 scene: newSceneInfo.scene,
-        //                 model: newSceneInfo.model,
-        //                 camera: null,
-        //                 renderer: newSceneInfo.renderer,
-        //             };                
-
-        //             let modelBoneList = Object.getOwnPropertyNames(boneNames);
-
-        //             let bones = [];
-        //             for (let i = 0; i < modelBoneList.length; i++) {
-        //                 bones[modelBoneList[i]] = newSceneInfo.model.getObjectByName(boneNames[modelBoneList[i]])
-        //             }
-        //             this.props.onLoadBones(bones)
-        //             this.props.batchUpdate("RUA", [0,0,0,1]);
-        //             this.changeStatus("Complete")(); // Determining the next stage by completing the previous stage forces sequential loading. Try using progress flags.
-        //         });
-        //     })
-        //     .catch((error) => {
-        //         this.setState({
-        //             errorMessage: "Encountered an error retrieving the file from the server. Try reloading or resubmitting."
-        //         });
-        //         this.changeStatus("Error")();
-        //         this.state.socket.disconnect();
-        //     });
-        // })
-
-        // socket.on("File missing", () => {
-        //     console.log("File doesn't exist.");
-        //     // It might be better to add parameters to this.changeStatus instead of passing through state.
-        //     this.setState({
-        //         errorMessage: "The requested file doesn't exist on the server. Try resubmitting."
-        //     });
-        //     this.changeStatus("Error")();
-        //     socket.disconnect();
-        // })
-
-        // socket.onAny((event, ...args) => {
-        //     console.log("Received data through socket.");
-        //     console.log(event, args);
-        // });
-
-        // // establish socket connection with server
-        // socket.connect();
-        // console.log("Connected with socket.");
-        // this.state.socket = socket;
-        // //  if update is received, page status is based on current state.
-        // //  possible status:
-        // //      waiting for response from server
-        // //      server is processing file
-        // //      server encountered an error, your file isn't coming
-        // //      server is sending the file right now
-        // //      the actual data, visualized.
-        // //  state needs to be reassigned (new pointer obj) so that re-rendering happens
+        // this.props.onSelectFileChange(this.props.targetFile); // This should not trigger every time the component re-renders.
     }
 
     LoadingMessage(props) {

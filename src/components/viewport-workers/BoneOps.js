@@ -38,6 +38,7 @@ export function onLoadBones(props, bones) {
     }
 
     setSliderPositions(props, bones, props.useGlobalQs.current);
+    // props.setTimeSliderValue(0); // should not be done unless we have a way to ensure that it takes full effect on the model and slider (both or neither)
 }
 
 export function setSliderPositions(props, bones, useGlobalQs) {

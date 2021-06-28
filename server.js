@@ -62,13 +62,88 @@ function walkDirectory(dir) {
     return myPromise;
 }
 
+/**
+ * Asynchronously and returns the display name from the metadata file at the given filepath.
+ * @param {String} filepath The directory containing the metadata file which has the desired display name.
+ * @returns A Promise that resolves to the display name for the data file. Resolves to 'null' for directories and
+ * rejects if the associated metadata.json file can't be parsed.
+ */
+function getFileDisplayName(filepath) {
+    return new Promise((myResolve, myReject) => {
+       fs.readFile(filepath+'/metadata.json', 'utf8', (err, jsonString) => {
+            if (err) {
+                myResolve(null);
+                return;
+            }
+            try {
+                let displayName = JSON.parse(jsonString).displayName;
+                myResolve(displayName? displayName : null);
+            } catch (err) {
+                myReject(err);
+            }
+        }) 
+    })
+    
+}
+
+/**
+ * Asynchronously creates a nested JS object matching the file structure of the given directory,
+ * where folders have children iff they have subdirectories.
+ * Does not include the parameter directory.
+ * @example 
+ * // Returns [{name: child1, id: child1}, {name: child2, id: child2, children: [{name: grandchild, id: grandchild}]}]
+ * // for the following file structure:
+ * // parent
+ * // |-- child1
+ * // |    `-- document.txt
+ * // `-- child2
+ * //      `-- grandchild
+ * getDirStructure("parent")
+ * @param {String} dir The name of the directory to encode.
+ * @returns Returns JS object matching the directory structure of dir.
+ */
+ function getDirStructure(dir) {
+    return new Promise((myResolve, myReject) => {
+        let childDirectories = [];
+        fs.readdir(dir, {withFileTypes: true}, (err, fileList) => {
+            if (err) {
+                myReject(err);
+                return; 
+            }
+            let promises = [];
+            fileList.forEach((file) => {
+                if (file.isDirectory()) {
+                    let dirObj = {
+                        name: null,
+                        id: dir+'/'+file.name,
+                        children: null,
+                    }
+                    let dirStructPromise = getDirStructure(dir+'/'+file.name);
+                    dirStructPromise.then((subDir) => {
+                        dirObj.children = subDir;
+                    });
+                    let displayNamePromise = getFileDisplayName(dir+'/'+file.name);
+                    displayNamePromise.then((displayName) => {
+                        dirObj.name = (displayName === null)? file.name : displayName;
+                    });
+                    promises.push(dirStructPromise, displayNamePromise);
+                    childDirectories.push(dirObj);
+                }
+            });
+            Promise.all(promises).then((subDirectories) => {
+                myResolve(childDirectories.length > 0 ? childDirectories : null);
+            });
+        });
+    });
+}
+
 async function scanAllFiles() {
     return new Promise(async function (myResolve, myReject) {
         try {
-            let returnedFiles = await walkDirectory(`./files`);
+            let returnedFiles = await getDirStructure(`./files`);
             console.log("Directory rescan requested at " + new Date().toUTCString());
             let fileListString = JSON.stringify(returnedFiles);
-            fs.writeFileSync(`${__dirname}/fileList.json`, fileListString);
+            fs.writeFileSync(`${__dirname}/fileList.json`, fileListString); // Can be async without causing any problems
 
             myResolve(returnedFiles);
         } catch(error) {
@@ -150,10 +225,23 @@ app.post("/api/postform", (req, res) => {
     
 })
 
+// Deals with the strange arrangement Sam needs to fix with the way
+// file IDs are assigned by the getDirStructure function, where every
+// file ID starts with "./files/". Should be removed soon.
+function cleanFilename(targetFile) {
+    if (targetFile.substr(0,8) === './files/') {
+        return targetFile.substr(8);
+    }
+    return targetFile;
+}
+
 function fileAvailable(targetFile) {
-    let fileRoot = `${__dirname}/files/user-uploads`;
+    targetFile = cleanFilename(targetFile);
+    let fileRoot = `${__dirname}/files/`;
+    console.log("File root: " + fileRoot);
     let dataFilePath = `${fileRoot}/${targetFile}/quaternion_data.dat`;
     let metadataPath = `${fileRoot}/${targetFile}/metadata.json`;
+    console.log(`Checking for available files: ${dataFilePath}, ${metadataPath}`);
     return (fs.existsSync(dataFilePath) && fs.existsSync(metadataPath));
 }
 
@@ -162,6 +250,8 @@ app.get("/api/uploadedfiles", (req, res) => {
     console.log("Received GET request for file.")
     let targetFile = req.query.file;
     console.log("Target file: " + targetFile);
+    targetFile = cleanFilename(targetFile);
+    console.log("Target file after cleaning: " + targetFile);
     // Disregard access code for now
     // if ((app.locals.currentFiles.get(targetFile).accessCode !== req.query.accessCode)) {
     //     res.json({
@@ -169,7 +259,7 @@ app.get("/api/uploadedfiles", (req, res) => {
     //     });
     //     return;
     // }
-    let fileRoot = `${__dirname}/files/user-uploads`;
+    let fileRoot = `${__dirname}/files/`;
     let filePath;
     switch (req.query.type) {
         case ('data'):

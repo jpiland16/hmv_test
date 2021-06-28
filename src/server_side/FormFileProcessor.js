@@ -19,7 +19,6 @@ const processFile = (form, callback, onError) => {
 };
 
 function handleForm(err, fields, files, callback, onError) {
-    // console.log(err);
     if (err) {
         console.log(err);
     }
@@ -46,6 +45,7 @@ function handleForm(err, fields, files, callback, onError) {
 function parseFormFields(fields) {
     metadata = {
         name: "Opportunity Dataset",
+        displayName: fields.displayName,
         globalTransformQuaternion: {
             x: 0.7071,
             y: 0,

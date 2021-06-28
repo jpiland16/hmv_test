@@ -36,6 +36,11 @@ export default function Welcome(props) {
   function launchVisualizer(){
     history.push('/visualizer')
   }
+
+  function launchUploadForm(){
+    history.push('/uploadformtest/material');
+  }
+
   return (
     
     <div>
@@ -57,7 +62,7 @@ export default function Welcome(props) {
               <DialogSelect/>
             </Grid>
             <Grid item>
-              <UploadDialog/>
+              <Button color='primary' variant= 'contained' id = "submitButton" onClick={()=>launchUploadForm()}>Upload Dataset</Button>
             </Grid>
           </Grid> 
         </div>

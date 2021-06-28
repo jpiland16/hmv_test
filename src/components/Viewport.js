@@ -8,7 +8,6 @@ import PlayBar from './PlayBar'
 import TopActionBar from './TopActionBar'
 import CardSet from './cards/CardSet'
 import Animator from './Animator'
-import StatusMessage from './StatusMessage'
 
 import { getMap, getFileList, downloadFile, downloadMetafile } from './viewport-workers/NetOps'
 import { onSelectFileChange, isFileNameValid, clickFile} from './viewport-workers/FileOps'
@@ -213,7 +212,7 @@ export default function Viewport(props) {
      *   ------------------- */  
 
     React.useEffect(() => {
-        if(bones) {
+        // if(bones) { // We no longer have to load the model in order to ask for a file list.
             if(props.firstLoad) {
                 if (files.current.length === 0) {
                     getFileList(propertySet);
@@ -231,7 +230,7 @@ export default function Viewport(props) {
                     files.current = propertySet.lastFiles[0];
                 }
             }
-        }
+        // }
     });
 
     /*  ---------------------
@@ -275,10 +274,6 @@ export default function Viewport(props) {
         return orbitControls.current;
     }
 
-    function VisualizerOrOtherwise(props) {
-        return <Visualizer {...(props.propSet)} onClick = { props.onClick } />;
-    }
-
     /*  ----------------------------------------
      *  RETURN OF THE RENDER - PROPS -> CHILDREN
      *  ---------------------------------------- */
@@ -287,7 +282,7 @@ export default function Viewport(props) {
         <div className="myView">
             <Menu {...propertySet} />
             {/* <Visualizer {...propertySet} onClick = { (event) => !menuIsPinned && setMenuIsOpen(false) } /> */}
-            <FileViewer targetFile={"5_27_2_22_1624774962736"} {...propertySet}/>
+            <FileViewer targetFile={"user-uploads/5_27_2_22_1624774962736"} {...propertySet}/>
             <PlayBar {...propertySet} disabled={data.current.length === 0} />
             <CardSet {...propertySet} />
             <TopActionBar {...propertySet} />

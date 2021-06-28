@@ -1,8 +1,7 @@
-import React from 'react'
-import { useState, useEffect, useRef, useCallback } from 'react'
-import * as THREE from 'three'
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
+import React from 'react';
+import { useEffect, useCallback } from 'react';
+import * as THREE from 'three';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
 export default function ThreeScene(props) {
 

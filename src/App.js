@@ -3,7 +3,6 @@ import Welcome from "./components/WelcomeScreen"
 import CalibrationForm from "./components/CalibrationForm"
 import './App.css';
 import MaterialCalibrationForm from "./components/MaterialCalibrationForm";
-import FileViewer from "./components/FileViewer";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import React from 'react';
 
@@ -28,9 +27,6 @@ export default function App() {
             </Route>
             <Route exact path="/uploadformtest/material">
                 <MaterialCalibrationForm/>
-            </Route>
-            <Route exact path="/uploadformtest/landingpage">
-                <FileViewer/>
             </Route>
             <Route>
                 <div>

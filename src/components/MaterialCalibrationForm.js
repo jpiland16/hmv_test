@@ -50,6 +50,7 @@ class MaterialCalibrationForm extends React.Component {
     console.log("About to send post request.");
     const formData = new FormData();
     formData.append('file', document.getElementById('myFile').files[0]);
+    formData.append('displayName', this.state.displayName);
     formData.append('sensorData', JSON.stringify(this.state.sensors));
     formData.append('timeColumn', this.state.timeColumn);
   
@@ -61,9 +62,9 @@ class MaterialCalibrationForm extends React.Component {
       if (responseJSON.status !== 'File received') {
         console.log('The server rejected the POST request. We should notify the user.');
       }
-      const targetURL = ("/uploadformtest/landingpage?")
+      const targetURL = ("/visualizer?");
       const params = new URLSearchParams();
-      params.set('filename', responseJSON.fileName);
+      params.set('file', './files/user-uploads/'+responseJSON.fileName); // Another place that will change based on the way file addresses are encoded
       console.log(params.toString());
       const target = targetURL + params.toString();
       this.props.history.push(target);
@@ -79,6 +80,7 @@ class MaterialCalibrationForm extends React.Component {
 
   addSensor = () => {
     this.setState({
+      displayName: "",
       sensors: this.state.sensors.concat([{ dataType: "Quaternion", bone: "RUA", startColumn: "" }]),
       validity: {
         noSensors: (this.state.sensors.length+1 < 1)
@@ -126,6 +128,10 @@ class MaterialCalibrationForm extends React.Component {
     console.log("Invalid thingy detected!!!");
   }
 
+  handleNameChange = (event) => {
+    this.setState({ displayName: event.target.value });
+  }
+
   NoSensorsError(props) {
     console.log(props.noSensors);
     if (props.noSensors) {
@@ -138,18 +144,14 @@ class MaterialCalibrationForm extends React.Component {
     return (
       <form onSubmit={this.handleSubmit}>
         <Grid>
-          <Grid container xs={12} spacing={2} justify="flex-start" alignItems="center">
-            <Grid item xs={6}>
-              {/* <input type="file" id="myFile" 
-                required
-                onInvalid={this.customValidityFunction}
-              >
-              </input> */}
-              {/* <Input type="file" id="myFile" required onInvalid={this.customValidityFunction}></Input> */}
+          <Grid container spacing={2} justify="flex-start" alignItems="center">
+            <Grid item xs={4}>
               <Input type="file" id="myFile" required></Input>
             </Grid>
-            
-            <Grid item xs={4}>
+            <Grid item xs={3}>
+              <TextField label="Display name" required onChange={this.handleNameChange}/>
+            </Grid>
+            <Grid item xs={2}>
               <TextField
                 type="number"
                 label="Time column"
@@ -170,13 +172,13 @@ class MaterialCalibrationForm extends React.Component {
         <hr/>
         <p>Sensors</p>
         <Grid container spacing={1}>
-        <Grid container xs={12} spacing={2} justify="center" alignItems="center">
+        <Grid container spacing={2} justify="center" alignItems="center">
           <Grid item xs={12}>
             <this.NoSensorsError noSensors={this.state.validity.noSensors}></this.NoSensorsError>
           </Grid>
         </Grid>
         {this.state.sensors.map((sensor, index) => (
-          <Grid container item xs={12} spacing={3} justify="flex-start" alignItems="center">
+          <Grid container item xs={8} spacing={3} justify="flex-start" alignItems="center">
             <Grid item xs={2}>
               <TextField
                 id="bone_select"
@@ -240,19 +242,12 @@ class MaterialCalibrationForm extends React.Component {
         </Grid>
       </Grid>
       <hr/>
-      <Grid container xs={12} spacing={2} justify="center" alignItems="center">
+      <Grid container spacing={2} justify="center" alignItems="center">
         <Grid item xs={3}>
           <Button type="submit" className="button-submit" disabled={this.state.validity.noSensors}>Submit</Button>
         </Grid>
       </Grid>
       <hr/>
-      <Button onClick={this.printState}>(PRINT STATE)</Button>
-      <Button type="button" onClick={this.handleSubmit}>(SEND HTTP REQUEST)</Button>
-      {this.state.sensors.map((shareholder, index) => (
-        <div>
-          <p>{index}: Bone={shareholder.bone}, Data type={shareholder.dataType}, Start column={shareholder.startColumn} </p>
-        </div>
-      ))}
       </Grid>
       </form>
     )

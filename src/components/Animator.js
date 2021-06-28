@@ -47,16 +47,18 @@ export default function Animator(props) {
                 let LTQ = targets[i].localTransformQuaternion;
 
                 let q1 = new THREE.Quaternion(LTQ.x, LTQ.y, LTQ.z, LTQ.w); // this quaternion rotates the limb to the identity quaternion in OPPORTUNITY world
+
+                let divisionFactor = props.fileMetadata.current.floatsMultiplied? 1000 : 1;
                 
                 let q2=new THREE.Quaternion(
                     // props.data.current[props.timeSliderValue][columnStart + 1] / 1000, // X
                     // props.data.current[props.timeSliderValue][columnStart + 2] / 1000, // Y
                     // props.data.current[props.timeSliderValue][columnStart + 3] / 1000, // Z
                     // props.data.current[props.timeSliderValue][columnStart + 0] / 1000, // W
-                    props.data.current[props.timeSliderValue][columnStart + 1], // X
-                    props.data.current[props.timeSliderValue][columnStart + 2], // Y
-                    props.data.current[props.timeSliderValue][columnStart + 3], // Z
-                    props.data.current[props.timeSliderValue][columnStart + 0], // W
+                    props.data.current[props.timeSliderValue][columnStart + 1] / divisionFactor, // X
+                    props.data.current[props.timeSliderValue][columnStart + 2] / divisionFactor, // Y
+                    props.data.current[props.timeSliderValue][columnStart + 3] / divisionFactor, // Z
+                    props.data.current[props.timeSliderValue][columnStart + 0] / divisionFactor, // W
                 )
 
                 let targetQ = new THREE.Quaternion()

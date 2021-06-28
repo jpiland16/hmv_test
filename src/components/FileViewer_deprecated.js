@@ -200,7 +200,7 @@ class FileViewer extends React.Component {
             dataReq.onerror = (() => {
                 reject();
             })
-            const targetURL = ("/api/uploadedfiles?")
+            const targetURL = ("/api/uploadedfiles?") // TODO: Use a different API URL than 'uploadedfiles' since this is for accessing any files
             const params = new URLSearchParams();
             params.set('file', this.fileName);
             params.set('type', type);
