@@ -137,6 +137,11 @@ function getFileDisplayName(filepath) {
     });
 }
 
+/**
+ * Writes a nested list of all current directories in ./files/ to ./fileList.json. Writes relevant info
+ * for displaying possible dataset selections and their display names.
+ * @returns A Promise that resolves when the file is written and rejects in the case of a file writing error.
+ */
 async function scanAllFiles() {
     return new Promise(async function (myResolve, myReject) {
         try {
@@ -171,19 +176,27 @@ function onProjectUpdate() {
     exec("git pull > git.log && npm run build > build.log")
 }
 
-app.post("/api/post", (req, res) => {
-    console.log("Received post request.");
-    fileProcessor.processFile(req, (data) => {
-        res.json({ message: data });
+function writeFilePromise(filePath, data) {
+    return new Promise((myResolve, myReject) => {
+        fs.writeFile(filePath, data, (err) => {
+            if (err) {
+                myReject(err);
+                return;
+            }
+            myResolve();
+        });
     });
-});
+}
 
-app.post("/api/postform", (req, res) => {
+function handleFormUpload(req, res) {
     const storagePath = './files/user-uploads/';
     let currDate = new Date();
     const directoryName = `${currDate.getMonth()}_${currDate.getDate()}_${currDate.getHours()}_${currDate.getMinutes()}_${currDate.valueOf()}`;
+    let fullPath = storagePath + directoryName;
     console.log("Received post request.");
-    app.locals.currentFiles.set("filename", "Processing") // TODO: This should be a map from file identifier to file status, so we can tell whether we're still working with a file.  
+    app.locals.currentFiles.set(fullPath, { status: "Processing" });
+    console.log("Updated file status. Printing full file status list: ");
+    console.log(app.locals.currentFiles); 
     let onError = (message) => {
         // This should be either (a) sent as a response or (b) stored so that it responds to a later GET message.
         // My inspriation is Gradescope's system, where you upload a file and get taken to a submission viewing screen.
@@ -191,28 +204,22 @@ app.post("/api/postform", (req, res) => {
     };
     try {
         formProcessor.processFile(req, (data, metadata) => {
-            fs.mkdir(storagePath + directoryName, {recursive: true}, (err) => {
+            fs.mkdir(fullPath, {recursive: true}, (err) => {
                 if (err) {
                     console.log("Error occured when trying to make new directory!")
                     //send update to any file listeners
                     return;
                 }
-                fs.writeFile(storagePath + directoryName + "/quaternion_data.dat", data, (err) => {
-                    if (err) {
-                        console.log(err);
-                        //send update to any file listeners
-                        return;
-                    }
-                    //send update to any file listeners
-                })
-                fs.writeFile(storagePath + directoryName + "/metadata.json", JSON.stringify(metadata), (err) => {
-                    if (err) {
-                        console.log(err);
-                        // send update to any file listeners
-                        // remove all files in the case of any error, using a cleanup() function
-                        return;
+                let dataPromise = writeFilePromise(fullPath + "/quaternion_data.dat", data);
+                let metaPromise = writeFilePromise(fullPath + "/metadata.json", JSON.stringify(metadata));
+                console.log("About to print fileListeners:");
+                console.log(app.locals.fileListeners);
+                Promise.all([dataPromise, metaPromise]).then(() => {
+                    if (app.locals.fileListeners.has(fullPath)) {
+                        app.locals.fileListeners.get(fullPath).forEach((socket) => socket.emit('File ready'));
                     }
                 })
+                .catch((err) => console.log(err));
             })
         }, onError);
         // notify listeners that file is done, but do not send the resulting file--this isn't a GET request.
@@ -222,7 +229,17 @@ app.post("/api/postform", (req, res) => {
         console.log("Cancelled due to error. This should probably be reported to the user when they ask for the resource later.")
         console.error(e);
     }
-    
+}
+
+app.post("/api/post", (req, res) => {
+    console.log("Received post request.");
+    fileProcessor.processFile(req, (data) => {
+        res.json({ message: data });
+    });
+});
+
+app.post("/api/postform", (req, res) => {
+    handleFormUpload(req, res);
 })
 
 // Deals with the strange arrangement Sam needs to fix with the way
@@ -237,7 +254,7 @@ function cleanFilename(targetFile) {
 
 function fileAvailable(targetFile) {
     targetFile = cleanFilename(targetFile);
-    let fileRoot = `${__dirname}/files/`;
+    let fileRoot = `${__dirname}/files`;
     console.log("File root: " + fileRoot);
     let dataFilePath = `${fileRoot}/${targetFile}/quaternion_data.dat`;
     let metadataPath = `${fileRoot}/${targetFile}/metadata.json`;
@@ -313,7 +330,9 @@ app.get("/api/*", (req, res) => {
             );
             break;
         case "get-file-list":
-            res.sendFile(`${__dirname}/fileList.json`);
+            scanAllFiles().then(
+                res.sendFile(`${__dirname}/fileList.json`)
+            );
             break;
         case "pull":
             res.send("POST request expected.");
@@ -420,34 +439,53 @@ async function executeDelayed(delayMillis, callback) {
 }
 
 io.on('connection', (socket) => {
+    console.log("A new socket connection just started up");
+    let targetFile = socket.handshake.query.file;
     //when disconnecting, remove from map (and maybe even delete the associated file)
     socket.on('disconnect', (reason) => {
         console.log("Socket was disconnected. Removing them from listener map...");
-        app.locals.fileListeners.delete(socket.handshake.query.file);
+        if (!app.locals.fileListeners.has(targetFile)) { return; }
+        let removeIndex = app.locals.fileListeners.get(targetFile).indexOf(socket);
+        if (removeIndex != -1) {
+            app.locals.fileListeners.get(targetFile).splice(removeIndex, 1);
+        }
     })
     socket.on('Debug request', (info) => {
         console.log("Debug request: client wants message of type " + info.messageType);
         socket.emit(info.messageType, info.params);
     });
-    console.log("A new socket connection just started up");
-    console.log("Asking for file: " + socket.handshake.query.file);
-    //use query to map filename to socket in app.locals.fileListeners
-        // if no such file exists, send that information
-    if (!app.locals.currentFiles.has(socket.handshake.query.file) && !fileAvailable(socket.handshake.query.file)) {
+    console.log("Asking for file: " + targetFile);
+    // TODO: Make this logic more readable by method extraction, so it looks like:
+    //  if file is available:
+    //      say that file is ready, terminate
+    //  if file doesn't exist:
+    //      say that file doesn't exist, terminate
+    //  add socket to listeners for target file
+    //  say the current status of the file, terminate
+    if (fileAvailable(targetFile)) {
+        socket.emit('File ready');
+        return;
+    }
+    if (!app.locals.currentFiles.has(targetFile)) {
         console.log("The requested file does not exist. Time to notify the client.")
         socket.emit("File missing", null);
+        return;
     }
-    app.locals.fileListeners.set(socket.handshake.query.file, socket);
-    //send current file status to socket
-    executeDelayed(1000, () => {
-        socket.emit('Processing data', {});
-        executeDelayed(1000, () => {
-            socket.emit('File ready', {});
-        })
-    })
-    // await sleep(5000);
-    // socket.emit("file status", { status: "Processing" });
-        // if the status is final, there's no need for a listener relationship
+    if (!app.locals.fileListeners.has(targetFile)) {
+        app.locals.fileListeners.set(targetFile, []);
+    }
+    app.locals.fileListeners.get(targetFile).push(socket);
+    console.log("Requested file: " + targetFile);
+    console.log("Printing full file status list that we're about to access: ");
+    console.log(app.locals.currentFiles); 
+    switch (app.locals.currentFiles.get(targetFile).status) {
+        case "Processing":
+            socket.emit('Processing data');
+            return;
+        default:
+            console.log(`The client's target file has an invalid status: ${app.locals.currentFiles.get(targetFile).status}. We should notify them`);
+            return;
+    }
 })
 
 scanAllFiles();

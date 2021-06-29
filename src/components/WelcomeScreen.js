@@ -38,7 +38,7 @@ export default function Welcome(props) {
   }
 
   function launchUploadForm(){
-    history.push('/uploadformtest/material');
+    history.push('/upload');
   }
 
   return (

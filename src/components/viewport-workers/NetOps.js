@@ -14,6 +14,12 @@ async function doXHR(method, url) {
 
 // NETWORK METHODS THAT SHOULD ONLY BE CALLED ONCE
 
+/**
+ * Retrieves the file tree from the server as a nested JSON file containing display names
+ * and IDs for each file. The IDs can be used for GET requests to "/api/uploadedfiles".
+ * @param {Object} props An Object with mutable entries props.files.current and lastFiles
+ * to store the JSON from the server.
+ */
 export async function getFileList(props) {
     doXHR("GET", "/api/get-file-list").then(
         (xhrr) => {

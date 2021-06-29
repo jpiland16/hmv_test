@@ -67,7 +67,7 @@ export default function Viewport(props) {
     const [ downloadPercent, setDownloadPercent ] = React.useState(0);
     const [ downloading, setDownloading ] = React.useState(false);
     const [ openLab, setOpenLab ] = React.useState("");
-    const [ fileStatus, setFileStatus ] = React.useState("Contacting server");
+    const [ fileStatus, setFileStatus ] = React.useState({ status: "Contacting server" });
     const [ sceneInfo, setSceneInfo ] = React.useState({ scene: null, model: null, camera: null, renderer: null });
     
     /*   ---------------------

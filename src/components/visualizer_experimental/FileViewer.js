@@ -72,7 +72,7 @@ class FileViewer extends React.Component {
     }
 
     MainDisplay(props) {
-        switch (props.fileStatus) {
+        switch (props.status) {
             case 'Contacting server':
                 return <props.library.ContactingServerMessage />;
             case 'Processing data':
@@ -82,14 +82,14 @@ class FileViewer extends React.Component {
             case 'Loading models':
                 return <props.library.LoadingModelMessage />
             case 'Error':
-                return <props.library.ErrorMessage errorMessage={props.library.state.errorMessage} />
+                return <props.library.ErrorMessage errorMessage={props.errorMessage} />
             case 'Complete':
                 //If complete, load the files needed for the 3d scene.
                 //Once that's done, we can finally display our scene.
                 // return <props.library.CompleteMessage data={props.library.state.data} metadata={props.library.state.metadata}/>
                 return <Visualizer sceneInfo={props.library.props.sceneInfo} />
         }
-        return <Alert severity="error">Unable to determine the state of this file. Try re-uploading.</Alert>
+        return <Alert severity="error">Unable to determine the state "{props.status}" of this file. Try re-uploading.</Alert>
     }
 
     // Why do we need the double arrow? Because using a function in JSX for onClick will evaluate whatever you pass in.
@@ -160,7 +160,7 @@ class FileViewer extends React.Component {
     render() {
         return (
             <div>
-                <this.MainDisplay fileStatus={this.props.fileStatus} errorMessage="Bad sensor data or something?" library={this}></this.MainDisplay>
+                <this.MainDisplay status={this.props.fileStatus.status} errorMessage={this.props.fileStatus.message} library={this}></this.MainDisplay>
                 {/* <Button onClick={this.getFile}>Send GET request</Button> */}
             </div>
         )

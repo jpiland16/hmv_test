@@ -1,4 +1,5 @@
 import io from 'socket.io-client'
+import { getFileList } from './NetOps' // Rather than importing from NetOps, we should move the dependent code to NetOps.js
 import { initializeScene } from '../visualizer_experimental/SceneInitializer'; // This should belong to Viewport or some other worker.
 
 let boneNames = {
@@ -31,6 +32,7 @@ export function clickFile(props, id) {
 }
 
 export function onSelectFileChange(props, mySelectedFile) {
+    console.log("OnSELECTFILECHANGE IS RUNNING");
     // // IMPORTANT! This method should only be called if mySelectedFile 
     // // has been VERIFIED as a valid file, or if we need to clear/reset the model. (i.e. mySelectedFile === "")
     // if (!props.outgoingRequest) {
@@ -80,12 +82,13 @@ export function onSelectFileChange(props, mySelectedFile) {
 
     socket.on("Processing data", () => {
         console.log("Received processing data message");
-        props.setFileStatus("Processing data"); // What should I use as a stand-in for changing status here? Probably props.setStatus("Processing Data"), or just use a flag
+        props.setFileStatus({ status: "Processing data" }); // What should I use as a stand-in for changing status here? Probably props.setStatus("Processing Data"), or just use a flag
     });
 
     socket.on("File ready", () => {
-        props.setFileStatus("Loading file");
+        props.setFileStatus({ status: "Loading file" });
         console.log(mySelectedFile);
+        getFileList(props);
         getFile(mySelectedFile)
         .then((responses) => {
             console.log(responses[0]); // Data file
@@ -107,7 +110,7 @@ export function onSelectFileChange(props, mySelectedFile) {
             props.fileMetadata.current = JSON.parse(responses[1]);
 
             socket.disconnect();
-            props.setFileStatus("Loading models");
+            props.setFileStatus({ status: "Loading models" });
             initializeScene().then((newSceneInfo)=> { // This call gets us way too nested. This should be extracted as a function.
                 props.setSceneInfo({
                     scene: newSceneInfo.scene,
@@ -125,14 +128,14 @@ export function onSelectFileChange(props, mySelectedFile) {
                 props.onLoadBones(bones)
                 // props.batchUpdate("RUA", [0,0,0,1]);
                 props.setTimeSliderValue(0);
-                props.setFileStatus("Complete"); // Determining the next stage by completing the previous stage forces sequential loading. Try using progress flags.
+                props.setFileStatus({ status: "Complete" }); // Determining the next stage by completing the previous stage forces sequential loading. Try using progress flags.
             });
         })
         .catch((error) => {
             // this.setState({
             //     errorMessage: "Encountered an error retrieving the file from the server. Try reloading or resubmitting."
             // });
-            props.setFileStatus("Error");
+            props.setFileStatus({ status: "Error", message: "The file could not be retrieved from the server. Try refreshing or resubmitting." });
             socket.disconnect();
         });
     });
@@ -143,7 +146,7 @@ export function onSelectFileChange(props, mySelectedFile) {
         // this.setState({
         //     errorMessage: "The requested file doesn't exist on the server. Try resubmitting."
         // });
-        props.setFileStatus("Error");
+        props.setFileStatus({ status: "Error", message: "The requested file doesn't exist. Try reselecting the file or resubmitting." });
         socket.disconnect();
     })
 

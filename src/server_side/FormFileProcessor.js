@@ -3,7 +3,6 @@ const FileReader = require('filereader');
 const { spawn } = require('child_process');
 
 const processFile = (form, callback, onError) => {
-    console.log("onError: " + onError);
     console.log("Processing a file sent by a POST request.");
     const formParser = formidable();
     try {
@@ -95,7 +94,7 @@ function handleUploadedFile(event, fields, callback, onError) {
     var pyOutput = "";
     var errorOutput;
     pyProcess.stdout.on('data', (pyData) => {
-        console.log("Data from python file: " + pyData);
+        // console.log("Data from python file: " + pyData);
         let responseMessage = pyData.toString('utf8');
         pyOutput += responseMessage;
     });    
@@ -110,7 +109,6 @@ function handleUploadedFile(event, fields, callback, onError) {
             onError(errorOutput);
             return;
         }
-        console.log("Sending data back from server side: " + pyOutput);
         callback(pyOutput);
     })
     pyProcess.stdin.write(event.target.result);

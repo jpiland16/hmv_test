@@ -133,7 +133,6 @@ class MaterialCalibrationForm extends React.Component {
   }
 
   NoSensorsError(props) {
-    console.log(props.noSensors);
     if (props.noSensors) {
       return <Alert severity="warning" hidden={true}>Please add specifications for one or more sensors.</Alert>;
     }
