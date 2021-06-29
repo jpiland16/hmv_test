@@ -91,18 +91,20 @@ function getFileDisplayName(filepath) {
  * where folders have children iff they have subdirectories.
  * Does not include the parameter directory.
  * @example 
- * // Returns [{name: child1, id: child1}, {name: child2, id: child2, children: [{name: grandchild, id: grandchild}]}]
+ * // Returns [{name: child1, id: child1}, {name: child2, id: child2, children: [{name: foo, id: child2/grandchild}]}]
  * // for the following file structure:
  * // parent
  * // |-- child1
  * // |    `-- document.txt
  * // `-- child2
  * //      `-- grandchild
- * getDirStructure("parent")
+ * //          `-- metadata.json (contains "displayName": "foo")
+ * getDirStructure("parent", false)
  * @param {String} dir The name of the directory to encode.
+ * @param {String} displayDirname The prefix to the filename in the ID field for each subdirectory.
  * @returns Returns JS object matching the directory structure of dir.
  */
- function getDirStructure(dir) {
+ function getDirStructure(dir, displayDirname) {
     return new Promise((myResolve, myReject) => {
         let childDirectories = [];
         fs.readdir(dir, {withFileTypes: true}, (err, fileList) => {
@@ -115,10 +117,10 @@ function getFileDisplayName(filepath) {
                 if (file.isDirectory()) {
                     let dirObj = {
                         name: null,
-                        id: dir+'/'+file.name,
+                        id: displayDirname + '/' + file.name,
                         children: null,
                     }
-                    let dirStructPromise = getDirStructure(dir+'/'+file.name);
+                    let dirStructPromise = getDirStructure(dir+'/'+file.name, displayDirname+'/'+file.name);
                     dirStructPromise.then((subDir) => {
                         dirObj.children = subDir;
                     });
@@ -145,7 +147,7 @@ function getFileDisplayName(filepath) {
 async function scanAllFiles() {
     return new Promise(async function (myResolve, myReject) {
         try {
-            let returnedFiles = await getDirStructure(`./files`);
+            let returnedFiles = await getDirStructure(`./files`, '');
             console.log("Directory rescan requested at " + new Date().toUTCString());
             let fileListString = JSON.stringify(returnedFiles);
             fs.writeFileSync(`${__dirname}/fileList.json`, fileListString); // Can be async without causing any problems
@@ -194,7 +196,7 @@ function handleFormUpload(req, res) {
     const directoryName = `${currDate.getMonth()}_${currDate.getDate()}_${currDate.getHours()}_${currDate.getMinutes()}_${currDate.valueOf()}`;
     let fullPath = storagePath + directoryName;
     console.log("Received post request.");
-    app.locals.currentFiles.set(fullPath, { status: "Processing" });
+    app.locals.currentFiles.set(fullPath.substr('./files/'.length), { status: "Processing" });
     console.log("Updated file status. Printing full file status list: ");
     console.log(app.locals.currentFiles); 
     let onError = (message) => {

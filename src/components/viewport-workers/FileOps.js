@@ -142,10 +142,6 @@ export function onSelectFileChange(props, mySelectedFile) {
 
     socket.on("File missing", () => {
         console.log("File doesn't exist.");
-        // It might be better to add parameters to this.changeStatus instead of passing through state.
-        // this.setState({
-        //     errorMessage: "The requested file doesn't exist on the server. Try resubmitting."
-        // });
         props.setFileStatus({ status: "Error", message: "The requested file doesn't exist. Try reselecting the file or resubmitting." });
         socket.disconnect();
     })

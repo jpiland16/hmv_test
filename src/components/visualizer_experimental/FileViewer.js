@@ -7,7 +7,6 @@ import { withRouter } from "react-router-dom";
 import Visualizer from './Visualizer';
 import { initializeScene } from './SceneInitializer';
 
-// I expect this to have pretty much the same contents as Viewport.js. I just want to sandbox with this before I port it over.
 
 let boneNames = {
     LUA: "upperarm_l",

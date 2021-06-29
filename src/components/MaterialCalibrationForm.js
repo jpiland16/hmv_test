@@ -64,14 +64,12 @@ class MaterialCalibrationForm extends React.Component {
       }
       const targetURL = ("/visualizer?");
       const params = new URLSearchParams();
-      params.set('file', './files/user-uploads/'+responseJSON.fileName); // Another place that will change based on the way file addresses are encoded
+      params.set('file', '/user-uploads/'+responseJSON.fileName);
       console.log(params.toString());
       const target = targetURL + params.toString();
       this.props.history.push(target);
     });
     formPostReq.open("POST", "/api/postform");
-    // TODO: Right now the response is in the default 'text' format, but it might
-    // be more appropriate to use another format.
     formPostReq.send(formData);
     console.log("Post request has been sent: ");
     console.log(formPostReq);
