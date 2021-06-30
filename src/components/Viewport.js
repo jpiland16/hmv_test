@@ -31,13 +31,13 @@ export default function Viewport(props) {
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
 
-    let initialSelectedFile = ""
+    let initialSelectedFile = { fileName: "", displayName: "None" };
     let initialExpandedItems = ["/"];
     let initialFileStatus = { status: "Contacting server" };
 
     if (urlParams.has('file')) {
         const fpath = urlParams.get('file');
-        initialSelectedFile = fpath;
+        initialSelectedFile.fileName = fpath;
         let charPos = 1;
         while (charPos < fpath.length) {
             if (fpath.charAt(charPos) === '/')
@@ -105,9 +105,10 @@ export default function Viewport(props) {
             setExpandedItems: setExpandedItems,
             selectedFile: selectedFile,
             setSelectedFile: setSelectedFile,
+
             fileStatus: fileStatus,
             setFileStatus: setFileStatus,
-            clickFile: (id) => clickFile(propertySet, id), 
+            clickFile: (id, name) => clickFile(propertySet, id, name), 
             onSelectFileChange: (file) => onSelectFileChange(propertySet, file),
             checkFileName: (fname) => isFileNameValid(propertySet, fname),
             files: files,
@@ -221,9 +222,9 @@ export default function Viewport(props) {
                     getFileList(propertySet);
                 }
                 getMap(propertySet).then(() => {
-                    if (selectedFile !== "") {
-                        if (isFileNameValid(propertySet, selectedFile)) {
-                            onSelectFileChange(propertySet, selectedFile);
+                    if (selectedFile.fileName !== "") {
+                        if (isFileNameValid(propertySet, selectedFile.fileName)) {
+                            onSelectFileChange(propertySet, selectedFile.fileName, selectedFile.displayName);
                         }
                     }
                 }, () => { });

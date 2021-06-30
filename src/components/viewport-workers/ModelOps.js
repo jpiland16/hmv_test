@@ -33,7 +33,7 @@ export function batchUpdateObject(props, boneId, slideArray) {
     
     if (props.childrenOf[boneId]) affectedByInheritance.push(...props.childrenOf[boneId])
 
-    if (props.playTimerId.current === 0 && (props.dev && props.selectedFile === "")) { // (Don't bother doing this when viewing pre-recorded data, or if we aren't in dev mode and running tests.)
+    if (props.playTimerId.current === 0 && (props.dev && props.selectedFile.fileName === "")) { // (Don't bother doing this when viewing pre-recorded data, or if we aren't in dev mode and running tests.)
         while (affectedByInheritance.length > 0) {
             let currentBone = affectedByInheritance.shift();
             if (props.childrenOf[currentBone]) affectedByInheritance.push(...props.childrenOf[currentBone])

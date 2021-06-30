@@ -19,7 +19,7 @@ export default function Animator(props) {
         
         console.log("Animator is activating.")
 
-        if (props.selectedFile === "") { return; }
+        if (props.selectedFile.fileName === "") { return; }
 
         console.log("Animator is still activated.")
 

@@ -182,11 +182,11 @@ class FileViewer extends React.Component {
 
 
     render() {
-        console.log("Selected file: " + this.props.selectedFile);
+        console.log("Selected file: " + this.props.selectedFile.fileName);
         return (
             <div>
                 <this.FileDisplay 
-                    fileSelected={this.props.selectedFile !== ''} 
+                    fileSelected={this.props.selectedFile.fileName !== ''} 
                     status={this.props.fileStatus.status} 
                     errorMessage={this.props.fileStatus.message} 
                     sceneInfo={this.props.sceneInfo}

@@ -5,14 +5,14 @@ export function isFileNameValid(props, fname) {
     // return props.fileMap[0] && Object.getOwnPropertyNames(props.fileMap[0]).indexOf(fname) >= 0
 }
 
-export function clickFile(props, id) {
+export function clickFile(props, id, name) {
     if(isFileNameValid(props, id)) {
-        onSelectFileChange(props, id);
+        onSelectFileChange(props, id, name);
         window.history.replaceState(null, null, "?file=" + id);
     }
 }
 
-export function onSelectFileChange(props, mySelectedFile) {
+export function onSelectFileChange(props, mySelectedFile, myDisplayName) {
     console.log("OnSELECTFILECHANGE IS RUNNING");
     // // IMPORTANT! This method should only be called if mySelectedFile 
     // // has been VERIFIED as a valid file, or if we need to clear/reset the model. (i.e. mySelectedFile === "")
@@ -42,8 +42,9 @@ export function onSelectFileChange(props, mySelectedFile) {
     //     }
     // }
     props.data.current = [];
+    props.setTimeSliderValue(0);
     console.log("Selected file has been changed to " + mySelectedFile + " (re-printed below)");
     console.log(mySelectedFile);
-    props.setSelectedFile(mySelectedFile); // We may want some verification, but verification is also done by this method.
+    props.setSelectedFile({ fileName: mySelectedFile, displayName: myDisplayName }); // We may want some verification, but verification is also done by this method.
     props.subscribeToFile(props, mySelectedFile);
 }
