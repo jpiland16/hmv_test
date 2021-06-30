@@ -13,18 +13,16 @@ export default function TopActionBar(props) {
                 props.menuIsOpen && props.getWindowDimensions()[0] > 768 ? "60%" : "calc(100% - 48px)" 
                 : props.menuIsOpen && props.getWindowDimensions()[0] > 768 ? "calc(60% - 28vw)" : "calc(100% - 28vw - 48px)" 
         }}> 
-            <Tooltip placement="bottom" title={props.modelLoaded ? "Click to choose file" : "Please wait for the model to load"}>
+            <Tooltip placement="bottom" title="Click to choose file">
                 <Typography className="fileName" style={{marginRight: "12px"}}
                     onClick={() => {
-                        if (props.modelLoaded) {
-                            props.setMenuIsOpen(true);
-                            props.setSelectedPanel(0);
-                        }
-                }} >
+                        props.setMenuIsOpen(true);
+                        props.setSelectedPanel(0);
+                    }}>
                     {props.selectedFile.fileName === "" ? "No file selected." : <span><b>Viewing: </b>{(props.selectedFile.displayName.length > 16 ? "..." : "") + props.selectedFile.displayName.substr(-16)}</span>}
                 </Typography>
             </Tooltip>
-            <Button disabled={!props.modelLoaded} className="topBtn" onClick={() => {
+            <Button className="topBtn" onClick={() => {
                         if(props.selectedFile.fileName === "") {
                             props.setMenuIsOpen(true);
                             props.setSelectedPanel(0);

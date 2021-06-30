@@ -287,7 +287,7 @@ export default function Viewport(props) {
             <Menu {...propertySet} />
             {/* <Visualizer {...propertySet} onClick = { (event) => !menuIsPinned && setMenuIsOpen(false) } /> */}
             <FileViewer targetFile={"user-uploads/5_27_2_22_1624774962736"} {...propertySet}/>
-            <PlayBar {...propertySet} disabled={data.current.length === 0} />
+            <PlayBar {...propertySet} disabled={!fileStatus || fileStatus.status !== "Complete"} />
             <CardSet {...propertySet} />
             <TopActionBar {...propertySet} />
             <Animator {...propertySet} />

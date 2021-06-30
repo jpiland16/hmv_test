@@ -164,8 +164,6 @@ function getFilePart(fileName, type) {
         console.log(params.toString());
         const target = targetURL + params.toString();
         dataReq.open("GET", target);
-        // TODO: Right now the response is in the default 'text' format, but it might
-        // be more appropriate to use another format.
         dataReq.send();
         console.log("GET request has been sent: ");
     });
@@ -195,7 +193,6 @@ export function subscribeToFile(props, mySelectedFile) {
         getFile(mySelectedFile)
         .then((responses) => {
             //When we get the files, we should use the original code to assign them as quaternions (after decoding from metadata)
-            // Lifted from NetOps.js temporarily
             let inputArray = responses[0].split("\n");
             let linesArray = [];
     
@@ -232,9 +229,6 @@ export function subscribeToFile(props, mySelectedFile) {
             });
         })
         .catch((error) => {
-            // this.setState({
-            //     errorMessage: "Encountered an error retrieving the file from the server. Try reloading or resubmitting."
-            // });
             props.setFileStatus({ status: "Error", message: "The file could not be retrieved from the server. Try refreshing or resubmitting." });
             socket.disconnect();
         });
@@ -257,28 +251,6 @@ export function subscribeToFile(props, mySelectedFile) {
 }
 
 export function downloadMetafile(props, selectedFilename) {
-    // let path = "/files/meta/" + props.fileMap[0][selectedFilename] + ".json"
-    // if (window.location.href.substring(0, 22) === "http://localhost:3000/") {
-    //     path = "https://raw.githubusercontent.com/jpiland16/hmv_test/master" + path
-    // }
-
-    // return new Promise((myResolve, myReject) => {
-    //     doXHR('GET', path).then(
-    //         (xhrr) => {
-    //             try {
-    //                 props.fileMetadata.current = JSON.parse(xhrr.responseText)
-    //                 myResolve()
-    //             } catch (e) {
-    //                 console.error("Metafile '" + path + "' not found!")
-    //                 myReject()
-    //             }
-    //         }, (errXhrr) => {
-    //             console.log(errXhrr)
-    //             myReject()
-    //         }
-    //     )
-    // });
-
     return new Promise((resolve, reject) => {
         let dataReq = new XMLHttpRequest();
         dataReq.onload = (event => {

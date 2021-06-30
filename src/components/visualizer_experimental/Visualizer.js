@@ -7,6 +7,9 @@ import './Visualizer.css';
 
 export default function ThreeScene(props) {
 
+    const MIN_CAMERA_DISTANCE = 1.25;
+    const MAX_CAMERA_DISTANCE = 7.5;
+
     // const [camera, setCamera] = useState(null);
     console.log("Printing scene info:");
     console.log(props.sceneInfo);
@@ -38,7 +41,7 @@ export default function ThreeScene(props) {
         const width = parentElement.clientWidth;
         const height = parentElement.clientHeight;
 
-        let camera = new THREE.PerspectiveCamera( 45, width / height, 0.1, 500 );
+        let camera = new THREE.PerspectiveCamera( 45, width / height, 0.01, 500 );
         camera.position.z = 3;
         camera.position.y = 0;
 
@@ -48,6 +51,8 @@ export default function ThreeScene(props) {
         // For simplicity, re-render every frame rather than on updates.
         // For performance, it might be better to render on updates only.
         let controls = new OrbitControls( camera, renderer.domElement );
+        controls.minDistance = MIN_CAMERA_DISTANCE;
+        controls.maxDistance = MAX_CAMERA_DISTANCE;
         controls.addEventListener( 'change', () => {
             renderer.render(currentScene, camera); 
         });

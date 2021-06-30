@@ -87,18 +87,50 @@ function getFileDisplayName(filepath) {
 }
 
 /**
+ * Checks the target filepath to see if the directory should be displayed to the user.
+ * Note that this does NOT check recursively, so a directory containing an invalid directory
+ * will be shown to the user.
+ * @param {String} dir The filepath from the project root of the target directory.
+ * @returns A Promise that resolves to true if the filepath leads to a directory that should
+ * be shown to the client, and resolves to false otherwise.
+ */
+function isValidDir(dir) {
+    return new Promise((myResolve, myReject) => {
+        fs.readdir(dir, { withFileTypes: true }, (err, dirChildren) => {
+            if (err) {
+                myResolve(false);
+                return;
+            }
+            let foundData, foundMetadata, containsFolder;
+            foundData = foundMetadata = containsFolder = false;
+            for (let file of dirChildren) {
+                containsFolder = containsFolder || file.isDirectory();
+                foundData = foundData || file.name === 'quaternion_data.dat';
+                foundMetadata = foundMetadata || file.name === 'metadata.json';
+            }
+            myResolve(containsFolder || (foundData && foundMetadata));
+        })
+    })
+    
+    
+}
+
+/**
  * Asynchronously creates a nested JS object matching the file structure of the given directory,
  * where folders have children iff they have subdirectories.
- * Does not include the parameter directory.
+ * Does not include the parameter directory. Does not include any leaf directory that is missing
+ * a metadata.json or quaternion_data.dat file.
  * @example 
  * // Returns [{name: child1, id: child1}, {name: child2, id: child2, children: [{name: foo, id: child2/grandchild}]}]
  * // for the following file structure:
  * // parent
  * // |-- child1
- * // |    `-- document.txt
+ * // |    `-- metadata.json (contains no "displayName:" field)
+ * // |    `-- quaternion_data.dat
  * // `-- child2
  * //      `-- grandchild
- * //          `-- metadata.json (contains "displayName": "foo")
+ * //          |-- metadata.json (contains "displayName": "foo")
+ * //          `-- quaternion_data.dat
  * getDirStructure("parent", false)
  * @param {String} dir The name of the directory to encode.
  * @param {String} displayDirname The prefix to the filename in the ID field for each subdirectory.
@@ -128,11 +160,14 @@ function getFileDisplayName(filepath) {
                     displayNamePromise.then((displayName) => {
                         dirObj.name = (displayName === null)? file.name : displayName;
                     });
-                    promises.push(dirStructPromise, displayNamePromise);
-                    childDirectories.push(dirObj);
+                    let validDirPromise = isValidDir(dir+'/'+file.name);
+                    validDirPromise.then((valid) => {
+                        if (valid) { childDirectories.push(dirObj); }
+                    })
+                    promises.push(dirStructPromise, displayNamePromise, validDirPromise);
                 }
             });
-            Promise.all(promises).then((subDirectories) => {
+            Promise.all(promises).then(() => {
                 myResolve(childDirectories.length > 0 ? childDirectories : null);
             });
         });

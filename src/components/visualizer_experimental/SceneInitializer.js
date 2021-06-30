@@ -50,6 +50,8 @@ function loadModel() {
             // gltf.scene.position.set(-2,-2,-2)
 
             var model = gltf.scene;
+            // https://discourse.threejs.org/t/parts-of-glb-object-disappear-in-certain-angles-and-zoom/21295/4
+		    model.traverse(function(obj) { obj.frustumCulled = false; });
 
             // let boneList = Object.getOwnPropertyNames(boneNames);
 

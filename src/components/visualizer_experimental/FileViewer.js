@@ -96,7 +96,7 @@ class FileViewer extends React.Component {
     // importing 'library'
     FileDisplay(props) {
         if (!props.fileSelected) {
-            return <Alert severity="info">Please select a file to view from the 'Choose File' section of the menu on the left.</Alert>;
+            return <Alert severity="info">Please select a file to view from the 'Choose File' section of the menu on the left. You can also click "Choose a file" above.</Alert>;
         }
         switch (props.status) {
             case 'Contacting server':
