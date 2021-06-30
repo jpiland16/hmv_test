@@ -194,9 +194,6 @@ export function subscribeToFile(props, mySelectedFile) {
         getFileList(props);
         getFile(mySelectedFile)
         .then((responses) => {
-            console.log(responses[0]); // Data file
-            console.log(responses[1]); // Metadata file
-
             //When we get the files, we should use the original code to assign them as quaternions (after decoding from metadata)
             // Lifted from NetOps.js temporarily
             let inputArray = responses[0].split("\n");

@@ -6,7 +6,9 @@ import io from 'socket.io-client'
 import { withRouter } from "react-router-dom";
 import Visualizer from './Visualizer';
 import { initializeScene } from './SceneInitializer';
+import CircularProgress from '@material-ui/core/CircularProgress'
 
+import './FileViewer.css';
 
 let boneNames = {
     LUA: "upperarm_l",
@@ -47,27 +49,47 @@ class FileViewer extends React.Component {
     }
 
     LoadingModelMessage(props) {
-        return <Alert severity="warning">Loading the model...</Alert>;
+        return (
+            <div className='loading'>
+                <CircularProgress/>
+                <br/>
+                Loading the model...
+            </div>
+        )
     }
 
     ContactingServerMessage(props) {
-        return <Alert severity="warning">Contacting the server...</Alert>;
+        return (
+            <div className='loading'>
+                <CircularProgress/>
+                <br/>
+                Contacting the server...
+            </div>
+        )
     }
 
     ProcessingDataMessage(props) {
-        return <Alert severity="warning">Your file is being processed...</Alert>;
+        return (
+            <div className='loading'>
+                <CircularProgress/>
+                <br/>
+                Processing the data file...
+            </div>
+        )
     }
 
     LoadingFileMessage(props) {
-        return <Alert severity="warning">Loading the data file...</Alert>;
+        return (
+            <div className='loading'>
+                <CircularProgress/>
+                <br/>
+                Loading the data file...
+            </div>
+        )
     }
 
     ErrorMessage(props) {
         return <Alert severity="error">An error occured while loading the data file: {props.errorMessage}</Alert>;
-    }
-
-    CompleteMessage(props) {
-        return <Alert severity="success">Your file is fully loaded and ready. Data: {props.data} Metadata: {props.metadata} </Alert>;
     }
 
     // TODO: Split this up into multiple files or use some other method to (1) separate the outer and inner choice and (2) prevent

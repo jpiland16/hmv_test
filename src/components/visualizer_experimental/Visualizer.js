@@ -3,6 +3,8 @@ import { useEffect, useCallback } from 'react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
+import './Visualizer.css';
+
 export default function ThreeScene(props) {
 
     // const [camera, setCamera] = useState(null);
@@ -94,8 +96,9 @@ export default function ThreeScene(props) {
 
     return (
         <div
-            style={{width: "800px", height: "800px"}}
-            ref={measuredRef}>
-        </div>
+            // style={{width: "800px", height: "800px"}}
+            ref={measuredRef}
+            id="visualizationBase" 
+        />
     )
 }

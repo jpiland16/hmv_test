@@ -6,11 +6,3 @@
     height: 100%;
     z-index: 1;
 }
-
-.loading {
-    text-align: center;
-    width: 100vw;
-    height: 200px;
-    margin: auto;
-    margin-top: calc(50vh - 100px);
-}
