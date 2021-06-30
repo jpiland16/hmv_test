@@ -70,7 +70,12 @@ class FileViewer extends React.Component {
         return <Alert severity="success">Your file is fully loaded and ready. Data: {props.data} Metadata: {props.metadata} </Alert>;
     }
 
-    MainDisplay(props) {
+    // TODO: Split this up into multiple files or use some other method to (1) separate the outer and inner choice and (2) prevent
+    // importing 'library'
+    FileDisplay(props) {
+        if (!props.fileSelected) {
+            return <Alert severity="info">Please select a file to view from the 'Choose File' section of the menu on the left.</Alert>;
+        }
         switch (props.status) {
             case 'Contacting server':
                 return <props.library.ContactingServerMessage />;
@@ -83,10 +88,7 @@ class FileViewer extends React.Component {
             case 'Error':
                 return <props.library.ErrorMessage errorMessage={props.errorMessage} />
             case 'Complete':
-                //If complete, load the files needed for the 3d scene.
-                //Once that's done, we can finally display our scene.
-                // return <props.library.CompleteMessage data={props.library.state.data} metadata={props.library.state.metadata}/>
-                return <Visualizer sceneInfo={props.library.props.sceneInfo} />
+                return <Visualizer sceneInfo={props.sceneInfo} />
         }
         return <Alert severity="error">Unable to determine the state "{props.status}" of this file. Try re-uploading.</Alert>
     }
@@ -156,11 +158,19 @@ class FileViewer extends React.Component {
         })
     }
 
+
     render() {
+        console.log("Selected file: " + this.props.selectedFile);
         return (
             <div>
-                <this.MainDisplay status={this.props.fileStatus.status} errorMessage={this.props.fileStatus.message} library={this}></this.MainDisplay>
-                {/* <Button onClick={this.getFile}>Send GET request</Button> */}
+                <this.FileDisplay 
+                    fileSelected={this.props.selectedFile !== ''} 
+                    status={this.props.fileStatus.status} 
+                    errorMessage={this.props.fileStatus.message} 
+                    sceneInfo={this.props.sceneInfo}
+                    library={this}
+                />
+                {/* <this.FileDisplay status={this.props.fileStatus.status} errorMessage={this.props.fileStatus.message} sceneInfo={this.props.sceneInfo}/> */}
             </div>
         )
     }

@@ -9,7 +9,7 @@ import TopActionBar from './TopActionBar'
 import CardSet from './cards/CardSet'
 import Animator from './Animator'
 
-import { getMap, getFileList, downloadFile, downloadMetafile } from './viewport-workers/NetOps'
+import { getMap, getFileList, downloadFile, downloadMetafile, subscribeToFile } from './viewport-workers/NetOps'
 import { onSelectFileChange, isFileNameValid, clickFile} from './viewport-workers/FileOps'
 import { updateSingleQValue, batchUpdateObject } from './viewport-workers/ModelOps'
 import { getLocalFromGlobal, getGlobalFromLocal } from './viewport-workers/MathOps'
@@ -33,6 +33,7 @@ export default function Viewport(props) {
 
     let initialSelectedFile = ""
     let initialExpandedItems = ["/"];
+    let initialFileStatus = { status: "Contacting server" };
 
     if (urlParams.has('file')) {
         const fpath = urlParams.get('file');
@@ -67,7 +68,7 @@ export default function Viewport(props) {
     const [ downloadPercent, setDownloadPercent ] = React.useState(0);
     const [ downloading, setDownloading ] = React.useState(false);
     const [ openLab, setOpenLab ] = React.useState("");
-    const [ fileStatus, setFileStatus ] = React.useState({ status: "Contacting server" });
+    const [ fileStatus, setFileStatus ] = React.useState(initialFileStatus);
     const [ sceneInfo, setSceneInfo ] = React.useState({ scene: null, model: null, camera: null, renderer: null });
     
     /*   ---------------------
@@ -152,6 +153,7 @@ export default function Viewport(props) {
             getControls: getControls,
             sceneInfo: sceneInfo,
             setSceneInfo: setSceneInfo,
+            initializeScene: initializeScene,
 
             // QUATERNION PROPERTIES
             globalQs: globalQs,
@@ -170,6 +172,7 @@ export default function Viewport(props) {
             downloadFile: downloadFile,
             downloadMetafile: downloadMetafile,
             outgoingRequest: outgoingRequest, 
+            subscribeToFile: subscribeToFile,
 
             // DATA
             data: data,
