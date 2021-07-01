@@ -21,6 +21,7 @@ let childrenOf = {};
 let parentOf = {};
 let globalQs = {};
 let outgoingRequest = false;
+let sliderValuesShadowCopy = {};
 const lastFiles = [null]; // Wrapped in an array to be mutable
 const fileMap = [null]; // Wrapped in an array to be mutable
 
@@ -147,6 +148,7 @@ export default function Viewport(props) {
             batchUpdate: (boneId, slideArray) => batchUpdateObject(propertySet, boneId, slideArray),
             modelNeedsUpdating: modelNeedsUpdating,
             setModelNeedsUpdating: setModelNeedsUpdating,
+            sliderValuesShadowCopy: sliderValuesShadowCopy,
 
             // THREE.JS OBJECTS
             camera: camera,
@@ -218,9 +220,6 @@ export default function Viewport(props) {
 
     React.useEffect(() => {
         if(props.firstLoad) {
-            if (files.current.length === 0) {
-                getFileList(propertySet);
-            }
             getMap(propertySet).then(() => {
                 if (selectedFile.fileName !== "") {
                     if (isFileNameValid(propertySet, selectedFile.fileName)) {
@@ -235,6 +234,10 @@ export default function Viewport(props) {
             }
         }
     });
+
+    React.useEffect(() => {
+        getFileList(propertySet);
+    }, []); // No dependencies, so it runs only once at first render.
 
     /*  ---------------------
      *  WINDOW SIZE RETRIEVAL

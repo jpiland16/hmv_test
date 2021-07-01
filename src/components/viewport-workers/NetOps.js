@@ -40,6 +40,7 @@ async function doXHR(method, url) {
 export async function getFileList(props) {
     doXHR("GET", "/api/get-file-list").then(
         (xhrr) => {
+            console.log("Did XHR to get file list.");
             let res;
             try {
                 res = JSON.parse(xhrr.responseText);

@@ -23,6 +23,7 @@ yarn-debug.log*
 yarn-error.log*
 
 # other
+sslcert/
 /files/**
 !/files/demo
 !/files/demo/**
@@ -31,7 +32,9 @@ yarn-error.log*
 !/files/figures
 !/files/figures/**
 !/files/testPostRequest.html
+!/files/contact-form.html
 fileList.json
 src/files
 build.log
 git.log
+sendEmail.js
