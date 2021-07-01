@@ -241,6 +241,7 @@ function handleFormUpload(req, res) {
     };
     try {
         formProcessor.processFile(req, (data, metadata) => {
+            res.json({ status: "File received", fileName: directoryName });
             fs.mkdir(fullPath, {recursive: true}, (err) => {
                 if (err) {
                     console.log("Error occured when trying to make new directory!")
@@ -261,7 +262,7 @@ function handleFormUpload(req, res) {
         }, onError);
         // notify listeners that file is done, but do not send the resulting file--this isn't a GET request.
         // We may want to also do some basic validation, but that's handled during file processing.
-        res.json({ status: "File received", fileName: directoryName });
+        // console.log("About to send response to the client...")
     } catch (e) {
         console.log("Cancelled due to error. This should probably be reported to the user when they ask for the resource later.")
         console.error(e);
@@ -463,17 +464,6 @@ io.use((socket, next) => {
     socket.userName = name;
     next();
 })
-
-//Purely for debugging!
-function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-}
-
-//Also for debugging: send timed response to client
-async function executeDelayed(delayMillis, callback) {
-    await sleep(delayMillis);
-    callback();
-}
 
 io.on('connection', (socket) => {
     console.log("A new socket connection just started up");

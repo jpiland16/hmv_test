@@ -37,7 +37,6 @@ class FileViewer extends React.Component {
     componentDidMount() {
         console.log("Target file: ");
         console.log(this.props.targetFile);
-        // this.props.onSelectFileChange(this.props.targetFile); // This should not trigger every time the component re-renders.
     }
 
     LoadingMessage(props) {

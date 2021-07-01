@@ -65,6 +65,7 @@ class MaterialCalibrationForm extends React.Component {
       const targetURL = ("/visualizer?");
       const params = new URLSearchParams();
       params.set('file', '/user-uploads/'+responseJSON.fileName);
+      params.set('name', this.state.displayName);
       console.log(params.toString());
       const target = targetURL + params.toString();
       this.props.history.push(target);

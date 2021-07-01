@@ -19,6 +19,7 @@ export function onSelectFileChange(props, mySelectedFile, myDisplayName) {
     props.setTimeSliderValue(0);
     console.log("Selected file has been changed to " + mySelectedFile + " (re-printed below)");
     console.log(mySelectedFile);
+    console.log("Display name: " + myDisplayName);
     props.setSelectedFile({ fileName: mySelectedFile, displayName: myDisplayName }); // We may want some verification, but verification is also done by this method.
     props.subscribeToFile(props, mySelectedFile);
 }

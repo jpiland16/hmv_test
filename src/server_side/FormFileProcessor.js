@@ -2,12 +2,27 @@ const formidable = require('formidable');
 const FileReader = require('filereader');
 const { spawn } = require('child_process');
 
+//Purely for debugging!
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+//Also for debugging: send timed response to client
+async function executeDelayed(delayMillis, callback) {
+    await sleep(delayMillis);
+    callback();
+}
+
 const processFile = (form, callback, onError) => {
-    console.log("Processing a file sent by a POST request.");
-    const formParser = formidable();
+    console.log("Processing a file sent by a POST request in the Form processor.");
+    const formParser = formidable({ maxFileSize: 50 * 1024 * 1024});
     try {
-        // formParser.on()
+        formParser.on('error',  (err) => { 
+            console.log("Formparser has encountered an error"); 
+            console.log(err);
+        });
         formParser.parse(form, (err, fields, files) => {
+            console.log("Finished parsing the form!")
             handleForm(err, fields, files, (data, metadata) => callback(data, metadata), onError);
         });
     }
@@ -18,6 +33,7 @@ const processFile = (form, callback, onError) => {
 };
 
 function handleForm(err, fields, files, callback, onError) {
+    console.log("Proceeded to handleForm function...");
     if (err) {
         console.log(err);
     }
@@ -73,7 +89,6 @@ function parseFormFields(fields) {
 }
 
 function handleUploadedFile(event, fields, callback, onError) {
-    // There's no real reason to rename the parameters here, besides conforming to the Python interface.
     let sensors = JSON.parse(fields.sensorData);
     console.log(sensors);
     let sensorColumns = [];

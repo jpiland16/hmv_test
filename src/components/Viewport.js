@@ -38,6 +38,7 @@ export default function Viewport(props) {
     if (urlParams.has('file')) {
         const fpath = urlParams.get('file');
         initialSelectedFile.fileName = fpath;
+        if (urlParams.has('name')) { initialSelectedFile.displayName = urlParams.get('name'); }
         let charPos = 1;
         while (charPos < fpath.length) {
             if (fpath.charAt(charPos) === '/')
@@ -109,7 +110,7 @@ export default function Viewport(props) {
             fileStatus: fileStatus,
             setFileStatus: setFileStatus,
             clickFile: (id, name) => clickFile(propertySet, id, name), 
-            onSelectFileChange: (file) => onSelectFileChange(propertySet, file),
+            onSelectFileChange: (file, displayName) => onSelectFileChange(propertySet, file, displayName),
             checkFileName: (fname) => isFileNameValid(propertySet, fname),
             files: files,
             lastFiles: lastFiles,
@@ -216,25 +217,23 @@ export default function Viewport(props) {
      *   ------------------- */  
 
     React.useEffect(() => {
-        // if(bones) { // We no longer have to load the model in order to ask for a file list.
-            if(props.firstLoad) {
-                if (files.current.length === 0) {
-                    getFileList(propertySet);
-                }
-                getMap(propertySet).then(() => {
-                    if (selectedFile.fileName !== "") {
-                        if (isFileNameValid(propertySet, selectedFile.fileName)) {
-                            onSelectFileChange(propertySet, selectedFile.fileName, selectedFile.displayName);
-                        }
-                    }
-                }, () => { });
-                props.setFirstLoad(false);
-            } else {
-                if (files.current && files.current.length === 0) {
-                    files.current = propertySet.lastFiles[0];
-                }
+        if(props.firstLoad) {
+            if (files.current.length === 0) {
+                getFileList(propertySet);
             }
-        // }
+            getMap(propertySet).then(() => {
+                if (selectedFile.fileName !== "") {
+                    if (isFileNameValid(propertySet, selectedFile.fileName)) {
+                        onSelectFileChange(propertySet, selectedFile.fileName, selectedFile.displayName);
+                    }
+                }
+            }, () => { });
+            props.setFirstLoad(false);
+        } else {
+            if (files.current && files.current.length === 0) {
+                files.current = propertySet.lastFiles[0];
+            }
+        }
     });
 
     /*  ---------------------
@@ -285,7 +284,6 @@ export default function Viewport(props) {
     return (
         <div className="myView">
             <Menu {...propertySet} />
-            {/* <Visualizer {...propertySet} onClick = { (event) => !menuIsPinned && setMenuIsOpen(false) } /> */}
             <FileViewer targetFile={"user-uploads/5_27_2_22_1624774962736"} {...propertySet}/>
             <PlayBar {...propertySet} disabled={!fileStatus || fileStatus.status !== "Complete"} />
             <CardSet {...propertySet} />

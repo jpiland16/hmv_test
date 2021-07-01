@@ -28,7 +28,7 @@ export default function TopActionBar(props) {
                             props.setSelectedPanel(0);
                         } else {
                             //if(window.confirm("Are you sure you want to close the file " + props.selectedFile + "?")) 
-                                window.history.replaceState(null, null, "?") || props.onSelectFileChange("")
+                                window.history.replaceState(null, null, "?") || props.onSelectFileChange("", "None")
                         }
             }} size="small">
                 { props.selectedFile.fileName === "" ?
