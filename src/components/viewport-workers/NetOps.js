@@ -126,7 +126,7 @@ export function downloadFile(props, fname) {
 }
 
 
-//TODO: Should move this to NetOps and merge with existing concept for file downloads
+//TODO: Should merge with existing concept for file downloads
 function getFile(fileName) {
     let dataPromise = getFilePart(fileName, 'data');
     let metadataPromise = getFilePart(fileName, 'metadata');
@@ -206,6 +206,11 @@ export function subscribeToFile(props, mySelectedFile) {
             props.outgoingRequest = false;
 
             props.fileMetadata.current = JSON.parse(responses[1]);
+            if (props.selectedFile.fileName !== "") {
+                let displayName = props.fileMetadata.current.displayName? props.fileMetadata.current.displayName : props.selectedFile.fileName;
+                props.setSelectedFile({ fileName: props.selectedFile.fileName, displayName: displayName });
+            }
+            // props.selectedFile.displayName = props.fileMetadata.current.displayName;
 
             socket.disconnect();
             props.setFileStatus({ status: "Loading models" });

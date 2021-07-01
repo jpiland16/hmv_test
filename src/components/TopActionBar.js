@@ -4,8 +4,10 @@ import Typography from '@material-ui/core/Typography'
 import FolderOpenIcon from '@material-ui/icons/FolderOpen';
 import CancelIcon from '@material-ui/icons/Cancel';
 import Tooltip from '@material-ui/core/Tooltip'
+import React from 'react';
 
 export default function TopActionBar(props) {
+
     return (
         <div className="topBar"style={{ 
             left: props.menuIsOpen && props.getWindowDimensions()[0] > 768 ? "40vw" : "48px",
@@ -19,7 +21,8 @@ export default function TopActionBar(props) {
                         props.setMenuIsOpen(true);
                         props.setSelectedPanel(0);
                     }}>
-                    {props.selectedFile.fileName === "" ? "No file selected." : <span><b>Viewing: </b>{(props.selectedFile.displayName.length > 16 ? "..." : "") + props.selectedFile.displayName.substr(-16)}</span>}
+                    {/* {props.selectedFile.fileName === "" ? "No file selected." : <span><b>Viewing: </b>{(props.selectedFile.displayName.length > 16 ? "..." : "") + props.selectedFile.displayName.substr(-16)}</span>} */}
+                    {props.selectedFile.fileName === "" ? "No file selected." : <span><b>Viewing: </b>{(props.selectedFile.displayName > 16 ? "..." : "") + props.selectedFile.displayName.substr(-16)}</span>}
                 </Typography>
             </Tooltip>
             <Button className="topBtn" onClick={() => {

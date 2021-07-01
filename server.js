@@ -2,14 +2,24 @@ const express = require('express');
 //const helmet = require('helmet')   
 const app = express();
 const serveIndex = require('serve-index');
-const http = require('http')
-const httpServer = http.createServer(app);
+// const http = require('http')
+const https=require('https');
 const fs = require('fs');
 const { count } = require('console');
 const { exec } = require('child_process');
 const formidable = require('formidable');
 const { Server } = require('socket.io');
-const io = new Server(httpServer, {
+
+const options = { //fullchain and privkey are used for the vm and server-crt and server-key are used locally
+    cert: fs.existsSync('./sslcert/fullchain.pem') ? fs.readFileSync('./sslcert/fullchain.pem') : fs.readFileSync('./sslcert/server-crt.pem'),
+    key: fs.existsSync('./sslcert/privkey.pem') ? fs.readFileSync('./sslcert/privkey.pem') : fs.readFileSync('./sslcert/server-key.pem')
+};
+
+const HTTPS_PORT = process.env.PORT || 5000;
+
+const httpsServer = https.createServer(options, app);
+
+const io = new Server(httpsServer, {
     cors: {
         origin: "http://localhost:3000",
     },
@@ -17,7 +27,6 @@ const io = new Server(httpServer, {
 
 const fileProcessor = require('./src/server_side/FileProcessor');
 const formProcessor = require('./src/server_side/FormFileProcessor');
-
 
 //app.use(helmet()); //adds security related HTTP headers
 
@@ -517,13 +526,9 @@ io.on('connection', (socket) => {
 
 scanAllFiles();
 
-const PORT = process.env.PORT || 5000
-
-// app.listen(PORT);
-httpServer.listen(PORT, () => {
-    console.log("Listening on port " + PORT + "...");
+httpsServer.listen(HTTPS_PORT, () => {
+    console.log("Listening on port " + HTTPS_PORT + "...");
     app.locals.currentFiles = new Map();
     app.locals.currentFiles.set("placeholderfile", { status: "Processing", accessCode: "password" });
-    
     app.locals.fileListeners = new Map();
-})
+});

@@ -73,13 +73,6 @@ export default function ThreeScene(props) {
         // requestAnimationFrame(()=>{ renderer.render(scene,camera)});
     }
 
-    // function componentDidMount() {
-    //     this.createScene(this.mount);
-    // }
-
-    // const mountRef = useRef(null);
-    // const [mount, setMount] = React.useState(null);
-
     let currentDiv;
 
     const measuredRef = useCallback(node => {
@@ -101,7 +94,6 @@ export default function ThreeScene(props) {
 
     return (
         <div
-            // style={{width: "800px", height: "800px"}}
             ref={measuredRef}
             id="visualizationBase" 
         />

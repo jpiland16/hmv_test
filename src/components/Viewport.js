@@ -39,7 +39,10 @@ export default function Viewport(props) {
     if (urlParams.has('file')) {
         const fpath = urlParams.get('file');
         initialSelectedFile.fileName = fpath;
-        if (urlParams.has('name')) { initialSelectedFile.displayName = urlParams.get('name'); }
+        initialSelectedFile.displayName = "Loading...";
+        if (urlParams.has('name')) { 
+            initialSelectedFile.displayName = urlParams.get('name'); 
+        }
         let charPos = 1;
         while (charPos < fpath.length) {
             if (fpath.charAt(charPos) === '/')
@@ -287,7 +290,7 @@ export default function Viewport(props) {
     return (
         <div className="myView">
             <Menu {...propertySet} />
-            <FileViewer targetFile={"user-uploads/5_27_2_22_1624774962736"} {...propertySet}/>
+            <FileViewer targetFile={""} {...propertySet}/>
             <PlayBar {...propertySet} disabled={!fileStatus || fileStatus.status !== "Complete"} />
             <CardSet {...propertySet} />
             <TopActionBar {...propertySet} />
