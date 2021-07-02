@@ -223,15 +223,8 @@ export default function Viewport(props) {
 
     React.useEffect(() => {
         if(props.firstLoad) {
-            getMap(propertySet).then(() => {
-                if (selectedFile.fileName !== "") {
-                    if (isFileNameValid(propertySet, selectedFile.fileName)) {
-                        console.log("About to run onSelectFileChange for " + selectedFile.fileName);
-                        onSelectFileChange(propertySet, selectedFile.fileName, selectedFile.displayName);
-                    }
-                    else { console.log("Skipped running onSelectFileChange.") }
-                }
-            }, () => { });
+            // getMap(propertySet).then(() => {
+            // }, () => { });
             props.setFirstLoad(false);
         } else {
             if (files.current && files.current.length === 0) {
