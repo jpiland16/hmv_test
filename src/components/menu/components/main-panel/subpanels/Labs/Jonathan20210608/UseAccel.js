@@ -112,13 +112,47 @@ export default function GeneratedData(props) {
                     
                     // Move legs
 
-                    let legQuaternion = new THREE.Quaternion(0, 0, 1, 0); 
+                    let upperRightLegQuaternion = new THREE.Quaternion(0, 0, 1, 0); 
                     let [y, w] = scaleToMag1([targetQ.y, targetQ.w])
                     // -y because axis is upside down
                     let compassQuaternion = new THREE.Quaternion(0, -y, 0, w);
-                    legQuaternion.multiply(compassQuaternion);
-                    props.batchUpdate("LUL", [legQuaternion.x, legQuaternion.y, legQuaternion.z, legQuaternion.w]);
-                    props.batchUpdate("RUL", [legQuaternion.x, legQuaternion.y, legQuaternion.z, legQuaternion.w]);
+                    upperRightLegQuaternion.multiply(compassQuaternion);
+
+                    let lowerRightLegQuaternion = new THREE.Quaternion().copy(upperRightLegQuaternion)
+                    
+                    let upperRightLegAccelerometerValue = props.data.current[props.timeSliderValue][2]; // Y
+                    upperRightLegAccelerometerValue = Math.max(-1000, Math.min(upperRightLegAccelerometerValue, 1000))                    
+
+                    let upperRightLegElevationAngle = Math.acos(upperRightLegAccelerometerValue / 1000) // radians
+                    let upperRightLegElevationQ = new THREE.Quaternion(Math.sin(upperRightLegElevationAngle/2), 0, 0, Math.cos(upperRightLegElevationAngle / 2))
+                    upperRightLegQuaternion.multiply(upperRightLegElevationQ)
+
+                    let lowerRightLegAccelerometerValue = props.data.current[props.timeSliderValue][20]; // Y
+                    lowerRightLegAccelerometerValue = Math.max(-1000, Math.min(lowerRightLegAccelerometerValue, 1000))                    
+
+                    let lowerRightLegElevationAngle = Math.acos(lowerRightLegAccelerometerValue / 1000) // radians
+                    let lowerRightLegElevationQ = new THREE.Quaternion(Math.sin(lowerRightLegElevationAngle/2), 0, 0, Math.cos(lowerRightLegElevationAngle / 2))
+                    lowerRightLegQuaternion.multiply(lowerRightLegElevationQ)
+
+                    let multiply = 1;
+
+                    if (props.data.current[props.timeSliderValue][243] == 2) // Walk
+                        multiply = -1;
+
+                    let upperLeftLegQuaternion = new THREE.Quaternion(0, 0, 1, 0); 
+                    upperLeftLegQuaternion.multiply(compassQuaternion)
+                    let upperLeftLegElevationQ = new THREE.Quaternion(multiply * Math.sin(upperRightLegElevationAngle/2), 0, 0, Math.cos(upperRightLegElevationAngle / 2))
+                    upperLeftLegQuaternion.multiply(upperLeftLegElevationQ)
+
+                    let lowerLeftLegQuaternion = new THREE.Quaternion(0, 0, 1, 0); 
+                    lowerLeftLegQuaternion.multiply(compassQuaternion)
+                    let lowerLeftLegElevationQ = new THREE.Quaternion(multiply * Math.sin(lowerRightLegElevationAngle/2), 0, 0, Math.cos(lowerRightLegElevationAngle / 2))
+                    lowerLeftLegQuaternion.multiply(lowerLeftLegElevationQ)
+
+                    props.batchUpdate("LUL", [upperLeftLegQuaternion.x, upperLeftLegQuaternion.y, upperLeftLegQuaternion.z, upperLeftLegQuaternion.w]);
+                    props.batchUpdate("RUL", [upperRightLegQuaternion.x, upperRightLegQuaternion.y, upperRightLegQuaternion.z, upperRightLegQuaternion.w]);
+                    props.batchUpdate("LLL", [lowerLeftLegQuaternion.x, lowerLeftLegQuaternion.y, lowerLeftLegQuaternion.z, lowerLeftLegQuaternion.w]);
+                    props.batchUpdate("RLL", [lowerRightLegQuaternion.x, lowerRightLegQuaternion.y, lowerRightLegQuaternion.z, lowerRightLegQuaternion.w]);
 
                     // Adjust position
 
