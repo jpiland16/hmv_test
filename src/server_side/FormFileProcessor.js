@@ -16,20 +16,14 @@ async function executeDelayed(delayMillis, callback) {
 const processFile = (form, callback, onError) => {
     console.log("Processing a file sent by a POST request in the Form processor.");
     const formParser = formidable({ maxFileSize: 50 * 1024 * 1024});
-    try {
-        formParser.on('error',  (err) => { 
-            console.log("Formparser has encountered an error"); 
-            console.log(err);
-        });
-        formParser.parse(form, (err, fields, files) => {
-            console.log("Finished parsing the form!")
-            handleForm(err, fields, files, (data, metadata) => callback(data, metadata), onError);
-        });
-    }
-    catch (e) {
-        console.log(e);
-    }
-
+    formParser.on('error',  (err) => { 
+        console.log("Formparser has encountered an error"); 
+        console.log(err);
+    });
+    formParser.parse(form, (err, fields, files) => {
+        console.log("Finished parsing the form!")
+        handleForm(err, fields, files, (data, metadata) => callback(data, metadata), onError);
+    });
 };
 
 function handleForm(err, fields, files, callback, onError) {
@@ -53,7 +47,7 @@ function handleForm(err, fields, files, callback, onError) {
     try {
         reader.readAsText(files.file);
     } catch (e) {
-        onError("Failed to read incoming file. We should probably notify the client.")
+        onError(e);
     }
 }
 
@@ -130,4 +124,36 @@ function handleUploadedFile(event, fields, callback, onError) {
     pyProcess.stdin.end();
 }
 
+const getFormParts = (form) => {
+    return new Promise((resolve, reject) => {
+        console.log("Downloading a file sent by a POST request in the simplified Form processor.");
+        // const formParser = formidable({ maxFileSize: 50 * 1024 * 1024});
+        const formParser = formidable();
+        formParser.on('error',  (err) => { 
+            console.log("Formparser has encountered an error"); 
+            console.log(err);
+            reject(err);
+            return;
+        });
+        formParser.on('fileBegin', () => console.log("file begin"));
+        // formParser.on('file', (formname, file) => console.log(file));
+        formParser.parse(form, (err, fields, files) => {
+            if (err) { reject(err); }
+            console.log("Finished parsing the form!")
+            resolve({ fields: fields, files: files });
+            return;
+        });
+    });
+}
+
+const processDownloadedForm = (fields, files) => {
+    return new Promise((resolve, reject) => {
+        console.log("Processing a downloaded form in the Form processor.");
+        handleForm(null, fields, files, (data, metadata) => resolve({ data: data, metadata: metadata }), (errMessage) => reject(errMessage));
+    });
+};
+
 exports.processFile = processFile;
+exports.getFormFile = getFormParts;
+exports.getFormParts = getFormParts;
+exports.processDownloadedForm = processDownloadedForm;

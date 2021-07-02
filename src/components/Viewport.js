@@ -226,8 +226,10 @@ export default function Viewport(props) {
             getMap(propertySet).then(() => {
                 if (selectedFile.fileName !== "") {
                     if (isFileNameValid(propertySet, selectedFile.fileName)) {
+                        console.log("About to run onSelectFileChange for " + selectedFile.fileName);
                         onSelectFileChange(propertySet, selectedFile.fileName, selectedFile.displayName);
                     }
+                    else { console.log("Skipped running onSelectFileChange.") }
                 }
             }, () => { });
             props.setFirstLoad(false);
@@ -240,6 +242,13 @@ export default function Viewport(props) {
 
     React.useEffect(() => {
         getFileList(propertySet);
+        if (selectedFile.fileName !== '' && isFileNameValid(propertySet, selectedFile.fileName)) {
+            console.log("Running onSelectFileChange");
+            onSelectFileChange(propertySet, selectedFile.fileName, selectedFile.displayName);
+        }
+        else {
+            console.log("Not running onSelectFileChange");
+        }
     }, []); // No dependencies, so it runs only once at first render.
 
     /*  ---------------------

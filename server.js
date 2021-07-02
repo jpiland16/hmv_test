@@ -9,6 +9,13 @@ const { count } = require('console');
 const { exec } = require('child_process');
 const formidable = require('formidable');
 const { Server } = require('socket.io');
+// const { onContactUs } = require('./sendEmail')
+var onContactUs = null;
+let contactModulePath = __dirname+'/sendEmail.js';
+if (fs.existsSync(contactModulePath)) {
+    const { contactUsFunction } = require('./sendEmail')
+    onContactUs = contactUsFunction;
+}
 
 const options = { //fullchain and privkey are used for the vm and server-crt and server-key are used locally
     cert: fs.existsSync('./sslcert/fullchain.pem') ? fs.readFileSync('./sslcert/fullchain.pem') : fs.readFileSync('./sslcert/server-crt.pem'),
@@ -21,11 +28,10 @@ const httpsServer = https.createServer(options, app);
 
 const io = new Server(httpsServer, {
     cors: {
-        origin: "http://localhost:3000",
+        origin: "https://localhost:3000",
     },
 });
 
-const fileProcessor = require('./src/server_side/FileProcessor');
 const formProcessor = require('./src/server_side/FormFileProcessor');
 
 //app.use(helmet()); //adds security related HTTP headers
@@ -234,6 +240,59 @@ function writeFilePromise(filePath, data) {
     });
 }
 
+function handleFormUploadAlt(req, res) {
+    const storagePath = './files/user-uploads/';
+    let currDate = new Date();
+    const directoryName = `${currDate.getMonth()}_${currDate.getDate()}_${currDate.getHours()}_${currDate.getMinutes()}_${currDate.valueOf()}`;
+    let fullPath = storagePath + directoryName;
+    console.log("Received post request.");
+    app.locals.currentFiles.set(fullPath.substr('./files'.length), { status: "Processing" });
+    console.log("Updated file status. Printing full file status list: ");
+    console.log(app.locals.currentFiles); 
+    formProcessor.getFormFile(req)
+        .then(({ fields: parsedFields, files: parsedFiles}) => {
+            console.log("Finished grabbing the files from the user upload.");
+            res.json({ status: "File received", fileName: directoryName });
+            formProcessor.processDownloadedForm(parsedFields, parsedFiles).then(({ data: data, metadata: metadata}) => {
+                console.log("Completely done processing the file. Now we just have to write the resulting data.");
+                writeUploadedFile(data, metadata, fullPath)
+                .then(() => {
+                    if (app.locals.fileListeners.has(fullPath)) {
+                        app.locals.fileListeners.get(fullPath).forEach((socket) => socket.emit('File ready'));
+                    }
+                })
+                .catch((err) => {
+                    console.log("Some kind of error happened that we need to communicate to the client: " + err);
+                });
+            });
+        })
+        .catch((err) => {
+            console.log(err);
+        });
+    // https://google.github.io/styleguide/jsguide.html says that this double un-indent is perfectly okay, which suprises me.
+}
+
+function writeUploadedFile(data, metadata, filepath) {
+    return new Promise((myResolve, myReject) => {
+        fs.mkdir(filepath, {recursive: true}, (err) => {
+            if (err) {
+                console.log("Error occured when trying to make new directory!")
+                myReject(err); // If I handle this somehow, then this can just return Promise.all below instead
+                return;
+            }
+            let dataPromise = writeFilePromise(filepath + "/quaternion_data.dat", data);
+            let metaPromise = writeFilePromise(filepath + "/metadata.json", JSON.stringify(metadata));
+            console.log("About to print fileListeners:");
+            console.log(app.locals.fileListeners);
+            Promise.all([dataPromise, metaPromise]).then(() => {
+                myResolve();
+            })
+            .catch((err) => myReject(err));
+        });
+    })
+    
+}
+
 function handleFormUpload(req, res) {
     const storagePath = './files/user-uploads/';
     let currDate = new Date();
@@ -243,51 +302,60 @@ function handleFormUpload(req, res) {
     app.locals.currentFiles.set(fullPath.substr('./files/'.length), { status: "Processing" });
     console.log("Updated file status. Printing full file status list: ");
     console.log(app.locals.currentFiles); 
+    // download file. then:
+        // send 'file received'
+        // process data. then:
+            // set file to 'ready' in map
     let onError = (message) => {
         // This should be either (a) sent as a response or (b) stored so that it responds to a later GET message.
         // My inspriation is Gradescope's system, where you upload a file and get taken to a submission viewing screen.
         console.log("An error occurred while trying to process your submission: " + message);
     };
-    try {
-        formProcessor.processFile(req, (data, metadata) => {
-            res.json({ status: "File received", fileName: directoryName });
-            fs.mkdir(fullPath, {recursive: true}, (err) => {
-                if (err) {
-                    console.log("Error occured when trying to make new directory!")
-                    //send update to any file listeners
-                    return;
+    formProcessor.processFile(req, (data, metadata) => {
+        res.json({ status: "File received", fileName: directoryName });
+        fs.mkdir(fullPath, {recursive: true}, (err) => {
+            if (err) {
+                console.log("Error occured when trying to make new directory!")
+                //send update to any file listeners
+                return;
+            }
+            let dataPromise = writeFilePromise(fullPath + "/quaternion_data.dat", data);
+            let metaPromise = writeFilePromise(fullPath + "/metadata.json", JSON.stringify(metadata));
+            console.log("About to print fileListeners:");
+            console.log(app.locals.fileListeners);
+            Promise.all([dataPromise, metaPromise]).then(() => {
+                if (app.locals.fileListeners.has(fullPath)) {
+                    app.locals.fileListeners.get(fullPath).forEach((socket) => socket.emit('File ready'));
                 }
-                let dataPromise = writeFilePromise(fullPath + "/quaternion_data.dat", data);
-                let metaPromise = writeFilePromise(fullPath + "/metadata.json", JSON.stringify(metadata));
-                console.log("About to print fileListeners:");
-                console.log(app.locals.fileListeners);
-                Promise.all([dataPromise, metaPromise]).then(() => {
-                    if (app.locals.fileListeners.has(fullPath)) {
-                        app.locals.fileListeners.get(fullPath).forEach((socket) => socket.emit('File ready'));
-                    }
-                })
-                .catch((err) => console.log(err));
             })
-        }, onError);
-        // notify listeners that file is done, but do not send the resulting file--this isn't a GET request.
-        // We may want to also do some basic validation, but that's handled during file processing.
-        // console.log("About to send response to the client...")
-    } catch (e) {
-        console.log("Cancelled due to error. This should probably be reported to the user when they ask for the resource later.")
-        console.error(e);
-    }
+            .catch((err) => console.log(err));
+        })
+    }, onError);
 }
 
-app.post("/api/post", (req, res) => {
-    console.log("Received post request.");
-    fileProcessor.processFile(req, (data) => {
-        res.json({ message: data });
-    });
-});
-
 app.post("/api/postform", (req, res) => {
-    handleFormUpload(req, res);
+    // handleFormUpload(req, res);
+    handleFormUploadAlt(req, res);
 })
+
+app.post('/api/send-message', (req, res) => {
+    if (onContactUs === null) {
+        res.status(503).send('server unable to forward message');
+    }
+    var form = new formidable.IncomingForm();
+    form.parse(req, function(err, fields, files) {
+        if (err) {
+            console.error("There was an error receiving the message. Check log for details.")
+            console.log(err);
+            res.status(503).send('message not received');
+        } else {
+            message = fields.message
+            email = fields.email
+            onContactUs(email, message)
+            res.status(200).send('message received')
+        }
+    })
+});
 
 // Deals with the strange arrangement Sam needs to fix with the way
 // file IDs are assigned by the getDirStructure function, where every

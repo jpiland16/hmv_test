@@ -210,7 +210,6 @@ export function subscribeToFile(props, mySelectedFile) {
                 let displayName = props.fileMetadata.current.displayName? props.fileMetadata.current.displayName : props.selectedFile.fileName;
                 props.setSelectedFile({ fileName: props.selectedFile.fileName, displayName: displayName });
             }
-            // props.selectedFile.displayName = props.fileMetadata.current.displayName;
 
             socket.disconnect();
             props.setFileStatus({ status: "Loading models" });
