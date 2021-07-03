@@ -254,11 +254,12 @@ function handleFormUploadAlt(req, res) {
             console.log("Finished grabbing the files from the user upload.");
             res.json({ status: "File received", fileName: directoryName });
             formProcessor.processDownloadedForm(parsedFields, parsedFiles).then(({ data: data, metadata: metadata}) => {
-                console.log("Completely done processing the file. Now we just have to write the resulting data.");
+                console.log(`Completely done processing ${fullPath}. Now we just have to write the resulting data.`);
                 writeUploadedFile(data, metadata, fullPath)
                 .then(() => {
-                    if (app.locals.fileListeners.has(fullPath)) {
-                        app.locals.fileListeners.get(fullPath).forEach((socket) => socket.emit('File ready'));
+                    let mappedPath = fullPath.substr('./files'.length);
+                    if (app.locals.fileListeners.has(mappedPath)) {
+                        app.locals.fileListeners.get(mappedPath).forEach((socket) => socket.emit('File ready'));
                     }
                 })
                 .catch((err) => {
