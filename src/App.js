@@ -12,7 +12,7 @@ export default function App() {
   return (
   <BrowserRouter>
         <Switch>
-            <Route exact path="/visualizer">
+            <Route path="/visualizer">
                 <Viewport dev={false} firstLoad={firstLoad} setFirstLoad={setFirstLoad}/>
             </Route>
             <Route exact path="/visualizer/dev">

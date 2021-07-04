@@ -171,8 +171,9 @@ function getFilePart(fileName, type) {
 }
 
 export function subscribeToFile(props, mySelectedFile) {
-    const URL = "http://localhost:3000"; // This needs to be flexible based on whether we're locally running
-    const socket = io(URL, { 
+    // const URL = "http://localhost:3000"; // This needs to be flexible based on whether we're locally running
+    const URL = window.location;
+    const socket = io({ 
         autoConnect: false,
         auth: {
             username: "placeholder_username"

@@ -26,11 +26,13 @@ const HTTPS_PORT = process.env.PORT || 5000;
 
 const httpsServer = https.createServer(options, app);
 
-const io = new Server(httpsServer, {
-    cors: {
-        origin: "https://localhost:3000",
-    },
-});
+// const io = new Server(httpsServer, {
+//     cors: {
+//         origin: "https://localhost:3000",
+//     },
+// });
+
+const io = new Server(httpsServer);
 
 const formProcessor = require('./src/server_side/FormFileProcessor');
 
@@ -511,7 +513,32 @@ app.get('/files/*', (req, res) => {
     }
 });
 
-app.use('*',  (req, res)=> {
+// app.use('*',  (req, res)=> {
+//     console.log("Got some sort of request.");
+//     if (fs.existsSync("./build/index.html")) {
+//         res.sendFile("/build/index.html", {
+//             "root": __dirname
+//         });
+//     } else {
+//         res.send(`<html>
+//                     <head>
+//                         <title>
+//                             Wesite under maintenance
+//                         </title>
+//                     </head>
+//                     <body>
+//                         The website is currently being rebuilt. Please refresh the page in 1-2 minutes.
+//                         <a href='https://github.com/jpiland16/hmv_test#hmv_test---launch-website'>Contact the developers</a> if you believe this message is in error.
+//                     </body>
+//                   </html>`)
+//     }
+// });
+
+app.get('/*',  (req, res)=> {
+    console.log("Got a GET request that made it through the router. URL: ");
+    console.log(req.url);
+    console.log(req.path);
+    // console.log(req.query);
     if (fs.existsSync("./build/index.html")) {
         res.sendFile("/build/index.html", {
             "root": __dirname
@@ -533,13 +560,13 @@ app.use('*',  (req, res)=> {
 
 io.use((socket, next) => {
     console.log("A new socket connection is going through middleware: " + socket)
-    // need identication of some sort
-    const name = socket.handshake.auth.username;
-    if (!name) {
-        console.log("The attempted socket didn't have a username. Aborting connection.");
-        return next(new Error("A name is required to associate with this connection"));
-    }
-    socket.userName = name;
+    // // need identication of some sort
+    // const name = socket.handshake.auth.username;
+    // if (!name) {
+    //     console.log("The attempted socket didn't have a username. Aborting connection.");
+    //     return next(new Error("A name is required to associate with this connection"));
+    // }
+    // socket.userName = name;
     next();
 })
 
@@ -598,6 +625,5 @@ scanAllFiles();
 httpsServer.listen(HTTPS_PORT, () => {
     console.log("Listening on port " + HTTPS_PORT + "...");
     app.locals.currentFiles = new Map();
-    app.locals.currentFiles.set("placeholderfile", { status: "Processing", accessCode: "password" });
     app.locals.fileListeners = new Map();
 });
