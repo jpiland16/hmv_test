@@ -1,5 +1,6 @@
 import Viewport from "./components/Viewport"
 import Welcome from "./components/WelcomeScreen"
+import Tutorial from "./components/TutorialScreen";
 import './App.css';
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import React from 'react';
@@ -11,6 +12,9 @@ export default function App() {
   return (
   <BrowserRouter>
         <Switch>
+            <Route exact path="/getting-started">
+                <Tutorial setFirstLoad={setFirstLoad}/>
+            </Route>
             <Route exact path="/visualizer">
                 <Viewport dev={false} firstLoad={firstLoad} setFirstLoad={setFirstLoad}/>
             </Route>

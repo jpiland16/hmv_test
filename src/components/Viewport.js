@@ -58,6 +58,7 @@ export default function Viewport(props) {
     const [ useRipple, setUseRipple ] = React.useState(false);                   // Limbs move independently by default
     const [ timeSliderValue, setTimeSliderValue ] = React.useState(0);           // Initial position is 0
     const [ playing, setPlaying ] = React.useState(false);                       // Paused by default
+    const [toolTipOpen, setTipOpen] = React.useState(false);
     const [ cardsPos, setCardsPos ] = React.useState(window.localStorage.getItem("cardsPos") || 'right');
     const [ timeDisplay, setTimeDisplay ] = React.useState(window.localStorage.getItem("timeDisplay") || 'msm')
     const [ downloadPercent, setDownloadPercent ] = React.useState(0);
@@ -178,7 +179,9 @@ export default function Viewport(props) {
             setTimeSliderValue: setTimeSliderValue,
             FPS: FPS,
             repeat: repeat,
-            lastIndex: lastIndex,        
+            lastIndex: lastIndex,   
+            toolTipOpen: toolTipOpen, //tooltip for play button can only be viewed when play button is disabled
+            setTipOpen: setTipOpen,     
 
         // -- MATH --
             getGlobalFromLocal: getGlobalFromLocal,

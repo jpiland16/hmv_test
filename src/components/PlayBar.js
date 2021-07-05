@@ -3,6 +3,7 @@ import PlayArrowIcon from '@material-ui/icons/PlayArrow'
 import PauseIcon from '@material-ui/icons/Pause'
 import Slider from '@material-ui/core/Slider'
 import IconButton from '@material-ui/core/IconButton';
+import { Tooltip } from '@material-ui/core';
 import './PlayBar.css'
 
 function getTimeStringFromMillis(time) {
@@ -14,6 +15,17 @@ function getTimeStringFromMillis(time) {
 }
 
 export default function PlayBar(props) {
+
+    const handleToolTipClose = () => {
+      props.setTipOpen(false);
+    };
+  
+    const handleToolTipOpen = () => {
+        if (props.disabled){
+            props.setTipOpen(true);
+       };
+      
+    };
 
     const playAdvance = () => {
 
@@ -43,22 +55,26 @@ export default function PlayBar(props) {
         <div className="playBar" style={{ 
             left: props.menuIsOpen && props.getWindowDimensions()[0] > 768 ? "40vw" : "0px",
             width: props.menuIsOpen && props.getWindowDimensions()[0] > 768 ? "60%" : "100%" }}>
-            <IconButton disabled={props.disabled} style={{ marginRight: "12px", marginTop: "2px" }} onClick={ () => {
-                if(props.playTimerId.current !== 0) {
-                    setLineNum(props.lineNumberRef.current);
-                    window.clearInterval(props.playTimerId.current);
-                    props.playTimerId.current = 0;
-                    props.setPlaying(false);
-                } else {
-                    if (props.lineNumberRef.current === props.data.current.length - 1) setLineNum(0);
-                    else setLineNum(props.lineNumberRef.current);
-                    props.playTimerId.current = (
-                        window.setInterval(playAdvance, 1000 / props.FPS.current));
-                    props.setPlaying(true)
-                }
-            } }>
-                { props.playing ? <PauseIcon /> : <PlayArrowIcon /> }
-            </IconButton>
+            <Tooltip title="Select a file to play" open={props.toolTipOpen} onClose={handleToolTipClose} onOpen={handleToolTipOpen}> 
+                <span>
+                    <IconButton disabled={props.disabled} style={{ marginRight: "12px", marginTop: "2px" }} onClick={ () => {
+                        if(props.playTimerId.current !== 0) {
+                            setLineNum(props.lineNumberRef.current);
+                            window.clearInterval(props.playTimerId.current);
+                            props.playTimerId.current = 0;
+                            props.setPlaying(false);
+                        } else {
+                            if (props.lineNumberRef.current === props.data.current.length - 1) setLineNum(0);
+                            else setLineNum(props.lineNumberRef.current);
+                            props.playTimerId.current = (
+                                window.setInterval(playAdvance, 1000 / props.FPS.current));
+                            props.setPlaying(true)
+                        }
+                    } }>
+                        { props.playing ? <PauseIcon /> : <PlayArrowIcon /> }
+                    </IconButton>
+                </span>
+            </Tooltip>
             <Slider disabled={props.disabled} min={0} max={props.data.current.length - 1} value={props.timeSliderValue} 
                 onChange={(event, newValue) => setLineNum(newValue)} 
                 style={{width: "calc(100% - 84px - 72px)"}}/>
