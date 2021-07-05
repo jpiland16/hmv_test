@@ -9,6 +9,7 @@ import Sophie20210603 from './Sophie20210603/test2.js'
 // import Sam20210531_2 from './Sam20210531/DefaultOrientation.js'
 import Sam20210605 from './Sam20210605/GyroIntegration.js'
 import Jonathan20210608 from './Jonathan20210608/UseAccel'
+import Sophie20210705 from './Sophie20210705/Sophie20210705.js'
 
 import Tooltip from '@material-ui/core/Tooltip'
 import Button from '@material-ui/core/Button'
@@ -67,6 +68,9 @@ export default function Labs(props) {
             </LabOpener>
             <LabOpener title="Jonathan 6/8/2021: testing BT accelerometer data" {...props}>
                 <Jonathan20210608 {...props} />
+            </LabOpener>
+            <LabOpener title="Sophie 7/5/2021: leg movement" {...props}>
+                <Sophie20210705 {...props} />
             </LabOpener>
         </div>
     )

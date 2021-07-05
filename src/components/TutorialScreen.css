@@ -12,6 +12,7 @@ tbody {
 caption {
     padding: 10px;
     caption-side: bottom;
+    font-weight: bold;
 }
 
 table {

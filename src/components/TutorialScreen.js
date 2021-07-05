@@ -43,7 +43,7 @@ export default function Tutorial() {
       
       <Box mx={30} mb={5}>    
         <h1 style={{textAlign: 'center'}}>Getting Started</h1>
-        <p>The Human Activity Visualizer is a free visualization tool that reads wearable sensor measurements taken over time and displays the activities of the sensor wearer via a virtual 3D model. Currently, the model is centered on the origin and changes in global position are not displayed. To try out the visualization tool on a sample dataset, click the 'View OPPORTUNITY Dataset' button on the homepage and select a trial to view. To view your own uploaded dataset, the guide below will explain step-by-step how to get started.</p>
+        <p>The Human Activity Visualizer is a free visualization tool that reads wearable sensor measurements from a file and displays the activities of the sensor wearer via a virtual 3D model. To try out the visualization tool on a sample dataset, click <a href="/visualizer?file=/opportunity-dataset/dataset/S4-ADL4.dat">here</a>. To view your own uploaded dataset, the guide below will explain step-by-step how to get started.</p>
         <h2>Uploading and Viewing Your Own Datasets</h2>
         <p>The Human Activity Visualizer requires a specific file format and only interprets certain types of sensor data. Before uploading your file, ensure that it meets the following format and data specifications. </p>
         <p>Your file must: </p>
@@ -55,7 +55,7 @@ export default function Tutorial() {
         <p>The data in your file must:</p>
         <ul>
           <li>include time values in milliseconds</li>
-          <li>include global quaternions or acc+mag+gyro values taken over time<ul>
+          <li>include global quaternions and/or acc+mag+gyro values taken over time<ul>
               <li>Note: other measurement types can be included in the uploaded file but will be ignored</li>
             </ul>
           </li>
