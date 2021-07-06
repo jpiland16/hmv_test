@@ -110,11 +110,6 @@ React.useEffect(() => {
 
     return (
       <div id='visualizationBase' ref={thisElementRef} style={{textAlign: "center", backgroundColor: "lightskyblue"}}>
-          <Typography 
-            style={{position: "absolute", bottom: "16px", right: "16px", cursor: "pointer", textDecoration: "underline", opacity: "60%"}}
-            onClick={() => window.location.href = "/files/contact-form.html"}>
-              Contact us
-          </Typography>
           <img src="/img/static-model.png" style={{
               height: "80%", 
               marginTop: "14.75vh",  

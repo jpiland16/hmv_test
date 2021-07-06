@@ -119,7 +119,7 @@ export default function GeneratedData(props) {
                     upperRightLegQuaternion.multiply(compassQuaternion);
 
                     let lowerRightLegQuaternion = new THREE.Quaternion().copy(upperRightLegQuaternion)
-                    
+                    // orients legs to face where body is facing
                     let upperRightLegAccelerometerValue = props.data.current[props.timeSliderValue][2]; // Y
                     upperRightLegAccelerometerValue = Math.max(-1000, Math.min(upperRightLegAccelerometerValue, 1000))                    
 
@@ -131,6 +131,9 @@ export default function GeneratedData(props) {
                     lowerRightLegAccelerometerValue = Math.max(-1000, Math.min(lowerRightLegAccelerometerValue, 1000))                    
 
                     let lowerRightLegElevationAngle = Math.acos(lowerRightLegAccelerometerValue / 1000) // radians
+                    if (Math.abs(lowerRightLegElevationAngle)> Math.abs(upperRightLegElevationAngle)){
+                        lowerRightLegElevationAngle = upperRightLegElevationAngle
+                    }
                     let lowerRightLegElevationQ = new THREE.Quaternion(Math.sin(lowerRightLegElevationAngle/2), 0, 0, Math.cos(lowerRightLegElevationAngle / 2))
                     lowerRightLegQuaternion.multiply(lowerRightLegElevationQ)
 
@@ -154,7 +157,7 @@ export default function GeneratedData(props) {
                     props.batchUpdate("LLL", [lowerLeftLegQuaternion.x, lowerLeftLegQuaternion.y, lowerLeftLegQuaternion.z, lowerLeftLegQuaternion.w]);
                     props.batchUpdate("RLL", [lowerRightLegQuaternion.x, lowerRightLegQuaternion.y, lowerRightLegQuaternion.z, lowerRightLegQuaternion.w]);
 
-                    // Adjust position
+                    // Adjust position back to origin
 
                     let yAxVector = new THREE.Vector3(0, 1, 0);
                     let newVector = new THREE.Vector3().copy(yAxVector)
