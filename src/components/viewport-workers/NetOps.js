@@ -170,7 +170,29 @@ function getFilePart(fileName, type) {
     });
 }
 
+/**
+ * Notifies the server that this client has subscribed to the target datset file. Unsubscribes from any
+ * other file that the component with properties `props` is subscribed to.
+ * @param {Object} props An Object containing the following:
+ *  - props.setFileStatus(): Sets a String to one of the following values describing the visualizer's readiness:
+ *      ( `"Processing data"`
+ *      `"Loading file"`
+ *      `"File ready"`
+ *      `"Loading models"`).
+ *  - props.getFileList(): Retreives the list of currently available files for viewing.
+ *  - props.initializeScene(): Creates a scene to apply the data to.
+ *  - props.setSceneInfo(): Stores an Object containg entries for the scene, the mannequin model, and the renderer.
+ *  - props.onLoadBones(): Sets the state of the client so that it applies data transformations to the model's bones.
+ *  Runs any other relevant initialization code.
+ *  - props.setTimeSliderValue(): Stores an int representing the data point to show to the user.
+ * @param {String} mySelectedFile The full filepath of the file to subscribe to, as enumerated by
+ * the response to a GET request to 'api/get-file-list'.
+ */
 export function subscribeToFile(props, mySelectedFile) {
+    if (props.fileStatus.socket) {
+        props.fileStatus.socket.disconnect();
+        props.setFileStatus({ currentSocket: null });
+    }
     // const URL = "http://localhost:3000"; // This needs to be flexible based on whether we're locally running
     const URL = window.location;
     const socket = io({ 
@@ -253,7 +275,7 @@ export function subscribeToFile(props, mySelectedFile) {
 
     socket.connect();
     console.log("Connected with socket.");
-    props.setFileStatus({ status: "Contacting server" });
+    props.setFileStatus({ status: "Contacting server", currentSocket: socket });
 }
 
 export function downloadMetafile(props, selectedFilename) {

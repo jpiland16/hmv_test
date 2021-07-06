@@ -1,11 +1,7 @@
 import React from 'react'
-import { useEffect, useCallback } from 'react';
 import { Alert } from '@material-ui/lab'
-import { Button } from '@material-ui/core'
-import io from 'socket.io-client'
 import { withRouter } from "react-router-dom";
 import Visualizer from './Visualizer';
-import { initializeScene } from './SceneInitializer';
 import CircularProgress from '@material-ui/core/CircularProgress'
 
 import './FileViewer.css';

@@ -566,12 +566,12 @@ io.use((socket, next) => {
     //     console.log("The attempted socket didn't have a username. Aborting connection.");
     //     return next(new Error("A name is required to associate with this connection"));
     // }
-    // socket.userName = name;
+    // socket.userName = name;  
     next();
 })
 
 io.on('connection', (socket) => {
-    console.log("A new socket connection just started up");
+    console.log("A new socket connection just started.");
     let targetFile = socket.handshake.query.file;
     //when disconnecting, remove from map (and maybe even delete the associated file)
     socket.on('disconnect', (reason) => {

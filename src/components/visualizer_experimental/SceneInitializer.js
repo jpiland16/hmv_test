@@ -1,7 +1,15 @@
 import * as THREE from 'three'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 
-
+/**
+ * Asynchronously creates a THREE.js scene with the mannequin model and Grid asset.
+ * @returns A Promise that resolves to an Object with the following keys: 
+ * - scene: The THREE.js scene to render.
+ * 
+ * - model: The Mannequin model to move using the target data.
+ * 
+ * - renderer: A THREE.js Renderer that can render the scene.
+ */
 export function initializeScene() {    
     let scene = new THREE.Scene();    
     scene.background = new THREE.Color( 0x87cefa);
