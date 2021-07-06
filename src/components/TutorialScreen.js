@@ -6,7 +6,8 @@ import Button from '@material-ui/core/Button';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
-
+import example1 from './example1.PNG'
+import example2 from './example2.PNG'
 import {useHistory} from 'react-router-dom'
 
 
@@ -32,7 +33,7 @@ export default function Tutorial() {
     <div style={{
       backgroundColor: 'lightskyblue',
       }} >
-        <div style={{overflowY: 'auto', height: window.innerHeight}}> 
+        <div style={{overflowY: 'auto', height: '100vh'}}> 
       <AppBar position="relative">
         <Toolbar>
           <Typography variant="h6" color="inherit" noWrap className={classes.title}>
@@ -41,7 +42,7 @@ export default function Tutorial() {
         </Toolbar>
       </AppBar>
       
-      <Box mx={30} mb={5}>    
+      <Box mx='20%' mb='5%'>    
         <h1 style={{textAlign: 'center'}}>Getting Started</h1>
         <p>The Human Activity Visualizer is a free visualization tool that reads wearable sensor measurements from a file and displays the activities of the sensor wearer via a virtual 3D model. To try out the visualization tool on a sample dataset, click <a href="/visualizer?file=/opportunity-dataset/dataset/S4-ADL4.dat">here</a>. To view your own uploaded dataset, the guide below will explain step-by-step how to get started.</p>
         <h2>Uploading and Viewing Your Own Datasets</h2>
@@ -99,28 +100,13 @@ export default function Tutorial() {
         </table>
         <p>When the file has been correctly formatted, click the 'Upload File' button on the main page, select your file(s), and enter the necessary calibration information. For each sensor, select the sensor location, data type, and start column of each data type (indexed at zero).</p>
         <p>For Example 1, you would input:</p>
-        <ul>
-          <li>Time Start Column: 0</li>
-          <li>Sensor Type: BACK<ul>
-              <li>Data Type: Quaternion</li>
-              <li>Start Column: 1</li>
-            </ul>
-          </li>
-          <li>Sensor Type: ULA<ul>
-              <li>Data Type: Quaternion</li>
-              <li>Start Column: 5</li>
-            </ul>
-          </li>
-        </ul>
+
+        <img src={example1} width='50%'/>
+       
         <p>For Example 2, you would input:</p>
-        <ul>
-          <li>Time Start Column: 0</li>
-          <li>Sensor Type: BACK<ul>
-              <li>Data Type: Acc+Mag+Gyro</li>
-              <li>Start Column: 1</li>
-            </ul>
-          </li>
-        </ul>
+        
+        <img src={example2} width='60%'/> 
+
         <p>Check that all of the information has been entered correctly, and click the 'Submit" button at the bottom of the form. A landing screen will appear when the file has been successfully submitted. Select the file you want to view first and continue to the visualizer page. Once the file has downloaded, press the play button the in bottom left corner of your screen to begin the animation.</p>
         <p>To view a different upload file, click on the hamburger icon in the top left corner and you will see the file directory. In the user-uploads folder, you will be able to access any additional files you uploaded. These files are only accessible by you but will be deleted from the server after two days.</p>
         <Button color='primary' variant= 'contained' id = "submitButton" onClick={()=>returnHome()}>Return Home to Get Started</Button>
