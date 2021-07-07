@@ -7,6 +7,10 @@ export function updateSingleQValue(props, boneId, qIndex, newValue) {
 }
 
 export function batchUpdateObject(props, boneId, slideArray) {
+    if (props.bones === null) {
+        console.log("Unable to update bones because the bone list hasn't been initialized yet.")
+        return;
+    }
     let newSliderValues = Object.getOwnPropertyNames(props.sliderValuesShadowCopy).length > 0 ? {...props.sliderValuesShadowCopy} : { ...props.sliderValues }; // Create shallow clone of old model state
     newSliderValues[boneId] = slideArray;
     let newQ = new THREE.Quaternion(slideArray[0], slideArray[1], slideArray[2], slideArray[3]);
@@ -27,7 +31,7 @@ export function batchUpdateObject(props, boneId, slideArray) {
     
     if (props.childrenOf[boneId]) affectedByInheritance.push(...props.childrenOf[boneId])
 
-    if (props.playTimerId.current === 0 && (props.dev && props.selectedFile === "")) { // (Don't bother doing this when viewing pre-recorded data, or if we aren't in dev mode and running tests.)
+    if (props.playTimerId.current === 0 && (props.dev && props.selectedFile.fileName === "")) { // (Don't bother doing this when viewing pre-recorded data, or if we aren't in dev mode and running tests.)
         while (affectedByInheritance.length > 0) {
             let currentBone = affectedByInheritance.shift();
             if (props.childrenOf[currentBone]) affectedByInheritance.push(...props.childrenOf[currentBone])

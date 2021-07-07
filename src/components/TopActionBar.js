@@ -4,8 +4,10 @@ import Typography from '@material-ui/core/Typography'
 import FolderOpenIcon from '@material-ui/icons/FolderOpen';
 import CancelIcon from '@material-ui/icons/Cancel';
 import Tooltip from '@material-ui/core/Tooltip'
+import React from 'react';
 
 export default function TopActionBar(props) {
+
     return (
         <div className="topBar"style={{ 
             left: props.menuIsOpen && props.getWindowDimensions()[0] > 768 ? "40vw" : "48px",
@@ -13,27 +15,26 @@ export default function TopActionBar(props) {
                 props.menuIsOpen && props.getWindowDimensions()[0] > 768 ? "60%" : "calc(100% - 48px)" 
                 : props.menuIsOpen && props.getWindowDimensions()[0] > 768 ? "calc(60% - 28vw)" : "calc(100% - 28vw - 48px)" 
         }}> 
-            <Tooltip placement="bottom" title={props.modelLoaded ? "Click to choose file" : "Please wait for the model to load"}>
+            <Tooltip placement="bottom" title="Click to choose file">
                 <Typography className="fileName" style={{marginRight: "12px"}}
                     onClick={() => {
-                        if (props.modelLoaded) {
-                            props.setMenuIsOpen(true);
-                            props.setSelectedPanel(0);
-                        }
-                }} >
-                    {props.selectedFile === "" ? "No file selected." : <span><b>Viewing: </b>{(props.selectedFile.length > 16 ? "..." : "") + props.selectedFile.substr(-16)}</span>}
+                        props.setMenuIsOpen(true);
+                        props.setSelectedPanel(0);
+                    }}>
+                    {/* {props.selectedFile.fileName === "" ? "No file selected." : <span><b>Viewing: </b>{(props.selectedFile.displayName.length > 16 ? "..." : "") + props.selectedFile.displayName.substr(-16)}</span>} */}
+                    {props.selectedFile.fileName === "" ? "No file selected." : <span><b>Viewing: </b>{(props.selectedFile.displayName > 16 ? "..." : "") + props.selectedFile.displayName.substr(-16)}</span>}
                 </Typography>
             </Tooltip>
-            <Button disabled={!props.modelLoaded} className="topBtn" onClick={() => {
-                        if(props.selectedFile === "") {
+            <Button className="topBtn" onClick={() => {
+                        if(props.selectedFile.fileName === "") {
                             props.setMenuIsOpen(true);
                             props.setSelectedPanel(0);
                         } else {
                             //if(window.confirm("Are you sure you want to close the file " + props.selectedFile + "?")) 
-                                window.history.replaceState(null, null, "?") || props.onSelectFileChange("")
+                                window.history.replaceState(null, null, "?") || props.onSelectFileChange("", "None")
                         }
             }} size="small">
-                { props.selectedFile === "" ?
+                { props.selectedFile.fileName === "" ?
                     <div style={{display: "flex", alignItems: "center"}}>
                         <FolderOpenIcon style={{marginRight: "6px"}}/>
                         Choose a file

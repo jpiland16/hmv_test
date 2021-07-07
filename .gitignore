@@ -38,3 +38,4 @@ src/files
 build.log
 git.log
 sendEmail.js
+*.pyc

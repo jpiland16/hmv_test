@@ -6,8 +6,8 @@ import Jonathan20210527 from './Jonathan20210527/RequestFile2'
 import Sophie20210530 from './Sophie20210530/test1'
 import Sam20210531 from './Sam20210531/OrientationStudy.js'
 import Sophie20210603 from './Sophie20210603/test2.js'
-// import Sam20210531_2 from './Sam20210531/DefaultOrientation.js'
 import Sam20210605 from './Sam20210605/GyroIntegration.js'
+import Sam20210611 from './Sam20210611/ServerSideProcessing.js'
 import Jonathan20210608 from './Jonathan20210608/UseAccel'
 import Sophie20210705 from './Sophie20210705/Sophie20210705.js'
 
@@ -60,11 +60,11 @@ export default function Labs(props) {
             <LabOpener title="Sophie 6/3/2021" {...props}>
                 <Sophie20210603 {...props}/>
             </LabOpener>
-            {/* <LabOpener title="Sam 5/31/2021: Default orientation" {...props}>
-                <Sam20210531_2 {...props}/>
-            </LabOpener> */}
             <LabOpener title="Sam 6/05/2021: Gyro integration" {...props}>
                 <Sam20210605 {...props}/>
+            </LabOpener>
+            <LabOpener title="Sam 6/11/2021: Server-side processing" {...props}>
+                <Sam20210611 {...props}/>
             </LabOpener>
             <LabOpener title="Jonathan 6/8/2021: testing BT accelerometer data" {...props}>
                 <Jonathan20210608 {...props} />

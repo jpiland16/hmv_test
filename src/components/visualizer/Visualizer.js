@@ -28,6 +28,10 @@ let bones = {
 }
 
 function createScene(parentElement) {
+    if (parentElement == null) {
+        console.log("Unable to initialize the scene because no scene exists.");
+        return Promise.reject();
+    }
     camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 0.1, 500 );
     
     camera.position.z = 3;
@@ -60,6 +64,10 @@ function createScene(parentElement) {
 }
 
 function refreshRendererSize(parentElement) {
+    if (parentElement == null) {
+        console.log("Unable to modify the scene's size because no scene exists.");
+        return;
+    }
     renderer.setSize( parentElement.offsetWidth, parentElement.offsetHeight );
     camera.aspect = parentElement.offsetWidth / parentElement.offsetHeight;
     camera.updateProjectionMatrix();
@@ -160,7 +168,6 @@ export default function Visualizer(props) {
                 </div>
             </div>
         ) }
-
             <div style={{display: props.downloading ? "none" : "block"}} ref={thisElementRef} id="visualizationBase" onClick={props.onClick}>
                 { props.modelLoaded ? undefined : 
                     <div className="loading">

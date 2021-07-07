@@ -5,7 +5,7 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 
 let model,scene,renderer,frameId,camera = null;
 let starttime = new Date().getTime();
-let rate = 10; // Hz
+let rate = 60; // Hz
 
 
 
@@ -115,7 +115,7 @@ React.useEffect(() => {
               marginTop: "14.75vh",  
               left: "calc(50vw - 36.3vh + 4px)",
               transition: "opacity 0.5s linear",
-              position: "absolute",
+              position: "absolute"
             }} id="staticImage"/>
       </div>
     );

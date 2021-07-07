@@ -131,9 +131,9 @@ export default function CustomizedTreeView(props) {
                 label={nodes.name} 
                 onContextMenu={ (event) => handleContextMenu(event, nodes.id, isFolder) } 
                 onClick={ (event) => { 
-                        if (!isFolder) props.clickFile(nodes.id) 
+                        if (!isFolder) { props.clickFile(nodes.id, nodes.name) }
                 } }
-                bold={props.selectedFile.indexOf(nodes.id) !== -1 ? "true" : "false"}
+                bold={props.selectedFile.fileName.indexOf(nodes.id) !== -1 ? "true" : "false"}
                 style={{
                         whiteSpace: "nowrap",
                         opacity: props.checkFileName(nodes.id) || isFolder ? 1 : 0.5,
@@ -171,7 +171,7 @@ export default function CustomizedTreeView(props) {
         <TreeView
             className={classes.root}
             expanded={props.searchFileText === "" ? props.expandedItems : getAllIds(makeRoot(props.files.current))}
-            selected={props.selectedFile}
+            selected={props.selectedFile.fileName}
             defaultCollapseIcon={<MinusSquare />}
             defaultExpandIcon={<PlusSquare />}
             defaultEndIcon={<CloseSquare />}

@@ -27,19 +27,23 @@ export function onLoadBones(props, bones) {
     setParent(props, bones, 'LLL','LUL')
     setParent(props, bones, "LUL","ROOT");
 
-    let boneList = Object.getOwnPropertyNames(bones);
+    // I had to modify this line to filter out 'length' from boneList, which is really confusing to me,
+    // since I got my list of bones the same way as the original visualizer does.
+    let boneList = Object.getOwnPropertyNames(bones).filter((entry) => entry !== 'length');
     for (let i = 0; i < boneList.length; i++) {
+        if (boneList[i] === 'length') { continue; }
         let boneQ = bones[boneList[i]].quaternion; // This is the "local" quaternion
         let globalQ = props.getGlobalFromLocal(props, bones, boneQ, boneList[i]);
         props.globalQs[boneList[i]] = globalQ;
     }
 
     setSliderPositions(props, bones, props.useGlobalQs.current);
+    // props.setTimeSliderValue(0); // should not be done unless we have a way to ensure that it takes full effect on the model and slider (both or neither)
 }
 
 export function setSliderPositions(props, bones, useGlobalQs) {
 
-    let boneList = Object.getOwnPropertyNames(bones);
+    let boneList = Object.getOwnPropertyNames(bones).filter((entry) => entry !== 'length');
     let newSliderPositions = { };
 
     for (let i = 0; i < boneList.length; i++) {

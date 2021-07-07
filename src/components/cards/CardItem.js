@@ -1140,15 +1140,20 @@ export default function CardItem(props) {
         let startRow = Math.max(0, lineNum - options.rowsBefore);
         let endRow = Math.min(data.length, lineNum + options.rowsAfter)
 
-        for (let row = startRow; row <= endRow; row++) {
-            let obj = {
-                name: data[row][0], // time
+        // Relies on there being activity data embedded in the data file that we're looking at.
+        try {
+            for (let row = startRow; row <= endRow; row++) {
+                let obj = {
+                    name: data[row][0], // time
+                }
+                for (let i = options.startCol; i < options.startCol + options.columnCount; i++) {
+                    obj[oppColumns[i].label] = data[row][i] * oppColumns[i].multiplier;
+                    if (row === startRow) dataNames.push(oppColumns[i].label);
+                }
+                graphData.push(obj);
             }
-            for (let i = options.startCol; i < options.startCol + options.columnCount; i++) {
-                obj[oppColumns[i].label] = data[row][i] * oppColumns[i].multiplier;
-                if (row === startRow) dataNames.push(oppColumns[i].label);
-            }
-            graphData.push(obj);
+        } catch (error) {
+            return null;
         }
 
         return (

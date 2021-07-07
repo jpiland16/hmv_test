@@ -2,17 +2,20 @@ import './Viewport.css'
 import Menu from './menu/Menu'
 import React from 'react'
 import Visualizer from './visualizer/Visualizer'
+import FileViewer from './visualizer_experimental/FileViewer'
+import { initializeScene } from './visualizer_experimental/SceneInitializer'
 import PlayBar from './PlayBar'
 import TopActionBar from './TopActionBar'
 import CardSet from './cards/CardSet'
 import Animator from './Animator'
 
-import { getMap, getFileList, downloadFile, downloadMetafile } from './viewport-workers/NetOps'
+import { getMap, getFileList, downloadFile, subscribeToFile } from './viewport-workers/NetOps'
 import { onSelectFileChange, isFileNameValid, clickFile} from './viewport-workers/FileOps'
 import { updateSingleQValue, batchUpdateObject } from './viewport-workers/ModelOps'
 import { getLocalFromGlobal, getGlobalFromLocal } from './viewport-workers/MathOps'
 import { setSliderPositions, onLoadBones } from './viewport-workers/BoneOps'
 import { resetModel } from './viewport-workers/Reset'
+import { Alert } from '@material-ui/lab'
 
 let childrenOf = {};
 let parentOf = {};
@@ -22,17 +25,26 @@ let sliderValuesShadowCopy = {};
 const lastFiles = [null]; // Wrapped in an array to be mutable
 const fileMap = [null]; // Wrapped in an array to be mutable
 
+const VERBOSE_OUTPUT = false
+
 export default function Viewport(props) {
+
+    if (VERBOSE_OUTPUT) console.log("Re-rendering viewport.")
     
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
 
-    let initialSelectedFile = ""
+    let initialSelectedFile = { fileName: "", displayName: "None" };
     let initialExpandedItems = ["/"];
+    let initialFileStatus = { status: "Contacting server" };
 
     if (urlParams.has('file')) {
         const fpath = urlParams.get('file');
-        initialSelectedFile = fpath;
+        initialSelectedFile.fileName = fpath;
+        initialSelectedFile.displayName = "Loading...";
+        if (urlParams.has('name')) { 
+            initialSelectedFile.displayName = urlParams.get('name'); 
+        }
         let charPos = 1;
         while (charPos < fpath.length) {
             if (fpath.charAt(charPos) === '/')
@@ -64,6 +76,8 @@ export default function Viewport(props) {
     const [ downloadPercent, setDownloadPercent ] = React.useState(0);
     const [ downloading, setDownloading ] = React.useState(false);
     const [ openLab, setOpenLab ] = React.useState("");
+    const [ fileStatus, setFileStatus ] = React.useState(initialFileStatus);
+    const [ sceneInfo, setSceneInfo ] = React.useState({ scene: null, model: null, camera: null, renderer: null });
     
     /*   ---------------------
      *   REFS (React.useRef())
@@ -99,8 +113,11 @@ export default function Viewport(props) {
             setExpandedItems: setExpandedItems,
             selectedFile: selectedFile,
             setSelectedFile: setSelectedFile,
-            clickFile: (id) => clickFile(propertySet, id), 
-            onSelectFileChange: (file) => onSelectFileChange(propertySet, file),
+
+            fileStatus: fileStatus,
+            setFileStatus: setFileStatus,
+            clickFile: (id, name) => clickFile(propertySet, id, name), 
+            onSelectFileChange: (file, displayName) => onSelectFileChange(propertySet, file, displayName),
             checkFileName: (fname) => isFileNameValid(propertySet, fname),
             files: files,
             lastFiles: lastFiles,
@@ -144,6 +161,9 @@ export default function Viewport(props) {
             getCamera: getCamera,
             orbitControls: orbitControls,
             getControls: getControls,
+            sceneInfo: sceneInfo,
+            setSceneInfo: setSceneInfo,
+            initializeScene: initializeScene,
 
             // QUATERNION PROPERTIES
             globalQs: globalQs,
@@ -160,8 +180,8 @@ export default function Viewport(props) {
             downloadPercent: downloadPercent,
             setDownloadPercent: setDownloadPercent,
             downloadFile: downloadFile,
-            downloadMetafile: downloadMetafile,
             outgoingRequest: outgoingRequest, 
+            subscribeToFile: subscribeToFile,
 
             // DATA
             data: data,
@@ -197,7 +217,10 @@ export default function Viewport(props) {
             setOpenLab: setOpenLab,
 
             // DEV MODE
-            dev: props.dev
+            dev: props.dev,
+
+            // console.log
+            verbose: VERBOSE_OUTPUT
 
     }
 
@@ -206,26 +229,27 @@ export default function Viewport(props) {
      *   ------------------- */  
 
     React.useEffect(() => {
-        if(bones) {
-            if(props.firstLoad) {
-                if (files.current.length === 0) {
-                    getFileList(propertySet);
-                }
-                getMap(propertySet).then(() => {
-                    if (selectedFile !== "") {
-                        if (isFileNameValid(propertySet, selectedFile)) {
-                            onSelectFileChange(propertySet, selectedFile);
-                        }
-                    }
-                }, () => { });
-                props.setFirstLoad(false);
-            } else {
-                if (files.current && files.current.length === 0) {
-                    files.current = propertySet.lastFiles[0];
-                }
+        if(props.firstLoad) {
+            // getMap(propertySet).then(() => {
+            // }, () => { });
+            props.setFirstLoad(false);
+        } else {
+            if (files.current && files.current.length === 0) {
+                files.current = propertySet.lastFiles[0];
             }
         }
     });
+
+    React.useEffect(() => {
+        getFileList(propertySet);
+        if (selectedFile.fileName !== '' && isFileNameValid(propertySet, selectedFile.fileName)) {
+            console.log("Running onSelectFileChange");
+            onSelectFileChange(propertySet, selectedFile.fileName, selectedFile.displayName);
+        }
+        else {
+            console.log("Not running onSelectFileChange");
+        }
+    }, []); // No dependencies, so it runs only once at first render.
 
     /*  ---------------------
      *  WINDOW SIZE RETRIEVAL
@@ -275,8 +299,8 @@ export default function Viewport(props) {
     return (
         <div className="myView">
             <Menu {...propertySet} />
-            <Visualizer {...propertySet} onClick = { (event) => !menuIsPinned && setMenuIsOpen(false) } />
-            <PlayBar {...propertySet} disabled={data.current.length === 0} />
+            <FileViewer targetFile={""} {...propertySet}/>
+            <PlayBar {...propertySet} disabled={!fileStatus || fileStatus.status !== "Complete"} />
             <CardSet {...propertySet} />
             <TopActionBar {...propertySet} />
             <Animator {...propertySet} />
