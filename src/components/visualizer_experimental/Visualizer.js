@@ -5,6 +5,20 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
 import './Visualizer.css';
 
+let camera;
+let currentDiv;
+
+function refreshRendererSize(parentElement, renderer, scene) {
+    if (parentElement == null) {
+        console.log("Unable to modify the scene's size because no scene exists.");
+        return;
+    }
+    renderer.setSize( parentElement.offsetWidth, parentElement.offsetHeight );
+    camera.aspect = parentElement.offsetWidth / parentElement.offsetHeight;
+    camera.updateProjectionMatrix();
+    renderer.render(scene, camera);
+}
+
 export default function ThreeScene(props) {
 
     const MIN_CAMERA_DISTANCE = 1.25;
@@ -13,13 +27,6 @@ export default function ThreeScene(props) {
     // const [camera, setCamera] = useState(null);
     console.log("Printing scene info:");
     console.log(props.sceneInfo);
-
-    function refreshRendererSize(currentScene, width, height, renderer, camera) {
-        renderer.setSize( width, height );
-        camera.aspect = width / height;
-        camera.updateProjectionMatrix();
-        renderer.render(currentScene, camera);
-    }
 
     /**
      * Begins a THREE.js render loop on a given scene.
@@ -41,7 +48,7 @@ export default function ThreeScene(props) {
         const width = parentElement.clientWidth;
         const height = parentElement.clientHeight;
 
-        let camera = new THREE.PerspectiveCamera( 45, width / height, 0.01, 500 );
+        camera = new THREE.PerspectiveCamera( 45, width / height, 0.01, 500 );
         camera.position.z = 3;
         camera.position.y = 0;
 
@@ -73,8 +80,6 @@ export default function ThreeScene(props) {
         // requestAnimationFrame(()=>{ renderer.render(scene,camera)});
     }
 
-    let currentDiv;
-
     const measuredRef = useCallback(node => {
         currentDiv = node;
         if (node === null) return;
@@ -83,12 +88,12 @@ export default function ThreeScene(props) {
     }, []);
 
     useEffect(() => {
-        if (currentDiv == null) {
-            console.log("No div reference to update!");
-            return;
+        function handleResize() {
+            refreshRendererSize(currentDiv, props.sceneInfo.renderer, props.sceneInfo.scene, props.sceneInfo.camera);
         }
-        // renderScene(currentDiv, props.scene, props.renderer);
-        // Maybe add some code to return a function that removes this from the DOM?
+
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize)
     });
 
 

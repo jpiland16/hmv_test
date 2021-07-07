@@ -115,7 +115,7 @@ React.useEffect(() => {
               marginTop: "14.75vh",  
               left: "calc(50vw - 36.3vh + 4px)",
               transition: "opacity 0.5s linear",
-              position: "absolute",
+              position: "absolute"
             }} id="staticImage"/>
       </div>
     );

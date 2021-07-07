@@ -6,21 +6,6 @@ import CircularProgress from '@material-ui/core/CircularProgress'
 
 import './FileViewer.css';
 
-let boneNames = {
-    LUA: "upperarm_l",
-    LLA: "lowerarm_l",
-    RUA: "upperarm_r",
-    RLA: "lowerarm_r",
-    BACK: "spine_02", /** IMPORTANT */
-    LSHOE: "foot_l",
-    RSHOE: "foot_r",
-    ROOT: "_rootJoint",
-    RUL: "right_upper_leg",
-    LUL: "left_upper_leg",
-    RLL: "right_lower_leg",
-    LLL: "left_lower_leg"
-}
-
 class FileViewer extends React.Component {
     constructor() {
         super();
@@ -179,7 +164,7 @@ class FileViewer extends React.Component {
     render() {
         console.log("Selected file: " + this.props.selectedFile.fileName);
         return (
-            <div>
+            <div style={{ marginLeft: this.props.menuIsOpen ? "40vw" : "0px"}}>
                 <this.FileDisplay 
                     fileSelected={this.props.selectedFile.fileName !== ''} 
                     status={this.props.fileStatus.status} 
@@ -187,7 +172,6 @@ class FileViewer extends React.Component {
                     sceneInfo={this.props.sceneInfo}
                     library={this}
                 />
-                {/* <this.FileDisplay status={this.props.fileStatus.status} errorMessage={this.props.fileStatus.message} sceneInfo={this.props.sceneInfo}/> */}
             </div>
         )
     }

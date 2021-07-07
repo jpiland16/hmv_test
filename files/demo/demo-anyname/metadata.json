@@ -1,0 +1,90 @@
+{   
+    "floatsMultiplied": true,
+    
+    "displayName":"S4-ADL4",
+
+    "globalTransformQuaternion": {
+        "x": 0.5,
+        "y": 0.5,
+        "z": 0.5,
+        "w": -0.5
+    },
+
+    "targets": [
+
+        {
+            "bone": "ROOT",
+            "type": "Quaternion",
+            "column": 46,
+            "localTransformQuaternion": {
+                "x": 0.7071,
+                "y": -0.7071,
+                "z": 0,
+                "w": 0
+            } 
+        },
+
+        {
+            "bone": "BACK",
+            "type": "Quaternion",
+            "column": 46,
+            "localTransformQuaternion": {
+                "x": 0.7071,
+                "y": -0.7071,
+                "z": 0,
+                "w": 0
+            } 
+        },
+        
+        {
+            "bone": "RUA",
+            "type": "Quaternion",
+            "column": 59,
+            "localTransformQuaternion": {
+                "x": 0.7071,
+                "y": 0.7071,
+                "z": 0,
+                "w": 0
+            } 
+        },
+        
+        {
+            "bone": "RLA",
+            "type": "Quaternion",
+            "column": 72,
+            "localTransformQuaternion": {
+                "x": 0.7071,
+                "y": 0.7071,
+                "z": 0,
+                "w": 0
+            } 
+        },
+        
+        {
+            "bone": "LUA",
+            "type": "Quaternion",
+            "column": 85,
+            "localTransformQuaternion": {
+                "x": 0.7071,
+                "y": 0.7071,
+                "z": 0,
+                "w": 0
+            } 
+        },
+        
+        {
+            "bone": "LLA",
+            "type": "Quaternion",
+            "column": 98,
+            "localTransformQuaternion": {
+                "x": 0.7071,
+                "y": 0.7071,
+                "z": 0,
+                "w": 0
+            } 
+        }
+
+
+    ]
+
+}

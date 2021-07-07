@@ -1,15 +1,12 @@
 const express = require('express');
-//const helmet = require('helmet')   
 const app = express();
 const serveIndex = require('serve-index');
-// const http = require('http')
 const https=require('https');
 const fs = require('fs');
-const { count } = require('console');
 const { exec } = require('child_process');
 const formidable = require('formidable');
 const { Server } = require('socket.io');
-// const { onContactUs } = require('./sendEmail')
+
 var onContactUs = null;
 let contactModulePath = __dirname+'/sendEmail.js';
 if (fs.existsSync(contactModulePath)) {
@@ -26,58 +23,11 @@ const HTTPS_PORT = process.env.PORT || 443;
 
 const httpsServer = https.createServer(options, app);
 
-// const io = new Server(httpsServer, {
-//     cors: {
-//         origin: "https://localhost:3000",
-//     },
-// });
-
 const io = new Server(httpsServer);
 
 const formProcessor = require('./src/server_side/FormFileProcessor');
 
-//app.use(helmet()); //adds security related HTTP headers
-
-app.use(express.static(`${__dirname}/build`));
-app.use(express.static(`${__dirname}/public`));
-
-function walkDirectory(dir) {
-    let myPromise = new Promise(function(myResolve, myReject) {
-        let thisDirFiles = [];
-        fs.readdir(dir,{withFileTypes: true}, async function(err, fileList) {
-            if (err) {
-                myReject(err);
-            } else {
-                for (let i = 0; i < fileList.length; i++) {
-                    let item = fileList[i];
-                    if (item.isDirectory()) {
-                        //console.log("Adding dir  " + item.name);
-                        try {
-                            let subDirFiles = await walkDirectory(dir + "/" + item.name);
-                            thisDirFiles.push({
-                                name: item.name,
-                                id: dir.substr(7) + "/" + item.name,
-                                children:  subDirFiles
-                            });
-                        } catch (error) {
-                            myReject(error);
-                        }
-                        //console.log("Finish dir  " + item.name);
-                    } else {
-                        //console.log("Adding file " + item.name);
-                        thisDirFiles.push({
-                            name: item.name,
-                            id: dir.substr(7) + "/" + item.name
-                        })
-                    }
-                }
-                //console.log("Done with directory " + dir);
-                myResolve(thisDirFiles);
-            }
-        })
-    });
-    return myPromise;
-}
+const VERBOSE_OUTPUT = false
 
 /**
  * Asynchronously and returns the display name from the metadata file at the given filepath.
@@ -175,7 +125,7 @@ function isValidDir(dir) {
                     });
                     let displayNamePromise = getFileDisplayName(dir+'/'+file.name);
                     displayNamePromise.then((displayName) => {
-                        dirObj.name = (displayName === null)? file.name : displayName;
+                        dirObj.name = (displayName === null) ? file.name : displayName;
                     });
                     let validDirPromise = isValidDir(dir+'/'+file.name);
                     validDirPromise.then((valid) => {
@@ -226,7 +176,7 @@ function countItems(root) {
 }
 
 function onProjectUpdate() {
-    console.log("Pull operation requested at " + new Date().toUTCString());
+    if (VERBOSE_OUTPUT) console.log("Pull operation requested at " + new Date().toUTCString());
     exec("git pull > git.log && npm run build > build.log")
 }
 
@@ -242,53 +192,57 @@ function writeFilePromise(filePath, data) {
     });
 }
 
-function handleFormUploadAlt(req, res) {
+function handleFormUpload(req, res) {
     const storagePath = './files/user-uploads/';
+
     let currDate = new Date();
     const directoryName = `${currDate.getMonth()}_${currDate.getDate()}_${currDate.getHours()}_${currDate.getMinutes()}_${currDate.valueOf()}`;
     let fullPath = storagePath + directoryName;
-    console.log("Received post request.");
+
+    if (VERBOSE_OUTPUT) console.log("Received post request.");
     app.locals.currentFiles.set(fullPath.substr('./files'.length), { status: "Processing" });
-    console.log("Updated file status. Printing full file status list: ");
-    console.log(app.locals.currentFiles); 
-    formProcessor.getFormFile(req)
-        .then(({ fields: parsedFields, files: parsedFiles}) => {
-            console.log("Finished grabbing the files from the user upload.");
-            res.json({ status: "File received", fileName: directoryName });
-            formProcessor.processDownloadedForm(parsedFields, parsedFiles).then(({ data: data, metadata: metadata}) => {
-                console.log(`Completely done processing ${fullPath}. Now we just have to write the resulting data.`);
-                writeUploadedFile(data, metadata, fullPath)
-                .then(() => {
-                    let mappedPath = fullPath.substr('./files'.length);
-                    if (app.locals.fileListeners.has(mappedPath)) {
-                        app.locals.fileListeners.get(mappedPath).forEach((socket) => socket.emit('File ready'));
-                    }
-                })
-                .catch((err) => {
-                    console.log("Some kind of error happened that we need to communicate to the client: " + err);
-                });
+    if (VERBOSE_OUTPUT) console.log("Updated file status. Printing full file status list: ");
+    if (VERBOSE_OUTPUT) console.log(app.locals.currentFiles); 
+
+    formidable().parse(req, (err, fields, files) => {
+        if (err) {
+            if (VERBOSE_OUTPUT) console.log(err);
+            return;
+        }
+        if (VERBOSE_OUTPUT) console.log("Finished grabbing the files from the user upload.");
+        res.json({ status: "File received", fileName: directoryName });
+        formProcessor.processDownloadedForm(fields, files).then(({ data: data, metadata: metadata}) => {
+            if (VERBOSE_OUTPUT) console.log(`Completely done processing ${fullPath}. Now we just have to write the resulting data.`);
+            writeUploadedFile(data, metadata, fullPath)
+            .then(() => {
+                let mappedPath = fullPath.substr('./files'.length);
+                if (app.locals.fileListeners.has(mappedPath)) {
+                    app.locals.fileListeners.get(mappedPath).forEach((socket) => socket.emit('File ready'));
+                }
+            })
+            .catch((err) => {
+                if (VERBOSE_OUTPUT) console.log("Some kind of error happened that we need to communicate to the client: " + err);
             });
-        })
-        .catch((err) => {
-            console.log(err);
         });
-    // https://google.github.io/styleguide/jsguide.html says that this double un-indent is perfectly okay, which suprises me.
+    });
 }
 
 function writeUploadedFile(data, metadata, filepath) {
     return new Promise((myResolve, myReject) => {
         fs.mkdir(filepath, {recursive: true}, (err) => {
             if (err) {
-                console.log("Error occured when trying to make new directory!")
+                if (VERBOSE_OUTPUT) console.log("Error occured when trying to make new directory!")
                 myReject(err); // If I handle this somehow, then this can just return Promise.all below instead
                 return;
             }
             let dataPromise = writeFilePromise(filepath + "/quaternion_data.dat", data);
             let metaPromise = writeFilePromise(filepath + "/metadata.json", JSON.stringify(metadata));
-            console.log("About to print fileListeners:");
-            console.log(app.locals.fileListeners);
+            if (VERBOSE_OUTPUT) console.log("About to print fileListeners:");
+            if (VERBOSE_OUTPUT) console.log(app.locals.fileListeners);
             Promise.all([dataPromise, metaPromise]).then(() => {
-                myResolve();
+                scanAllFiles().then(() => {
+                    myResolve();
+                });
             })
             .catch((err) => myReject(err));
         });
@@ -296,49 +250,9 @@ function writeUploadedFile(data, metadata, filepath) {
     
 }
 
-function handleFormUpload(req, res) {
-    const storagePath = './files/user-uploads/';
-    let currDate = new Date();
-    const directoryName = `${currDate.getMonth()}_${currDate.getDate()}_${currDate.getHours()}_${currDate.getMinutes()}_${currDate.valueOf()}`;
-    let fullPath = storagePath + directoryName;
-    console.log("Received post request.");
-    app.locals.currentFiles.set(fullPath.substr('./files/'.length), { status: "Processing" });
-    console.log("Updated file status. Printing full file status list: ");
-    console.log(app.locals.currentFiles); 
-    // download file. then:
-        // send 'file received'
-        // process data. then:
-            // set file to 'ready' in map
-    let onError = (message) => {
-        // This should be either (a) sent as a response or (b) stored so that it responds to a later GET message.
-        // My inspriation is Gradescope's system, where you upload a file and get taken to a submission viewing screen.
-        console.log("An error occurred while trying to process your submission: " + message);
-    };
-    formProcessor.processFile(req, (data, metadata) => {
-        res.json({ status: "File received", fileName: directoryName });
-        fs.mkdir(fullPath, {recursive: true}, (err) => {
-            if (err) {
-                console.log("Error occured when trying to make new directory!")
-                //send update to any file listeners
-                return;
-            }
-            let dataPromise = writeFilePromise(fullPath + "/quaternion_data.dat", data);
-            let metaPromise = writeFilePromise(fullPath + "/metadata.json", JSON.stringify(metadata));
-            console.log("About to print fileListeners:");
-            console.log(app.locals.fileListeners);
-            Promise.all([dataPromise, metaPromise]).then(() => {
-                if (app.locals.fileListeners.has(fullPath)) {
-                    app.locals.fileListeners.get(fullPath).forEach((socket) => socket.emit('File ready'));
-                }
-            })
-            .catch((err) => console.log(err));
-        })
-    }, onError);
-}
-
 app.post("/api/postform", (req, res) => {
     // handleFormUpload(req, res);
-    handleFormUploadAlt(req, res);
+    handleFormUpload(req, res);
 })
 
 app.post('/api/send-message', (req, res) => {
@@ -349,7 +263,7 @@ app.post('/api/send-message', (req, res) => {
     form.parse(req, function(err, fields, files) {
         if (err) {
             console.error("There was an error receiving the message. Check log for details.")
-            console.log(err);
+            if (VERBOSE_OUTPUT) console.log(err);
             res.status(503).send('message not received');
         } else {
             message = fields.message
@@ -373,20 +287,20 @@ function cleanFilename(targetFile) {
 function fileAvailable(targetFile) {
     targetFile = cleanFilename(targetFile);
     let fileRoot = `${__dirname}/files`;
-    console.log("File root: " + fileRoot);
+    if (VERBOSE_OUTPUT) console.log("File root: " + fileRoot);
     let dataFilePath = `${fileRoot}/${targetFile}/quaternion_data.dat`;
     let metadataPath = `${fileRoot}/${targetFile}/metadata.json`;
-    console.log(`Checking for available files: ${dataFilePath}, ${metadataPath}`);
+    if (VERBOSE_OUTPUT) console.log(`Checking for available files: ${dataFilePath}, ${metadataPath}`);
     return (fs.existsSync(dataFilePath) && fs.existsSync(metadataPath));
 }
 
 app.get("/api/uploadedfiles", (req, res) => {
     // This doesn't really work since we need an asynchronous update from server to client when status changes.
-    console.log("Received GET request for file.")
+    if (VERBOSE_OUTPUT) console.log("Received GET request for file.")
     let targetFile = req.query.file;
-    console.log("Target file: " + targetFile);
+    if (VERBOSE_OUTPUT) console.log("Target file: " + targetFile);
     targetFile = cleanFilename(targetFile);
-    console.log("Target file after cleaning: " + targetFile);
+    if (VERBOSE_OUTPUT) console.log("Target file after cleaning: " + targetFile);
     // Disregard access code for now
     // if ((app.locals.currentFiles.get(targetFile).accessCode !== req.query.accessCode)) {
     //     res.json({
@@ -408,17 +322,17 @@ app.get("/api/uploadedfiles", (req, res) => {
             // res.json({ status: "Invalid file type: should be 'data' or 'metadata'." });
             return;
     }
-    console.log("File path: " + filePath);
+    if (VERBOSE_OUTPUT) console.log("File path: " + filePath);
     if (fs.existsSync(filePath)) {
-        console.log("The file exists. Let's send it.");
+        if (VERBOSE_OUTPUT) console.log("The file exists. Let's send it.");
         res.sendFile(filePath);
     } else {
-        console.log("File was not found.");
+        if (VERBOSE_OUTPUT) console.log("File was not found.");
         res.sendStatus(404);
         return;
     }
     // If the file is done processing and we're good, send the file.
-    //  This includes progress reports based on file download status on the client. is that our job to manage?
+    // This includes progress reports based on file download status on the client. is that our job to manage?
     // If the file is still processing, send a progress report. And then somehow also send the file?
     // If the file encountered an error, send the error.
 });
@@ -443,14 +357,12 @@ app.get("/api/*", (req, res) => {
                             </html>
                             `)
                 }, (error) => {
-                    console.log(error);
+                    if (VERBOSE_OUTPUT) console.log(error);
                 }
             );
             break;
         case "get-file-list":
-            scanAllFiles().then(
-                res.sendFile(`${__dirname}/fileList.json`)
-            );
+            res.sendFile(`${__dirname}/fileList.json`)
             break;
         case "pull":
             res.send("POST request expected.");
@@ -478,20 +390,20 @@ app.post('/api/upload-file', (req, res) => {
 
     form.parse(req, function(err, fields, files) {
          if (err) {
-              console.log(err);
+              if (VERBOSE_OUTPUT) console.log(err);
               res.send('upload failed')
          } else {
             let fileIds = Object.getOwnPropertyNames(files);
             for (let i = 0; i < fileIds.length; i++) {
                 let fileId = fileIds[i];
-                console.log(` >>> Attempting to obtain: "${files[fileId].name}" with params: ${fields[fileId + 'params']}`)
+                if (VERBOSE_OUTPUT) console.log(` >>> Attempting to obtain: "${files[fileId].name}" with params: ${fields[fileId + 'params']}`)
                 var oldpath = files[fileId].path;
                 var newpath = path + files[fileId].name;
                 fs.rename(oldpath, newpath, function (err) {
                     if (err) throw err;
                 });
             }
-            console.log(`${fileIds.length} file(s) uploaded to the server at ${new Date().toUTCString()}`)
+            if (VERBOSE_OUTPUT) console.log(`${fileIds.length} file(s) uploaded to the server at ${new Date().toUTCString()}`)
             res.send('complete').end();
          }
     });
@@ -513,32 +425,12 @@ app.get('/files/*', (req, res) => {
     }
 });
 
-// app.use('*',  (req, res)=> {
-//     console.log("Got some sort of request.");
-//     if (fs.existsSync("./build/index.html")) {
-//         res.sendFile("/build/index.html", {
-//             "root": __dirname
-//         });
-//     } else {
-//         res.send(`<html>
-//                     <head>
-//                         <title>
-//                             Wesite under maintenance
-//                         </title>
-//                     </head>
-//                     <body>
-//                         The website is currently being rebuilt. Please refresh the page in 1-2 minutes.
-//                         <a href='https://github.com/jpiland16/hmv_test#hmv_test---launch-website'>Contact the developers</a> if you believe this message is in error.
-//                     </body>
-//                   </html>`)
-//     }
-// });
+app.use(express.static(`${__dirname}/build`));
 
 app.get('/*',  (req, res)=> {
-    console.log("Got a GET request that made it through the router. URL: ");
-    console.log(req.url);
-    console.log(req.path);
-    // console.log(req.query);
+    if (VERBOSE_OUTPUT) console.log("Got a GET request that made it through the router. URL: ");
+    if (VERBOSE_OUTPUT) console.log(req.url);
+    if (VERBOSE_OUTPUT) console.log(req.path);
     if (fs.existsSync("./build/index.html")) {
         res.sendFile("/build/index.html", {
             "root": __dirname
@@ -559,11 +451,11 @@ app.get('/*',  (req, res)=> {
 });
 
 io.use((socket, next) => {
-    console.log("A new socket connection is going through middleware: " + socket)
+    if (VERBOSE_OUTPUT) console.log("A new socket connection is going through middleware: " + socket)
     // // need identication of some sort
     // const name = socket.handshake.auth.username;
     // if (!name) {
-    //     console.log("The attempted socket didn't have a username. Aborting connection.");
+    //     if (VERBOSE_OUTPUT) console.log("The attempted socket didn't have a username. Aborting connection.");
     //     return next(new Error("A name is required to associate with this connection"));
     // }
     // socket.userName = name;  
@@ -571,11 +463,11 @@ io.use((socket, next) => {
 })
 
 io.on('connection', (socket) => {
-    console.log("A new socket connection just started.");
+    if (VERBOSE_OUTPUT) console.log("A new socket connection just started.");
     let targetFile = socket.handshake.query.file;
     //when disconnecting, remove from map (and maybe even delete the associated file)
     socket.on('disconnect', (reason) => {
-        console.log("Socket was disconnected. Removing them from listener map...");
+        if (VERBOSE_OUTPUT) console.log("Socket was disconnected. Removing them from listener map...");
         if (!app.locals.fileListeners.has(targetFile)) { return; }
         let removeIndex = app.locals.fileListeners.get(targetFile).indexOf(socket);
         if (removeIndex != -1) {
@@ -583,10 +475,10 @@ io.on('connection', (socket) => {
         }
     })
     socket.on('Debug request', (info) => {
-        console.log("Debug request: client wants message of type " + info.messageType);
+        if (VERBOSE_OUTPUT) console.log("Debug request: client wants message of type " + info.messageType);
         socket.emit(info.messageType, info.params);
     });
-    console.log("Asking for file: " + targetFile);
+    if (VERBOSE_OUTPUT) console.log("Asking for file: " + targetFile);
     // TODO: Make this logic more readable by method extraction, so it looks like:
     //  if file is available:
     //      say that file is ready, terminate
@@ -599,7 +491,7 @@ io.on('connection', (socket) => {
         return;
     }
     if (!app.locals.currentFiles.has(targetFile)) {
-        console.log("The requested file does not exist. Time to notify the client.")
+        if (VERBOSE_OUTPUT) console.log("The requested file does not exist. Time to notify the client.")
         socket.emit("File missing", null);
         return;
     }
@@ -607,15 +499,15 @@ io.on('connection', (socket) => {
         app.locals.fileListeners.set(targetFile, []);
     }
     app.locals.fileListeners.get(targetFile).push(socket);
-    console.log("Requested file: " + targetFile);
-    console.log("Printing full file status list that we're about to access: ");
-    console.log(app.locals.currentFiles); 
+    if (VERBOSE_OUTPUT) console.log("Requested file: " + targetFile);
+    if (VERBOSE_OUTPUT) console.log("Printing full file status list that we're about to access: ");
+    if (VERBOSE_OUTPUT) console.log(app.locals.currentFiles); 
     switch (app.locals.currentFiles.get(targetFile).status) {
         case "Processing":
             socket.emit('Processing data');
             return;
         default:
-            console.log(`The client's target file has an invalid status: ${app.locals.currentFiles.get(targetFile).status}. We should notify them`);
+            if (VERBOSE_OUTPUT) console.log(`The client's target file has an invalid status: ${app.locals.currentFiles.get(targetFile).status}. We should notify them`);
             return;
     }
 })

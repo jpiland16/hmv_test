@@ -45,9 +45,9 @@ class MaterialCalibrationForm extends React.Component {
 
   handleSubmit = (event) => {
     event.preventDefault();
-    console.log("Submitted the form.")
-    console.log(this.state.sensors);
-    console.log("About to send post request.");
+    if (this.props.verbose) console.log("Submitted the form.")
+    if (this.props.verbose) console.log(this.state.sensors);
+    if (this.props.verbose) console.log("About to send post request.");
     const formData = new FormData();
     formData.append('file', document.getElementById('myFile').files[0]);
     formData.append('displayName', this.state.displayName);
@@ -56,24 +56,24 @@ class MaterialCalibrationForm extends React.Component {
   
     let formPostReq = new XMLHttpRequest();
     formPostReq.onload = (event => {
-      console.log("POST request complete!");
+      if (this.props.verbose) console.log("POST request complete!");
       let responseJSON = JSON.parse(formPostReq.response);
-      console.log(responseJSON);
+      if (this.props.verbose) console.log(responseJSON);
       if (responseJSON.status !== 'File received') {
-        console.log('The server rejected the POST request. We should notify the user.');
+        if (this.props.verbose) console.log('The server rejected the POST request. We should notify the user.');
       }
       const targetURL = ("/visualizer?");
       const params = new URLSearchParams();
       params.set('file', '/user-uploads/'+responseJSON.fileName);
       params.set('name', this.state.displayName);
-      console.log(params.toString());
+      if (this.props.verbose) console.log(params.toString());
       const target = targetURL + params.toString();
       this.props.history.push(target);
     });
     formPostReq.open("POST", "/api/postform");
     formPostReq.send(formData);
-    console.log("Post request has been sent: ");
-    console.log(formPostReq);
+    if (this.props.verbose) console.log("Post request has been sent: ");
+    if (this.props.verbose) console.log(formPostReq);
   }
 
 
@@ -88,11 +88,11 @@ class MaterialCalibrationForm extends React.Component {
   }
 
   printState = () => {
-    console.log(this.state.sensors);
+    if (this.props.verbose) console.log(this.state.sensors);
   }
 
   deleteSensor = (removedIndex) => () => {
-    console.log(`Deleting sensor with index ${removedIndex}`);
+    if (this.props.verbose) console.log(`Deleting sensor with index ${removedIndex}`);
     this.setState({
       sensors: this.state.sensors.filter((sensor, currIndex) => currIndex !== removedIndex),
       validity: {
@@ -124,7 +124,7 @@ class MaterialCalibrationForm extends React.Component {
 
   customValidityFunction = (event) => {
     event.preventDefault();
-    console.log("Invalid thingy detected!!!");
+    if (this.props.verbose) console.log("Invalid thingy detected!!!");
   }
 
   handleNameChange = (event) => {
