@@ -200,6 +200,9 @@ async function scanAllFiles() {
     return new Promise(async function (myResolve, myReject) {
         try {
             let returnedFiles = await getDirStructure(`./files`, '');
+            // TODO: Add currently processing files to this list.
+            // How? find out which child of returnedFiles is user-uploads
+            // push every entry of the filesInProgress map to its child list
             console.log("Directory rescan requested at " + new Date().toUTCString());
             let fileListString = JSON.stringify(returnedFiles);
             fs.writeFileSync(`${__dirname}/fileList.json`, fileListString); // Can be async without causing any problems
