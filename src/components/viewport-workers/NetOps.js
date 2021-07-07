@@ -1,20 +1,4 @@
 import io from 'socket.io-client'
-
-let boneNames = {
-    LUA: "upperarm_l", 
-    LLA: "lowerarm_l", 
-    RUA: "upperarm_r", 
-    RLA: "lowerarm_r", 
-    BACK: "spine_02", /** IMPORTANT */
-    LSHOE: "foot_l", 
-    RSHOE: "foot_r",
-    ROOT: "_rootJoint",
-    RUL: "right_upper_leg",
-    LUL: "left_upper_leg",
-    RLL: "right_lower_leg",
-    LLL: "left_lower_leg"
-}
-
 // PARENT XHR METHOD
 
 async function doXHR(method, url) {
@@ -234,22 +218,15 @@ export function subscribeToFile(props, mySelectedFile) {
 
             socket.disconnect();
             props.setFileStatus({ status: "Loading models" });
-            props.initializeScene().then((newSceneInfo)=> { // This call gets us way too nested. This should be extracted as a function.
+            // Note that this awaitScene dependence means that subscribeToFile will not work if we haven't yet rendered the viewport!
+            props.awaitScene.then((newSceneInfo)=> { // This call gets us way too nested. This should be extracted as a function.
                 props.setSceneInfo({
                     scene: newSceneInfo.scene,
                     model: newSceneInfo.model,
                     camera: null,
                     renderer: newSceneInfo.renderer,
-                });                
-                
-                let modelBoneList = Object.getOwnPropertyNames(boneNames);
-
-                let bones = [];
-                for (let i = 0; i < modelBoneList.length; i++) {
-                    bones[modelBoneList[i]] = newSceneInfo.model.getObjectByName(boneNames[modelBoneList[i]])
-                }
-                props.onLoadBones(bones)
-                // props.batchUpdate("RUA", [0,0,0,1]);
+                });
+                props.resetModel();
                 props.setTimeSliderValue(0);
                 props.setFileStatus({ status: "Complete" }); // Determining the next stage by completing the previous stage forces sequential loading. Try using progress flags.
             });

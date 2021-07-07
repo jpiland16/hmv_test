@@ -70,7 +70,7 @@ export default function Viewport(props) {
     const [ useRipple, setUseRipple ] = React.useState(false);                   // Limbs move independently by default
     const [ timeSliderValue, setTimeSliderValue ] = React.useState(0);           // Initial position is 0
     const [ playing, setPlaying ] = React.useState(false);                       // Paused by default
-    const [toolTipOpen, setTipOpen] = React.useState(false);
+    const [ toolTipOpen, setTipOpen ] = React.useState(false);
     const [ cardsPos, setCardsPos ] = React.useState(window.localStorage.getItem("cardsPos") || 'right');
     const [ timeDisplay, setTimeDisplay ] = React.useState(window.localStorage.getItem("timeDisplay") || 'msm')
     const [ downloadPercent, setDownloadPercent ] = React.useState(0);
@@ -78,6 +78,7 @@ export default function Viewport(props) {
     const [ openLab, setOpenLab ] = React.useState("");
     const [ fileStatus, setFileStatus ] = React.useState(initialFileStatus);
     const [ sceneInfo, setSceneInfo ] = React.useState({ scene: null, model: null, camera: null, renderer: null });
+    const [ scenePromise, setScenePromise ] = React.useState(null);
     
     /*   ---------------------
      *   REFS (React.useRef())
@@ -164,6 +165,7 @@ export default function Viewport(props) {
             sceneInfo: sceneInfo,
             setSceneInfo: setSceneInfo,
             initializeScene: initializeScene,
+            awaitScene: scenePromise,
 
             // QUATERNION PROPERTIES
             globalQs: globalQs,
@@ -241,6 +243,34 @@ export default function Viewport(props) {
     });
 
     React.useEffect(() => {
+        console.log("Running useEffect");
+        setScenePromise(new Promise((myResolve, myReject) => {
+            initializeScene().then((newSceneInfo) => {
+                let boneNames = {
+                    LUA: "upperarm_l", 
+                    LLA: "lowerarm_l", 
+                    RUA: "upperarm_r", 
+                    RLA: "lowerarm_r", 
+                    BACK: "spine_02", /** IMPORTANT */
+                    LSHOE: "foot_l", 
+                    RSHOE: "foot_r",
+                    ROOT: "_rootJoint",
+                    RUL: "right_upper_leg",
+                    LUL: "left_upper_leg",
+                    RLL: "right_lower_leg",
+                    LLL: "left_lower_leg"
+                }
+
+                let modelBoneList = Object.getOwnPropertyNames(boneNames);
+
+                let bones = [];
+                for (let i = 0; i < modelBoneList.length; i++) {
+                    bones[modelBoneList[i]] = newSceneInfo.model.getObjectByName(boneNames[modelBoneList[i]])
+                }
+                onLoadBones(propertySet, bones);
+                myResolve(newSceneInfo);
+            });
+        }));
         getFileList(propertySet);
         if (selectedFile.fileName !== '' && isFileNameValid(propertySet, selectedFile.fileName)) {
             console.log("Running onSelectFileChange");

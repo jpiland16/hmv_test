@@ -85,7 +85,9 @@ export function resetModel(props) {
         let q = resetValues[boneNames[i]];
         props.globalQs[boneNames[i]] = new THREE.Quaternion(q.x, q.y, q.z, q.w);
         let lq = getLocalFromGlobal(props, props.globalQs[boneNames[i]], boneNames[i]);
-        props.bones[boneNames[i]].quaternion.set(lq.x, lq.y, lq.z, lq.w);
+        if (props.bones[boneNames[i]]) {
+            props.bones[boneNames[i]].quaternion.set(lq.x, lq.y, lq.z, lq.w);
+        }
     }
     
     props.sliderValuesShadowCopy = {...props.globalQs};
