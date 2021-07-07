@@ -193,8 +193,6 @@ export function subscribeToFile(props, mySelectedFile) {
         props.fileStatus.socket.disconnect();
         props.setFileStatus({ currentSocket: null });
     }
-    // const URL = "http://localhost:3000"; // This needs to be flexible based on whether we're locally running
-    const URL = window.location;
     const socket = io({ 
         autoConnect: false,
         auth: {

@@ -22,7 +22,7 @@ const options = { //fullchain and privkey are used for the vm and server-crt and
     key: fs.existsSync('./sslcert/privkey.pem') ? fs.readFileSync('./sslcert/privkey.pem') : fs.readFileSync('./sslcert/server-key.pem')
 };
 
-const HTTPS_PORT = process.env.PORT || 5000;
+const HTTPS_PORT = process.env.PORT || 443;
 
 const httpsServer = https.createServer(options, app);
 
@@ -627,3 +627,10 @@ httpsServer.listen(HTTPS_PORT, () => {
     app.locals.currentFiles = new Map();
     app.locals.fileListeners = new Map();
 });
+
+// Redirect from http port 80 to https
+var http = require('http');
+http.createServer(function (req, res) {
+    res.writeHead(301, { "Location": "https://" + req.headers['host'] + req.url });
+    res.end();
+}).listen(80);
