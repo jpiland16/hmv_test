@@ -16,11 +16,11 @@ export default function App() {
             <Route exact path="/getting-started">
                 <Tutorial setFirstLoad={setFirstLoad}/>
             </Route>
-            <Route path="/visualizer">
-                <Viewport dev={false} firstLoad={firstLoad} setFirstLoad={setFirstLoad}/>
-            </Route>
             <Route exact path="/visualizer/dev">
                 <Viewport dev={true} firstLoad={firstLoad} setFirstLoad={setFirstLoad}/>
+            </Route>
+            <Route path="/visualizer">
+                <Viewport dev={false} firstLoad={firstLoad} setFirstLoad={setFirstLoad}/>
             </Route>
             <Route exact path="/">
                 <Welcome setFirstLoad={setFirstLoad}/>

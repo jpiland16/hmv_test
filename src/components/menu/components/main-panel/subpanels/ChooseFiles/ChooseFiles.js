@@ -133,8 +133,7 @@ export default function CustomizedTreeView(props) {
                 onClick={ (event) => { 
                         if (!isFolder) { props.clickFile(nodes.id, nodes.name) }
                 } }
-                // bold={props.selectedFile.indexOf(nodes.id) !== -1 ? "true" : "false"}
-                bold={"false"}
+                bold={props.selectedFile.fileName.indexOf(nodes.id) !== -1 ? "true" : "false"}
                 style={{
                         whiteSpace: "nowrap",
                         opacity: props.checkFileName(nodes.id) || isFolder ? 1 : 0.5,

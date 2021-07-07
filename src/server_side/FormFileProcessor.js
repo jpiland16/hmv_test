@@ -1,48 +1,25 @@
-const formidable = require('formidable');
 const FileReader = require('filereader');
 const { spawn } = require('child_process');
 
-//Purely for debugging!
-function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-}
-
-//Also for debugging: send timed response to client
-async function executeDelayed(delayMillis, callback) {
-    await sleep(delayMillis);
-    callback();
-}
-
-const processFile = (form, callback, onError) => {
-    console.log("Processing a file sent by a POST request in the Form processor.");
-    const formParser = formidable({ maxFileSize: 50 * 1024 * 1024});
-    formParser.on('error',  (err) => { 
-        console.log("Formparser has encountered an error"); 
-        console.log(err);
-    });
-    formParser.parse(form, (err, fields, files) => {
-        console.log("Finished parsing the form!")
-        handleForm(err, fields, files, (data, metadata) => callback(data, metadata), onError);
-    });
-};
+const VERBOSE_OUTPUT = false
 
 function handleForm(err, fields, files, callback, onError) {
-    console.log("Proceeded to handleForm function...");
+    if (VERBOSE_OUTPUT) console.log("Proceeded to handleForm function...");
     if (err) {
-        console.log(err);
+        if (VERBOSE_OUTPUT) console.log(err);
     }
-    console.log(fields);
+    if (VERBOSE_OUTPUT) console.log(fields);
     const reader = new FileReader();
     reader.addEventListener('load', (event) => {
         try {
             handleUploadedFile(event, fields, (data) => callback(data, parseFormFields(fields)), onError);
         } catch (e) {
-            console.log("handleUploadedFile threw an error!");
-            console.log(e);
+            if (VERBOSE_OUTPUT) console.log("handleUploadedFile threw an error!");
+            if (VERBOSE_OUTPUT) console.log(e);
         }
     });
     reader.addEventListener('error', (err) => {
-        console.log(err);
+        if (VERBOSE_OUTPUT) console.log(err);
     });
     try {
         reader.readAsText(files.file);
@@ -64,7 +41,7 @@ function parseFormFields(fields) {
         targets: []
     }
     let sensors = JSON.parse(fields.sensorData);
-    console.log(sensors);
+    if (VERBOSE_OUTPUT) console.log(sensors);
     for (let i = 0; i < sensors.length; i ++) {
         let sensor = sensors[i];
         metadata.targets.push({
@@ -84,7 +61,7 @@ function parseFormFields(fields) {
 
 function handleUploadedFile(event, fields, callback, onError) {
     let sensors = JSON.parse(fields.sensorData);
-    console.log(sensors);
+    if (VERBOSE_OUTPUT) console.log(sensors);
     let sensorColumns = [];
     for (let i = 0; i < sensors.length; i ++) {
         sensorColumns.push({ start_column: sensors[i].startColumn, data_type: sensors[i].dataType });
@@ -95,21 +72,21 @@ function handleUploadedFile(event, fields, callback, onError) {
             time_column: fields.timeColumn
         }
     );
-    console.log("Python string params: " + pyStringParams);
+    if (VERBOSE_OUTPUT) console.log("Python string params: " + pyStringParams);
     // var pyProcess = spawn('python', ['pyprogs/testprog.py', pyStringParams], { cwd: process.cwd() + "\\src\\server_side"});
     var pyProcess = spawn('python', ['src/server_side/python_programs/multi_sensor_fuser_obj.py', pyStringParams]);
-    console.log("Generated python process pid (greater than 0 on success): " + pyProcess.pid);
-    console.log("Current path: " + process.cwd());
+    if (VERBOSE_OUTPUT) console.log("Generated python process pid (greater than 0 on success): " + pyProcess.pid);
+    if (VERBOSE_OUTPUT) console.log("Current path: " + process.cwd());
     var pyOutput = "";
     var errorOutput;
     pyProcess.stdout.on('data', (pyData) => {
-        // console.log("Data from python file: " + pyData);
+        // if (VERBOSE_OUTPUT) console.log("Data from python file: " + pyData);
         let responseMessage = pyData.toString('utf8');
         pyOutput += responseMessage;
     });    
     pyProcess.stderr.on('data', (pyData) => {
-        console.log("Error from python file: " + pyData);
-        console.log("We should probably report this to the client somehow.");
+        if (VERBOSE_OUTPUT) console.log("Error from python file: " + pyData);
+        if (VERBOSE_OUTPUT) console.log("We should probably report this to the client somehow.");
         pyProcess.kill();
         errorOutput = pyData;
     });
@@ -124,36 +101,11 @@ function handleUploadedFile(event, fields, callback, onError) {
     pyProcess.stdin.end();
 }
 
-const getFormParts = (form) => {
-    return new Promise((resolve, reject) => {
-        console.log("Downloading a file sent by a POST request in the simplified Form processor.");
-        // const formParser = formidable({ maxFileSize: 50 * 1024 * 1024});
-        const formParser = formidable();
-        formParser.on('error',  (err) => { 
-            console.log("Formparser has encountered an error"); 
-            console.log(err);
-            reject(err);
-            return;
-        });
-        formParser.on('fileBegin', () => console.log("file begin"));
-        // formParser.on('file', (formname, file) => console.log(file));
-        formParser.parse(form, (err, fields, files) => {
-            if (err) { reject(err); }
-            console.log("Finished parsing the form!")
-            resolve({ fields: fields, files: files });
-            return;
-        });
-    });
-}
-
 const processDownloadedForm = (fields, files) => {
     return new Promise((resolve, reject) => {
-        console.log("Processing a downloaded form in the Form processor.");
+        if (VERBOSE_OUTPUT) console.log("Processing a downloaded form in the Form processor.");
         handleForm(null, fields, files, (data, metadata) => resolve({ data: data, metadata: metadata }), (errMessage) => reject(errMessage));
     });
 };
 
-exports.processFile = processFile;
-exports.getFormFile = getFormParts;
-exports.getFormParts = getFormParts;
 exports.processDownloadedForm = processDownloadedForm;

@@ -9,7 +9,7 @@ import TopActionBar from './TopActionBar'
 import CardSet from './cards/CardSet'
 import Animator from './Animator'
 
-import { getMap, getFileList, downloadFile, downloadMetafile, subscribeToFile } from './viewport-workers/NetOps'
+import { getMap, getFileList, downloadFile, subscribeToFile } from './viewport-workers/NetOps'
 import { onSelectFileChange, isFileNameValid, clickFile} from './viewport-workers/FileOps'
 import { updateSingleQValue, batchUpdateObject } from './viewport-workers/ModelOps'
 import { getLocalFromGlobal, getGlobalFromLocal } from './viewport-workers/MathOps'
@@ -25,9 +25,11 @@ let sliderValuesShadowCopy = {};
 const lastFiles = [null]; // Wrapped in an array to be mutable
 const fileMap = [null]; // Wrapped in an array to be mutable
 
+const VERBOSE_OUTPUT = false
+
 export default function Viewport(props) {
 
-    console.log("Re-rendering viewport.")
+    if (VERBOSE_OUTPUT) console.log("Re-rendering viewport.")
     
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
@@ -178,7 +180,6 @@ export default function Viewport(props) {
             downloadPercent: downloadPercent,
             setDownloadPercent: setDownloadPercent,
             downloadFile: downloadFile,
-            downloadMetafile: downloadMetafile,
             outgoingRequest: outgoingRequest, 
             subscribeToFile: subscribeToFile,
 
@@ -216,7 +217,10 @@ export default function Viewport(props) {
             setOpenLab: setOpenLab,
 
             // DEV MODE
-            dev: props.dev
+            dev: props.dev,
+
+            // console.log
+            verbose: VERBOSE_OUTPUT
 
     }
 

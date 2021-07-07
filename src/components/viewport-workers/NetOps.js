@@ -171,7 +171,7 @@ function getFilePart(fileName, type) {
 }
 
 /**
- * Notifies the server that this client has subscribed to the target datset file. Unsubscribes from any
+ * Notifies the server that this client has subscribed to the target dataset file. Unsubscribes from any
  * other file that the component with properties `props` is subscribed to.
  * @param {Object} props An Object containing the following:
  *  - props.setFileStatus(): Sets a String to one of the following values describing the visualizer's readiness:
@@ -193,8 +193,6 @@ export function subscribeToFile(props, mySelectedFile) {
         props.fileStatus.socket.disconnect();
         props.setFileStatus({ currentSocket: null });
     }
-    // const URL = "http://localhost:3000"; // This needs to be flexible based on whether we're locally running
-    const URL = window.location;
     const socket = io({ 
         autoConnect: false,
         auth: {
@@ -229,10 +227,10 @@ export function subscribeToFile(props, mySelectedFile) {
             props.outgoingRequest = false;
 
             props.fileMetadata.current = JSON.parse(responses[1]);
-            if (props.selectedFile.fileName !== "") {
-                let displayName = props.fileMetadata.current.displayName? props.fileMetadata.current.displayName : props.selectedFile.fileName;
-                props.setSelectedFile({ fileName: props.selectedFile.fileName, displayName: displayName });
-            }
+            // if (props.selectedFile.fileName !== "") {
+            //     let displayName = props.fileMetadata.current.displayName? props.fileMetadata.current.displayName : props.selectedFile.fileName;
+            //     props.setSelectedFile({ fileName: props.selectedFile.fileName, displayName: displayName });
+            // }
 
             socket.disconnect();
             props.setFileStatus({ status: "Loading models" });
@@ -276,37 +274,4 @@ export function subscribeToFile(props, mySelectedFile) {
     socket.connect();
     console.log("Connected with socket.");
     props.setFileStatus({ status: "Contacting server", currentSocket: socket });
-}
-
-export function downloadMetafile(props, selectedFilename) {
-    return new Promise((resolve, reject) => {
-        let dataReq = new XMLHttpRequest();
-        dataReq.onload = (event => {
-            switch(dataReq.status) {
-                case (200):
-                    resolve(JSON.parse(dataReq.responseText));
-                    break;
-                case (400):
-                    reject("Invalid data type request!");
-                    break;
-                case (404):
-                    reject("The target file was not found.");
-                    break;
-            }
-        });
-        dataReq.onerror = (() => {
-            reject();
-        })
-        const targetURL = ("/api/uploadedfiles?")
-        const params = new URLSearchParams();
-        params.set('file', selectedFilename);
-        params.set('type', 'metadata');
-        params.set('accessCode', 'password_wrong');
-        const target = targetURL + params.toString();
-        dataReq.open("GET", target);
-        // TODO: Right now the response is in the default 'text' format, but it might
-        // be more appropriate to use another format.
-        dataReq.send();
-        console.log("GET request has been sent: ");
-    });
 }
