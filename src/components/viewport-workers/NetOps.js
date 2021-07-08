@@ -111,19 +111,25 @@ export function downloadFile(props, fname) {
 
 
 //TODO: Should merge with existing concept for file downloads
-function getFile(fileName) {
-    let dataPromise = getFilePart(fileName, 'data');
+function getFile(fileName, onProgress) {
+    let dataPromise = getFilePart(fileName, 'data', onProgress);
     let metadataPromise = getFilePart(fileName, 'metadata');
     return Promise.all([dataPromise, metadataPromise]);
 }
 
-
-function getFilePart(fileName, type) {
+function getFilePart(fileName, type, onProgress=null) {
     return new Promise((resolve, reject) => {
         if (type !== 'data' && type !== 'metadata') {
             console.log("Inappropriate data type: Should either be data or metadata.");
         }   
         let dataReq = new XMLHttpRequest();
+        if (onProgress) {
+            dataReq.onprogress = (event) => {
+                onProgress(Math.round((event.loaded / event.total) * 100));
+                // console.log("Loading " + ((type === 'data')? "data" : "metadata") + ":" + loadedPercent + "%");
+            }
+        }
+
         dataReq.onload = (event => {
             console.log(dataReq);
             switch(dataReq.status) {
@@ -164,7 +170,7 @@ function getFilePart(fileName, type) {
  *      `"File ready"`
  *      `"Loading models"`).
  *  - props.getFileList(): Retreives the list of currently available files for viewing.
- *  - props.initializeScene(): Creates a scene to apply the data to.
+ *  - props.awaitScene: A Promise that resolves with a sceneInfo Object (see below) when the scene has been loaded.
  *  - props.setSceneInfo(): Stores an Object containg entries for the scene, the mannequin model, and the renderer.
  *  - props.onLoadBones(): Sets the state of the client so that it applies data transformations to the model's bones.
  *  Runs any other relevant initialization code.
@@ -193,10 +199,10 @@ export function subscribeToFile(props, mySelectedFile) {
     });
 
     socket.on("File ready", () => {
-        props.setFileStatus({ status: "Loading file" });
+        props.setFileStatus({ status: "Loading file", progress: 0 });
         console.log(mySelectedFile);
         getFileList(props);
-        getFile(mySelectedFile)
+        getFile(mySelectedFile, (progressPercent) => props.setFileStatus({ status: "Loading file", progress: progressPercent }))
         .then((responses) => {
             //When we get the files, we should use the original code to assign them as quaternions (after decoding from metadata)
             let inputArray = responses[0].split("\n");
@@ -211,10 +217,6 @@ export function subscribeToFile(props, mySelectedFile) {
             props.outgoingRequest = false;
 
             props.fileMetadata.current = JSON.parse(responses[1]);
-            // if (props.selectedFile.fileName !== "") {
-            //     let displayName = props.fileMetadata.current.displayName? props.fileMetadata.current.displayName : props.selectedFile.fileName;
-            //     props.setSelectedFile({ fileName: props.selectedFile.fileName, displayName: displayName });
-            // }
 
             socket.disconnect();
             props.setFileStatus({ status: "Loading models" });

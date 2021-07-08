@@ -31,7 +31,9 @@ class FileViewer extends React.Component {
     LoadingModelMessage(props) {
         return (
             <div className='loading'>
-                <CircularProgress/>
+                <CircularProgress variant="determinate" value={props.progress}></CircularProgress>
+                <br/>
+                {props.progress}%
                 <br/>
                 Loading the model...
             </div>
@@ -61,7 +63,9 @@ class FileViewer extends React.Component {
     LoadingFileMessage(props) {
         return (
             <div className='loading'>
-                <CircularProgress/>
+                <CircularProgress variant="determinate" value={props.progress}></CircularProgress>
+                <br/>
+                {props.progress}%
                 <br/>
                 Loading the data file...
             </div>
@@ -84,9 +88,9 @@ class FileViewer extends React.Component {
             case 'Processing data':
                 return <props.library.ProcessingDataMessage />
             case 'Loading file':
-                return <props.library.LoadingFileMessage />
+                return <props.library.LoadingFileMessage progress={props.fileProgress}/>
             case 'Loading models':
-                return <props.library.LoadingModelMessage />
+                return <props.library.LoadingModelMessage progress={props.modelProgress}/>
             case 'Error':
                 return <props.library.ErrorMessage errorMessage={props.errorMessage} />
             case 'Complete':
@@ -168,6 +172,8 @@ class FileViewer extends React.Component {
                 <this.FileDisplay 
                     fileSelected={this.props.selectedFile.fileName !== ''} 
                     status={this.props.fileStatus.status} 
+                    fileProgress={this.props.fileStatus.progress} 
+                    modelProgress={this.props.modelDownloadProgress} 
                     errorMessage={this.props.fileStatus.message} 
                     sceneInfo={this.props.sceneInfo}
                     library={this}

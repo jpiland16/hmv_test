@@ -79,6 +79,7 @@ export default function Viewport(props) {
     const [ fileStatus, setFileStatus ] = React.useState(initialFileStatus);
     const [ sceneInfo, setSceneInfo ] = React.useState({ scene: null, model: null, camera: null, renderer: null });
     const [ scenePromise, setScenePromise ] = React.useState(null);
+    const [ modelDownloadProgress, setModelProgress ] = React.useState(0);
     
     /*   ---------------------
      *   REFS (React.useRef())
@@ -184,6 +185,7 @@ export default function Viewport(props) {
             downloadFile: downloadFile,
             outgoingRequest: outgoingRequest, 
             subscribeToFile: subscribeToFile,
+            modelDownloadProgress : modelDownloadProgress,
 
             // DATA
             data: data,
@@ -245,7 +247,10 @@ export default function Viewport(props) {
     React.useEffect(() => {
         console.log("Running useEffect");
         setScenePromise(new Promise((myResolve, myReject) => {
-            initializeScene().then((newSceneInfo) => {
+            const onProgress = (progressPercent) => {
+                setModelProgress(progressPercent);
+            }
+            initializeScene(onProgress).then((newSceneInfo) => {
                 let boneNames = {
                     LUA: "upperarm_l", 
                     LLA: "lowerarm_l", 
