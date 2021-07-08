@@ -11,30 +11,32 @@ export default function LabOpener(props) {
         }}>
             <Tooltip title={props.title} placement="right">
                 <div className="openerClickable" onClick={() => {
-                    if (props.openLab === props.title) {
-                        props.setOpenLab("");
-                    } else {
-                        props.setOpenLab(props.title);  
-                    }
-                    props.data.current = [];                                    // Allow either refresh or disable
-                    props.outputTypes.current = []                              // Clear all graphs
-                    props.setTimeSliderValue(0);                                // Move to start
-                    props.lineNumberRef.current = 0;                            // (same as above)
-                    props.setUseRipple(true)                                    // For the initialization of the model
-                    props.resetModel()                                          // Same as above
-                    if (props.playTimerId.current !== 0) {                      // Stop playback if it is occuring
-                            window.clearInterval(props.playTimerId.current);   
-                            props.playTimerId.current = 0;
-                            props.setPlaying(false);
-                    } 
-                    if (props.getCamera()) {
-                        props.getCamera().position.x = 0;
-                        props.getCamera().position.y = 0;
-                        props.getCamera().position.z = 3;
-                        props.getCamera().up.set(0, 1, 0);
-                        props.getControls().update();
-                    }                          
-                }}>
+                    props.awaitScene.then(({ sceneInfo, mannequinBones }) => {
+                        if (props.openLab === props.title) {
+                            props.setOpenLab("");
+                        } else {
+                            props.setOpenLab(props.title);  
+                        }
+                        props.data.current = [];                                    // Allow either refresh or disable
+                        props.outputTypes.current = []                              // Clear all graphs
+                        props.setTimeSliderValue(0);                                // Move to start
+                        props.lineNumberRef.current = 0;                            // (same as above)
+                        props.setUseRipple(true)                                    // For the initialization of the model
+                        props.resetModel()                                          // Same as above
+                        if (props.playTimerId.current !== 0) {                      // Stop playback if it is occuring
+                                window.clearInterval(props.playTimerId.current);   
+                                props.playTimerId.current = 0;
+                                props.setPlaying(false);
+                        } 
+                        if (props.getCamera()) {
+                            props.getCamera().position.x = 0;
+                            props.getCamera().position.y = 0;
+                            props.getCamera().position.z = 3;
+                            props.getCamera().up.set(0, 1, 0);
+                            props.getControls().update();
+                        }     
+                        props.setFileStatus({ status: "Complete" });                     
+                    })}}>
                     <IconButton>
                         {props.openLab === props.title ? <ExpandLessIcon /> : <ExpandMoreIcon />}
                     </IconButton>

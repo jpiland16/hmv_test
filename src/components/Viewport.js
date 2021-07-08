@@ -163,9 +163,8 @@ export default function Viewport(props) {
             orbitControls: orbitControls,
             getControls: getControls,
             sceneInfo: sceneInfo,
-            setSceneInfo: setSceneInfo,
-            initializeScene: initializeScene,
             awaitScene: scenePromise,
+            setSceneInfo: setSceneInfo,
 
             // QUATERNION PROPERTIES
             globalQs: globalQs,
@@ -268,7 +267,15 @@ export default function Viewport(props) {
                     bones[modelBoneList[i]] = newSceneInfo.model.getObjectByName(boneNames[modelBoneList[i]])
                 }
                 onLoadBones(propertySet, bones);
-                myResolve(newSceneInfo);
+
+                setSceneInfo({
+                    scene: newSceneInfo.scene,
+                    model: newSceneInfo.model,
+                    camera: null,
+                    renderer: newSceneInfo.renderer,
+                });
+
+                myResolve({ sceneInfo: newSceneInfo, mannequinBones: bones });
             });
         }));
         getFileList(propertySet);

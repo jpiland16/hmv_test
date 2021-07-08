@@ -75,7 +75,7 @@ class FileViewer extends React.Component {
     // TODO: Split this up into multiple files or use some other method to (1) separate the outer and inner choice and (2) prevent
     // importing 'library'
     FileDisplay(props) {
-        if (!props.fileSelected) {
+        if (!props.fileSelected && !props.dev) {
             return <Alert severity="info">Please select a file to view from the 'Choose File' section of the menu on the left. You can also click "Choose a file" above.</Alert>;
         }
         switch (props.status) {
@@ -171,6 +171,7 @@ class FileViewer extends React.Component {
                     errorMessage={this.props.fileStatus.message} 
                     sceneInfo={this.props.sceneInfo}
                     library={this}
+                    dev={this.props.dev}
                 />
             </div>
         )

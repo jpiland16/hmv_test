@@ -219,12 +219,12 @@ export function subscribeToFile(props, mySelectedFile) {
             socket.disconnect();
             props.setFileStatus({ status: "Loading models" });
             // Note that this awaitScene dependence means that subscribeToFile will not work if we haven't yet rendered the viewport!
-            props.awaitScene.then((newSceneInfo)=> { // This call gets us way too nested. This should be extracted as a function.
+            props.awaitScene.then(({ sceneInfo, mannequinBones })=> { // This call gets us way too nested. This should be extracted as a function.
                 props.setSceneInfo({
-                    scene: newSceneInfo.scene,
-                    model: newSceneInfo.model,
+                    scene: sceneInfo.scene,
+                    model: sceneInfo.model,
                     camera: null,
-                    renderer: newSceneInfo.renderer,
+                    renderer: sceneInfo.renderer,
                 });
                 props.resetModel();
                 props.setTimeSliderValue(0);

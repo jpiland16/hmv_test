@@ -78,7 +78,9 @@ const resetValues = {
 }
 
 export function resetModel(props) {
-
+    if (props.bones === null) {
+        return;
+    }
     let boneNames = Object.getOwnPropertyNames(resetValues);
 
     for (let i = 0; i < boneNames.length; i++) {

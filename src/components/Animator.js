@@ -70,7 +70,7 @@ export default function Animator(props) {
     });
 
     React.useEffect(() => {
-        if (props.fileStatus && props.fileStatus.status === 'Complete') {
+        if (props.fileStatus && props.fileStatus.status === 'Complete' && !props.dev) {
             props.lastIndex.current = props.timeSliderValue;
             applyDataQuaternions(props, props.timeSliderValue);
         }
