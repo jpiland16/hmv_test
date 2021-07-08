@@ -1,10 +1,8 @@
 import './TutorialScreen.css';
 import React, { useState, useEffect } from 'react';
-import AppBar from '@material-ui/core/AppBar';
+import TitleBar from './TitleBar';
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import example1 from './example1.PNG'
 import example2 from './example2.PNG'
@@ -34,14 +32,7 @@ export default function Tutorial() {
       backgroundColor: 'lightskyblue',
       }} >
         <div style={{overflowY: 'auto', height: '100vh'}}> 
-      <AppBar position="relative">
-        <Toolbar>
-          <Typography variant="h6" color="inherit" noWrap className={classes.title}>
-            Human Activity Visualizer
-          </Typography>
-        </Toolbar>
-      </AppBar>
-      
+      <TitleBar classes={classes} />
       <Box mx='20%' mb='5%'>    
         <h1 style={{textAlign: 'center'}}>Getting Started</h1>
         <p>The Human Activity Visualizer is a free visualization tool that reads wearable sensor measurements from a file and displays the activities of the sensor wearer via a virtual 3D model. To try out the visualization tool on a sample dataset, click <a href="/visualizer?file=/opportunity-dataset/dataset/S4-ADL4.dat">here</a>. To view your own uploaded dataset, the guide below will explain step-by-step how to get started.</p>

@@ -41,7 +41,7 @@ export default function DialogSelect() {
 
   const handleOK = () => {
     setOpen(false);
-    window.location.href = (`/visualizer?file=/opportunity-dataset/dataset/${subValue}-${triValue}.dat`) 
+    window.location.href = (`/visualizer?file=/opportunity-dataset/dataset/${subValue}-${triValue}`) 
   
   };
 

@@ -1,16 +1,13 @@
 import './WelcomeScreen.css';
 import {useHistory} from 'react-router-dom'
 import React from 'react';
-import AppBar from '@material-ui/core/AppBar';
 import Button from '@material-ui/core/Button';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import DialogSelect from './DatasetDialog'
 import HomeAnimation from './HomeAnimation'
 import Grid from '@material-ui/core/Grid';
-import UploadDialog from './UploadDialog';
+import TitleBar from './TitleBar'
 
 
 
@@ -57,15 +54,7 @@ export default function Welcome(props) {
   return (
     
     <div>
-      <AppBar position="relative">
-        <Toolbar>
-          <Typography variant="h6" color="inherit" noWrap className={classes.title}>
-            Human Activity Visualizer
-          </Typography>
-          <Button color="inherit" onClick={()=>window.location.href = "/getting-started"}>Getting Started</Button>
-          <Button color="inherit" onClick={() => window.location.href = "/files/contact-form.html"}>Contact Us</Button>
-        </Toolbar>
-      </AppBar>
+      <TitleBar classes={classes}/>
       <Container>
         <HomeAnimation/>
         <div className="toplayer">
