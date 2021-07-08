@@ -3,11 +3,12 @@ import React from "react";
 import * as THREE from "three";
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 
-let model,scene,renderer,frameId,camera = null;
+let model, scene, renderer, frameId, camera = null;
+
 let starttime = new Date().getTime();
 let rate = 60; // Hz
 
-
+let preimageShowing = true;
 
 export default function HomeAnimation() {
 
@@ -54,8 +55,9 @@ function renderScene() {
     if (renderer)
       renderer.render(scene, camera);
     let staticImage = document.getElementById("staticImage")
-    if (model && staticImage) {
+    if (model && staticImage && preimageShowing) {
       staticImage.style.opacity = "0"
+      preimageShowing = false;
     }
   };
 
@@ -104,6 +106,8 @@ React.useEffect(() => {
 
   return function cleanUp(){
     stop();
+    model = null;
+    preimageShowing = true;
   }
   
 }, []);
