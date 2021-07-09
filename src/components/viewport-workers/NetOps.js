@@ -51,8 +51,8 @@ export async function getFileList(props) {
                     id: '/demo',
                     name: 'demo',
                     children: [{
-                      id: '/demo/S4-ADL4.dat',
-                      name: 'S4-ADL4.dat'
+                      id: '/demo/demo-anyname',
+                      name: 'S4-ADL4'
                     }],
                 }]
             }
@@ -189,89 +189,140 @@ function getFilePart(fileName, type) {
  * the response to a GET request to 'api/get-file-list'.
  */
 export function subscribeToFile(props, mySelectedFile) {
-    if (props.fileStatus.socket) {
-        props.fileStatus.socket.disconnect();
-        props.setFileStatus({ currentSocket: null });
-    }
-    const socket = io({ 
-        autoConnect: false,
-        auth: {
-            username: "placeholder_username"
-        },
-        query: {
-            "file": mySelectedFile
-        },
-    });
+    if (window.location.href.substring(0, 22) === "http://localhost:3000/") {
+        // Do special stuff for React Dev mode
 
-    socket.on("Processing data", () => {
-        console.log("Received processing data message");
-        props.setFileStatus({ status: "Processing data" }); // What should I use as a stand-in for changing status here? Probably props.setStatus("Processing Data"), or just use a flag
-    });
-
-    socket.on("File ready", () => {
-        props.setFileStatus({ status: "Loading file" });
-        console.log(mySelectedFile);
-        getFileList(props);
-        getFile(mySelectedFile)
-        .then((responses) => {
-            //When we get the files, we should use the original code to assign them as quaternions (after decoding from metadata)
-            let inputArray = responses[0].split("\n");
-            let linesArray = [];
-    
-            for (let i = 2; i < inputArray.length - 1; i++) {
-                linesArray.push(inputArray[i].split(" ").filter(item => item !== '\r'));
-            }
-    
-            props.data.current = linesArray;
-            props.setDownloading(false);
-            props.outgoingRequest = false;
-
-            props.fileMetadata.current = JSON.parse(responses[1]);
-            // if (props.selectedFile.fileName !== "") {
-            //     let displayName = props.fileMetadata.current.displayName? props.fileMetadata.current.displayName : props.selectedFile.fileName;
-            //     props.setSelectedFile({ fileName: props.selectedFile.fileName, displayName: displayName });
-            // }
-
-            socket.disconnect();
-            props.setFileStatus({ status: "Loading models" });
-            props.initializeScene().then((newSceneInfo)=> { // This call gets us way too nested. This should be extracted as a function.
-                props.setSceneInfo({
-                    scene: newSceneInfo.scene,
-                    model: newSceneInfo.model,
-                    camera: null,
-                    renderer: newSceneInfo.renderer,
-                });                
-                
-                let modelBoneList = Object.getOwnPropertyNames(boneNames);
-
-                let bones = [];
-                for (let i = 0; i < modelBoneList.length; i++) {
-                    bones[modelBoneList[i]] = newSceneInfo.model.getObjectByName(boneNames[modelBoneList[i]])
+        // Get metadata file
+        let xm = new XMLHttpRequest();
+        xm.open("GET", "https://raw.githubusercontent.com/jpiland16/hmv_test/master/files" + mySelectedFile + "/metadata.json")
+        xm.onload = () => {
+            // Get data file
+            let xd = new XMLHttpRequest();
+            xd.open("GET", "https://raw.githubusercontent.com/jpiland16/hmv_test/master/files" + mySelectedFile + "/quaternion_data.dat")
+            xd.onload = () => {
+                let inputArray = xd.responseText.split("\n");
+                let linesArray = [];
+        
+                for (let i = 2; i < inputArray.length - 1; i++) {
+                    linesArray.push(inputArray[i].split(" ").filter(item => item !== '\r'));
                 }
-                props.onLoadBones(bones)
-                // props.batchUpdate("RUA", [0,0,0,1]);
-                props.setTimeSliderValue(0);
-                props.setFileStatus({ status: "Complete" }); // Determining the next stage by completing the previous stage forces sequential loading. Try using progress flags.
-            });
-        })
-        .catch((error) => {
-            props.setFileStatus({ status: "Error", message: "The file could not be retrieved from the server. Try refreshing or resubmitting." });
-            socket.disconnect();
+        
+                props.data.current = linesArray;
+                props.setDownloading(false);
+                props.outgoingRequest = false;
+
+                props.fileMetadata.current = JSON.parse(xm.responseText);
+
+                props.setFileStatus({ status: "Loading models" });
+                props.initializeScene().then((newSceneInfo)=> { // This call gets us way too nested. This should be extracted as a function.
+                    props.setSceneInfo({
+                        scene: newSceneInfo.scene,
+                        model: newSceneInfo.model,
+                        camera: null,
+                        renderer: newSceneInfo.renderer,
+                    });                
+                    
+                    let modelBoneList = Object.getOwnPropertyNames(boneNames);
+
+                    let bones = [];
+                    for (let i = 0; i < modelBoneList.length; i++) {
+                        bones[modelBoneList[i]] = newSceneInfo.model.getObjectByName(boneNames[modelBoneList[i]])
+                    }
+                    props.onLoadBones(bones)
+                    // props.batchUpdate("RUA", [0,0,0,1]);
+                    props.setTimeSliderValue(0);
+                    props.setFileStatus({ status: "Complete" }); // Determining the next stage by completing the previous stage forces sequential loading. Try using progress flags.
+                });
+            }
+            xd.send()
+        }
+        xm.send()
+
+    } else {
+        if (props.fileStatus.socket) {
+            props.fileStatus.socket.disconnect();
+            props.setFileStatus({ currentSocket: null });
+        }
+        const socket = io({ 
+            autoConnect: false,
+            auth: {
+                username: "placeholder_username"
+            },
+            query: {
+                "file": mySelectedFile
+            },
         });
-    });
 
-    socket.on("File missing", () => {
-        console.log("File doesn't exist.");
-        props.setFileStatus({ status: "Error", message: "The requested file doesn't exist. Try reselecting the file or resubmitting." });
-        socket.disconnect();
-    })
+        socket.on("Processing data", () => {
+            console.log("Received processing data message");
+            props.setFileStatus({ status: "Processing data" }); // What should I use as a stand-in for changing status here? Probably props.setStatus("Processing Data"), or just use a flag
+        });
 
-    socket.onAny((event, ...args) => {
-        console.log("Received data through socket.");
-        console.log(event, args);
-    });
+        socket.on("File ready", () => {
+            props.setFileStatus({ status: "Loading file" });
+            console.log(mySelectedFile);
+            getFileList(props);
+            getFile(mySelectedFile)
+            .then((responses) => {
+                //When we get the files, we should use the original code to assign them as quaternions (after decoding from metadata)
+                let inputArray = responses[0].split("\n");
+                let linesArray = [];
+        
+                for (let i = 2; i < inputArray.length - 1; i++) {
+                    linesArray.push(inputArray[i].split(" ").filter(item => item !== '\r'));
+                }
+        
+                props.data.current = linesArray;
+                props.setDownloading(false);
+                props.outgoingRequest = false;
 
-    socket.connect();
-    console.log("Connected with socket.");
-    props.setFileStatus({ status: "Contacting server", currentSocket: socket });
+                props.fileMetadata.current = JSON.parse(responses[1]);
+                // if (props.selectedFile.fileName !== "") {
+                //     let displayName = props.fileMetadata.current.displayName? props.fileMetadata.current.displayName : props.selectedFile.fileName;
+                //     props.setSelectedFile({ fileName: props.selectedFile.fileName, displayName: displayName });
+                // }
+
+                socket.disconnect();
+                props.setFileStatus({ status: "Loading models" });
+                props.initializeScene().then((newSceneInfo)=> { // This call gets us way too nested. This should be extracted as a function.
+                    props.setSceneInfo({
+                        scene: newSceneInfo.scene,
+                        model: newSceneInfo.model,
+                        camera: null,
+                        renderer: newSceneInfo.renderer,
+                    });                
+                    
+                    let modelBoneList = Object.getOwnPropertyNames(boneNames);
+
+                    let bones = [];
+                    for (let i = 0; i < modelBoneList.length; i++) {
+                        bones[modelBoneList[i]] = newSceneInfo.model.getObjectByName(boneNames[modelBoneList[i]])
+                    }
+                    props.onLoadBones(bones)
+                    // props.batchUpdate("RUA", [0,0,0,1]);
+                    props.setTimeSliderValue(0);
+                    props.setFileStatus({ status: "Complete" }); // Determining the next stage by completing the previous stage forces sequential loading. Try using progress flags.
+                });
+            })
+            .catch((error) => {
+                props.setFileStatus({ status: "Error", message: "The file could not be retrieved from the server. Try refreshing or resubmitting." });
+                socket.disconnect();
+            });
+        });
+
+        socket.on("File missing", () => {
+            console.log("File doesn't exist.");
+            props.setFileStatus({ status: "Error", message: "The requested file doesn't exist. Try reselecting the file or resubmitting." });
+            socket.disconnect();
+        })
+
+        socket.onAny((event, ...args) => {
+            console.log("Received data through socket.");
+            console.log(event, args);
+        });
+
+        socket.connect();
+        console.log("Connected with socket.");
+        props.setFileStatus({ status: "Contacting server", currentSocket: socket });
+    }
 }
