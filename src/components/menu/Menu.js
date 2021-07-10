@@ -9,9 +9,9 @@ export default function Menu(props) {
         <div>
             {/* <ClickAwayListener mouseEvent="onMouseDown" touchEvent="onTouchStart" onClickAway={() => (props.menuIsPinned || props.setIsOpen(false))}> */}
                 <div>
-                    <Slide direction="right" in={props.menuIsOpen}>
+                    <Slide direction="right" in={props.menuIsOpen} mountOnEnter unmountOnExit>
                         <Paper className="myMenuPanel" square elevation={4}>
-                            <MenuPanel visible={props.menuIsOpen} pinActive={props.menuIsPinned} onClick={() => props.setMenuIsPinned(!props.menuIsPinned)} 
+                                <MenuPanel visible={props.menuIsOpen} pinActive={props.menuIsPinned} onClick={() => props.setMenuIsPinned(!props.menuIsPinned)} 
                              {...props} dev={props.dev}/>
                         </Paper>
                     </Slide>

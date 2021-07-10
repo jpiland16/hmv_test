@@ -8,6 +8,7 @@ import PlayBar from './PlayBar'
 import TopActionBar from './TopActionBar'
 import CardSet from './cards/CardSet'
 import Animator from './Animator'
+import Slide from '@material-ui/core/Slide'
 
 import { getMap, getFileList, downloadFile, subscribeToFile } from './viewport-workers/NetOps'
 import { onSelectFileChange, isFileNameValid, clickFile} from './viewport-workers/FileOps'
@@ -334,10 +335,12 @@ export default function Viewport(props) {
     return (
         <div className="myView">
             <Menu {...propertySet} />
-            <FileViewer targetFile={""} {...propertySet}/>
-            <PlayBar {...propertySet} disabled={!fileStatus || fileStatus.status !== "Complete"} />
-            <CardSet {...propertySet} />
-            <TopActionBar {...propertySet} />
+            {/* </div> */}
+            <div className="visualizerContainer">
+                <FileViewer targetFile={""} {...propertySet}/>
+                <CardSet {...propertySet} />
+            </div>
+            {/* <PlayBar {...propertySet} disabled={!fileStatus || fileStatus.status !== "Complete"} /> */}
             <Animator {...propertySet} />
         </div>
     )

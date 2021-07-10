@@ -3,6 +3,8 @@ import { Alert } from '@material-ui/lab'
 import { withRouter } from "react-router-dom";
 import Visualizer from './Visualizer';
 import CircularProgress from '@material-ui/core/CircularProgress'
+import PlayBarAlt from '../PlayBarAlt';
+import TopActionBar from '../TopActionBar';
 
 import './FileViewer.css';
 
@@ -11,7 +13,8 @@ class FileViewer extends React.Component {
         super();
         this.state = {
             loaded: false,
-            status: 'Contacting server'
+            status: 'Contacting server',
+            index: 0,
         }
     }
 
@@ -168,16 +171,36 @@ class FileViewer extends React.Component {
     render() {
         console.log("Selected file: " + this.props.selectedFile.fileName);
         return (
-            <div style={{ marginLeft: this.props.menuIsOpen ? "40vw" : "0px"}}>
-                <this.FileDisplay 
-                    fileSelected={this.props.selectedFile.fileName !== ''} 
-                    status={this.props.fileStatus.status} 
-                    fileProgress={this.props.fileStatus.progress} 
-                    modelProgress={this.props.modelDownloadProgress} 
-                    errorMessage={this.props.fileStatus.message} 
-                    sceneInfo={this.props.sceneInfo}
-                    library={this}
-                />
+            // <div style={{ marginLeft: this.props.menuIsOpen ? "40vw" : "0px"}}>
+            <div className="fileViewContainer">
+                <TopActionBar {...this.props} />
+                <div className="sceneContainer">
+                    <this.FileDisplay 
+                        fileSelected={this.props.selectedFile.fileName !== ''} 
+                        status={this.props.fileStatus.status} 
+                        fileProgress={this.props.fileStatus.progress} 
+                        modelProgress={this.props.modelDownloadProgress} 
+                        errorMessage={this.props.fileStatus.message} 
+                        sceneInfo={this.props.sceneInfo}
+                        library={this}
+                    />
+                </div>
+                <div className="fileViewBottomBar">
+                    {this.props.fileStatus.status === 'Complete'?
+                        <PlayBarAlt 
+                            values={this.props.data.current.map((row) => (row[0]))} 
+                            FPS={10}
+                            // index={this.state.index} // We want to move 'index' to be held here, but it needs to be modified by a master play button belonging to Viewport.
+                            index={this.props.timeSliderValue}
+                            onChangeIndex={(newIndex)=>{
+                                this.setState({ index: newIndex });
+                                this.props.setTimeSliderValue(newIndex);
+                                this.props.lineNumberRef.current = newIndex;
+                            }}
+                        /> :
+                        null
+                    }
+                </div>
             </div>
         )
     }

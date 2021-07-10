@@ -80,6 +80,8 @@ const resetValues = {
 export function resetModel(props) {
 
     if (props.bones === null) {
+        // If the bones haven't been loaded yet, then they don't need to be reset,
+        // iff we assume their initial positions are the desired positions after reset.
         return;
     }
 

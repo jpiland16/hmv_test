@@ -1,6 +1,22 @@
 .myView {
+    display: flex;
+    align-content: flex-start;
     overflow: hidden;
     background-color: lightskyblue;
     width: 100vw;
     height: 100%;
+}
+
+.menuContainer {
+    position: absolute;
+    /* left: 0px; */
+    height: 100%;
+    width: 40vw;
+}
+
+.visualizerContainer {
+    flex: 1;
+    height: 100%;
+    /* background-color: red;
+    border: 10px solid green; */
 }
