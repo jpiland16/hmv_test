@@ -189,8 +189,10 @@ function getFilePart(fileName, type) {
  * the response to a GET request to 'api/get-file-list'.
  */
 export function subscribeToFile(props, mySelectedFile) {
-    if (window.location.href.substring(0, 22) === "http://localhost:3000/") {
-        // Do special stuff for React Dev mode
+    const skipSocket = false;
+    if (window.location.href.substring(0, 22) === "http://localhost:3000/" && skipSocket) {
+        // Do special stuff for React Dev mode, unless we need to do dev for the 
+        // file retrieval process
 
         // Get metadata file
         let xm = new XMLHttpRequest();
