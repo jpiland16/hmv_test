@@ -335,12 +335,9 @@ export default function Viewport(props) {
     return (
         <div className="myView">
             <Menu {...propertySet} />
-            {/* </div> */}
-            <div className="visualizerContainer">
-                <FileViewer targetFile={""} {...propertySet}/>
-                <CardSet {...propertySet} />
-            </div>
-            {/* <PlayBar {...propertySet} disabled={!fileStatus || fileStatus.status !== "Complete"} /> */}
+            <FileViewer targetFile={""} {...propertySet}/>
+            <CardSet {...propertySet} />
+            <PlayBar {...propertySet} disabled={!fileStatus || fileStatus.status !== "Complete"} />
             <Animator {...propertySet} />
         </div>
     )

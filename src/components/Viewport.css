@@ -1,6 +1,6 @@
 .myView {
-    display: flex;
-    align-content: flex-start;
+    /* display: flex;
+    align-content: flex-start; */
     overflow: hidden;
     background-color: lightskyblue;
     width: 100vw;

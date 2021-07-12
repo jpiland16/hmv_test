@@ -185,22 +185,6 @@ class FileViewer extends React.Component {
                         library={this}
                     />
                 </div>
-                <div className="fileViewBottomBar">
-                    {this.props.fileStatus.status === 'Complete'?
-                        <PlayBarAlt 
-                            values={this.props.data.current.map((row) => (row[0]))} 
-                            FPS={10}
-                            // index={this.state.index} // We want to move 'index' to be held here, but it needs to be modified by a master play button belonging to Viewport.
-                            index={this.props.timeSliderValue}
-                            onChangeIndex={(newIndex)=>{
-                                this.setState({ index: newIndex });
-                                this.props.setTimeSliderValue(newIndex);
-                                this.props.lineNumberRef.current = newIndex;
-                            }}
-                        /> :
-                        null
-                    }
-                </div>
             </div>
         )
     }
