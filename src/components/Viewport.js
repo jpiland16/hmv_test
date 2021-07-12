@@ -8,6 +8,13 @@ import PlayBar from './PlayBar'
 import TopActionBar from './TopActionBar'
 import CardSet from './cards/CardSet'
 import Animator from './Animator'
+import MenuButton from './menu/MenuButton'
+import MenuIcon from '@material-ui/icons/Menu'
+import ChevronLeftIcon from '@material-ui/icons/ChevronLeft'
+import FileCopyIcon from '@material-ui/icons/FileCopy';
+import { Slide, Zoom } from '@material-ui/core'
+import { Paper } from '@material-ui/core'
+import MainPanel from './menu/components/MainPanel'
 
 import { getMap, getFileList, downloadFile, subscribeToFile } from './viewport-workers/NetOps'
 import { onSelectFileChange, isFileNameValid, clickFile} from './viewport-workers/FileOps'
@@ -16,6 +23,7 @@ import { getLocalFromGlobal, getGlobalFromLocal } from './viewport-workers/MathO
 import { setSliderPositions, onLoadBones } from './viewport-workers/BoneOps'
 import { resetModel } from './viewport-workers/Reset'
 import { Alert } from '@material-ui/lab'
+import { IconButton } from '@material-ui/core'
 
 let childrenOf = {};
 let parentOf = {};
@@ -296,15 +304,83 @@ export default function Viewport(props) {
      *  RETURN OF THE RENDER - PROPS -> CHILDREN
      *  ---------------------------------------- */
 
+    /**
+     * 
+     * @param {*} props 
+     * Example of params:
+     * { buttons: [
+     *   { imageComponent: <MenuIcon/>, onClick: () => window.location.push('/') }
+     * ]}
+     * @returns 
+     */
+    function MenuSideBar({ buttons, backgroundColor }) {
+        return (
+            <div className="menuSideBar" style={{"background-color": (backgroundColor)? backgroundColor : null}}>
+                <div className="buttonColumnContainer">
+                    {buttons.map(({ imageComponent, onClick, visible }) => {
+                        return (
+                            visible?
+                                <MenuBarButton imageComponent={imageComponent} onClick={onClick}/> :
+                                null
+                        )
+                    })}
+                </div>
+            </div>
+        );
+    }
+
+    function MenuBarButton({ imageComponent, onClick }) {
+        return (
+            <IconButton
+                style={{padding: 0, height: "2.0vw", width:"2.0vw"}} 
+                iconStyle={{width: "100%", height: "100%", fontSize: "1000"}}
+                onClick={onClick}>
+                {imageComponent}
+            </IconButton>
+        )
+    }
+
+    const [dummy, setDummy] = React.useState(false);
+    let menuExpanded = dummy;
+
     return (
         <div className="myView">
-            <HomeButton />
-            <Menu {...propertySet} />
-            <FileViewer targetFile={""} {...propertySet}/>
-            <PlayBar {...propertySet} disabled={!fileStatus || fileStatus.status !== "Complete"} />
-            <CardSet {...propertySet} />
-            <TopActionBar {...propertySet} />
-            <Animator {...propertySet} />
+            <MenuSideBar
+                backgroundColor={menuExpanded? "green" : null}
+                buttons={
+                    [
+                        {
+                            imageComponent: <img style={{"width": "100%", "height": "100%"}} src="/hmv-favicon-512.png"/>,
+                            onClick: () => window.location.href = "/",
+                            visible: true
+                        },
+                        {
+                            imageComponent: <MenuIcon fontSize='large'/>,
+                            onClick: () => { setDummy(true) },
+                            visible: !menuExpanded
+                        },
+                        {
+                            imageComponent: <ChevronLeftIcon fontSize='large'/>,
+                            onClick: () => { setDummy(false) },
+                            visible: menuExpanded
+                        },
+                        {
+                            imageComponent: <FileCopyIcon fontSize='large'/>,
+                            onClick: () => {  },
+                            visible: menuExpanded
+                        },
+                    ]
+                }/>
+            <Slide direction="right" in={menuExpanded} mountOnEnter unmountOnExit>
+                <Paper className="menuExpanded">
+                    <MainPanel selectedPanel={0} setSelected={()=>{}} {...propertySet}/>
+                </Paper>
+            </Slide>
+            {/* <div className="slideMenu"></div> */}
+            <div className="fileViewerContainer">
+                <FileViewer targetFile={""} {...propertySet}/>
+            </div>
+            {/* <Menu {...propertySet} /> */}
         </div>
     )
 }

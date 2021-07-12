@@ -3,6 +3,10 @@ import { Alert } from '@material-ui/lab'
 import { withRouter } from "react-router-dom";
 import Visualizer from './Visualizer';
 import CircularProgress from '@material-ui/core/CircularProgress'
+import PlayBar from '../PlayBar';
+import CardSet from '../cards/CardSet';
+import TopActionBar from '../TopActionBar';
+import Animator from '../Animator';
 
 import './FileViewer.css';
 
@@ -76,7 +80,7 @@ class FileViewer extends React.Component {
     // importing 'library'
     FileDisplay(props) {
         if (!props.fileSelected) {
-            return <div style={{marginLeft: props.menuIsOpen ? "6px" : "48px" }}><Alert severity="info">Please select a file to view from the 'Choose File' section of the menu on the left. You can also click "Choose a file" above.</Alert></div>;
+            return <div><Alert severity="info">Please select a file to view from the 'Choose File' section of the menu on the left. You can also click "Choose a file" above.</Alert></div>;
         }
         switch (props.status) {
             case 'Contacting server':
@@ -90,7 +94,7 @@ class FileViewer extends React.Component {
             case 'Error':
                 return <props.library.ErrorMessage errorMessage={props.errorMessage} />
             case 'Complete':
-                return <Visualizer sceneInfo={props.sceneInfo} />
+                return <div className="canvas-container"><Visualizer sceneInfo={props.sceneInfo} /></div>
         }
         return <div style={{marginLeft: props.menuIsOpen ? "6px" : "48px" }}><Alert severity="error">Unable to determine the state "{props.status}" of this file. Try re-uploading.</Alert></div>;
     }
@@ -164,7 +168,8 @@ class FileViewer extends React.Component {
     render() {
         console.log("Selected file: " + this.props.selectedFile.fileName);
         return (
-            <div style={{ marginLeft: this.props.menuIsOpen ? "40vw" : "0px"}}>
+            // <div style={{ marginLeft: this.props.menuIsOpen ? "40vw" : "0px"}}>
+            <div style={{"background-color": "yellow", "height": "100%", "width": "100%"}}>
                 <this.FileDisplay 
                     fileSelected={this.props.selectedFile.fileName !== ''} 
                     status={this.props.fileStatus.status} 
@@ -173,6 +178,10 @@ class FileViewer extends React.Component {
                     library={this}
                     menuIsOpen={this.props.menuIsOpen}
                 />
+                <PlayBar {...this.props} disabled={!this.props.fileStatus || this.props.fileStatus.status !== "Complete"} />
+                <CardSet {...this.props} />
+                {/* <TopActionBar {...this.props} /> */}
+                <Animator {...this.props} />
             </div>
         )
     }

@@ -52,21 +52,45 @@ export default function ThreeScene(props) {
         camera.position.z = 3;
         camera.position.y = 0;
 
-        // refreshRendererSize(currentScene, width, height);
-        renderer.setSize(width, height);
+        const onResize = (parentDiv) => {
+            console.log("Reacting to resize!");
+            const width = parentDiv.clientWidth;
+            const height = parentDiv.clientHeight;
+
+            camera.aspect = width/height;
+            camera.updateProjectionMatrix();
+
+            renderer.setSize(width, height);
+        }
+
+        onResize(parentElement);
 
         // For simplicity, re-render every frame rather than on updates.
         // For performance, it might be better to render on updates only.
         let controls = new OrbitControls( camera, renderer.domElement );
         controls.minDistance = MIN_CAMERA_DISTANCE;
         controls.maxDistance = MAX_CAMERA_DISTANCE;
+
         controls.addEventListener( 'change', () => {
             renderer.render(currentScene, camera); 
         });
+
+        const checkForResize = (renderer, parentDiv) => {
+            if (!renderer || !parentDiv) { return; }
+            let rendererSize = renderer.getSize(new THREE.Vector2());
+            if (rendererSize.x != parentElement.clientWidth || rendererSize.y != parentElement.clientHeight) {
+                onResize(parentDiv);
+            }
+        }
+
         const animate = () => {
             requestAnimationFrame(animate);
 
             renderer.render(currentScene, camera);
+
+            // 'Listen' (poll) for changes in size to adjust the renderer and camera.
+            checkForResize(renderer, parentElement);
+            
         }
 
         animate();
@@ -99,6 +123,7 @@ export default function ThreeScene(props) {
 
     return (
         <div
+            style={{"width": "100%", "height": "100%", "background-color": "green"}}
             ref={measuredRef}
             id="visualizationBase" 
         />

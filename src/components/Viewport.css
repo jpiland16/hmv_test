@@ -1,6 +1,53 @@
 .myView {
+    display: flex;
+    flex-direction: row;
     overflow: hidden;
     background-color: lightskyblue;
     width: 100vw;
     height: 100%;
+}
+
+.slideMenu {
+    height: 100%;
+    width: 40vw;
+    background-color: yellow;
+}
+
+.menuSideBar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
+    width: 3vw;
+}
+
+.buttonContainer {
+    width: 2.5vw;
+    height: 2.5vw;
+}
+
+.buttonColumnContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    width: 2.5vw;
+    margin-top: 0.5vw;
+}
+
+.menuExpanded {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: row;
+    min-width: 40vw;
+    width: 40vw;
+    height: 100%;
+    background-color: yellow;
+    resize: horizontal;
+}
+
+.fileViewerContainer {
+    flex-grow: 1;
+    /* background-color: violet; */
+    border: 1px solid chartreuse;
 }

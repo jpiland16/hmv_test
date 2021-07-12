@@ -4,8 +4,8 @@ import { Tooltip } from '@material-ui/core';
 function MenuButton(props) {
     return (
         <Tooltip title={"Return to the home page"} placement="right">
-            <IconButton style={{position: "absolute", zIndex: 5}} onClick={() => window.location.href = "/"}>
-                <img style={{height: "36px", margin: "-6px"}} src="/hmv-favicon-512.png" />
+            <IconButton style={{"width": "100%"}} onClick={() => window.location.href = "/"}>
+                <img style={{"width": "200%"}} src="/hmv-favicon-512.png" />
             </IconButton>
         </Tooltip>
     );
