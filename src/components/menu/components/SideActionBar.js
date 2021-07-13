@@ -12,19 +12,12 @@ import CategoryIcon from '@material-ui/icons/Category'
 
 export default function SideActionBar(props) {
     return (
-        <div className="sidebar">  
-            <Zoom in={props.visible} style={{ transitionDelay: props.visible ? '0ms' : '0ms' }}>
-                <Tooltip title="Return to the home page" placement="right">
-                    <IconButton style={{
-                        marginTop: "48px"
-                    }} color={props.selectedPanel === -1 ? "primary" : "default"} onClick={() => window.location.href = "/"}>
-                        <HomeIcon />
-                    </IconButton>
-                </Tooltip>
-            </Zoom>           
+        <div className="sidebar">          
             <Zoom in={props.visible} style={{ transitionDelay: props.visible ? '50ms' : '0ms' }}>
                 <Tooltip title="Choose files" placement="right">
-                    <IconButton color={props.selectedPanel === 0 ? "primary" : "default"} onClick={() => props.setSelected(0)}>
+                    <IconButton style={{
+                        marginTop: "96px"
+                    }} color={props.selectedPanel === 0 ? "primary" : "default"} onClick={() => props.setSelected(0)}>
                         <FileCopyIcon />
                     </IconButton>
                 </Tooltip>

@@ -1,7 +1,7 @@
 import './Viewport.css'
 import Menu from './menu/Menu'
 import React from 'react'
-import Visualizer from './visualizer/Visualizer'
+import HomeButton from './HomeButton'
 import FileViewer from './visualizer_experimental/FileViewer'
 import { initializeScene } from './visualizer_experimental/SceneInitializer'
 import PlayBar from './PlayBar'
@@ -334,6 +334,7 @@ export default function Viewport(props) {
 
     return (
         <div className="myView">
+            <HomeButton />
             <Menu {...propertySet} />
             <FileViewer targetFile={""} {...propertySet}/>
             <CardSet {...propertySet} />

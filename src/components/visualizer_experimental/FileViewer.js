@@ -28,7 +28,7 @@ class FileViewer extends React.Component {
         if (props.loaded) {
             return null;
         }
-        return <Alert severity="warning">Your file is being processed...</Alert>;
+        return <div style={{marginLeft: props.menuIsOpen ? "6px" : "48px" }}><Alert severity="warning">Your file is being processed...</Alert></div>;
     }
 
     LoadingModelMessage(props) {
@@ -76,14 +76,14 @@ class FileViewer extends React.Component {
     }
 
     ErrorMessage(props) {
-        return <Alert severity="error">An error occured while loading the data file: {props.errorMessage}</Alert>;
+        return <div style={{marginLeft: props.menuIsOpen ? "6px" : "48px" }}><Alert severity="error">An error occured while loading the data file: {props.errorMessage}</Alert></div>;
     }
 
     // TODO: Split this up into multiple files or use some other method to (1) separate the outer and inner choice and (2) prevent
     // importing 'library'
     FileDisplay(props) {
         if (!props.fileSelected) {
-            return <Alert severity="info">Please select a file to view from the 'Choose File' section of the menu on the left. You can also click "Choose a file" above.</Alert>;
+            return <div style={{marginLeft: props.menuIsOpen ? "6px" : "48px" }}><Alert severity="info">Please select a file to view from the 'Choose File' section of the menu on the left. You can also click "Choose a file" above.</Alert></div>;
         }
         switch (props.status) {
             case 'Contacting server':
@@ -99,7 +99,7 @@ class FileViewer extends React.Component {
             case 'Complete':
                 return <Visualizer sceneInfo={props.sceneInfo} />
         }
-        return <Alert severity="error">Unable to determine the state "{props.status}" of this file. Try re-uploading.</Alert>
+        return <div style={{marginLeft: props.menuIsOpen ? "6px" : "48px" }}><Alert severity="error">Unable to determine the state "{props.status}" of this file. Try re-uploading.</Alert></div>;
     }
 
     // Why do we need the double arrow? Because using a function in JSX for onClick will evaluate whatever you pass in.
@@ -171,20 +171,17 @@ class FileViewer extends React.Component {
     render() {
         console.log("Selected file: " + this.props.selectedFile.fileName);
         return (
-            // <div style={{ marginLeft: this.props.menuIsOpen ? "40vw" : "0px"}}>
-            <div className="fileViewContainer">
-                <TopActionBar {...this.props} />
-                <div className="sceneContainer">
-                    <this.FileDisplay 
-                        fileSelected={this.props.selectedFile.fileName !== ''} 
-                        status={this.props.fileStatus.status} 
-                        fileProgress={this.props.fileStatus.progress} 
-                        modelProgress={this.props.modelDownloadProgress} 
-                        errorMessage={this.props.fileStatus.message} 
-                        sceneInfo={this.props.sceneInfo}
-                        library={this}
-                    />
-                </div>
+            <div style={{ marginLeft: this.props.menuIsOpen ? "40vw" : "0px"}}>
+                <this.FileDisplay 
+                    fileSelected={this.props.selectedFile.fileName !== ''} 
+                    status={this.props.fileStatus.status} 
+                    fileProgress={this.props.fileStatus.progress} 
+                    modelProgress={this.props.modelDownloadProgress} 
+                    errorMessage={this.props.fileStatus.message} 
+                    sceneInfo={this.props.sceneInfo}
+                    library={this}
+                    menuIsOpen={this.props.menuIsOpen}
+                />
             </div>
         )
     }
