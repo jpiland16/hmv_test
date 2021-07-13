@@ -33,11 +33,7 @@ export function initializeScene(onProgress=null) {
 
 function loadModel(onProgress=null) {
     var loader = new GLTFLoader();
-
-    const compassPath =  window.location.href.substring(0, 22) === "http://localhost:3000/" ? 
-    "https://raw.githubusercontent.com/jpiland16/hmv_test/master/files/figures/compass.glb" :
-    "/files/figures/compass.glb"
-
+    
     const gridPath = window.location.href.substring(0, 22) === "http://localhost:3000/" ? 
     "https://raw.githubusercontent.com/jpiland16/hmv_test/master/files/figures/grid.glb" :
     "/files/figures/grid.glb";

@@ -3,8 +3,7 @@ import { Alert } from '@material-ui/lab'
 import { withRouter } from "react-router-dom";
 import Visualizer from './Visualizer';
 import CircularProgress from '@material-ui/core/CircularProgress'
-import PlayBarAlt from '../PlayBarAlt';
-import TopActionBar from '../TopActionBar';
+import LinearProgress from '@material-ui/core/LinearProgress'
 
 import './FileViewer.css';
 
@@ -34,11 +33,9 @@ class FileViewer extends React.Component {
     LoadingModelMessage(props) {
         return (
             <div className='loading'>
-                <CircularProgress variant="determinate" value={props.progress}></CircularProgress>
+                <LinearProgress variant="determinate" value={props.progress} style={{width: "90%", margin: "auto"}}></LinearProgress>
                 <br/>
-                {props.progress}%
-                <br/>
-                Loading the model...
+                Loading the model... ({props.progress}%)
             </div>
         )
     }
@@ -66,11 +63,9 @@ class FileViewer extends React.Component {
     LoadingFileMessage(props) {
         return (
             <div className='loading'>
-                <CircularProgress variant="determinate" value={props.progress}></CircularProgress>
+                <LinearProgress variant="determinate" value={props.progress} style={{width: "90%", margin: "auto"}}></LinearProgress>
                 <br/>
-                {props.progress}%
-                <br/>
-                Loading the data file...
+                Loading the data file... ({props.progress}%)
             </div>
         )
     }
@@ -171,7 +166,7 @@ class FileViewer extends React.Component {
     render() {
         console.log("Selected file: " + this.props.selectedFile.fileName);
         return (
-            <div style={{ marginLeft: this.props.menuIsOpen ? "40vw" : "0px"}}>
+            <div style={{ marginLeft: this.props.menuIsOpen ? "40vw" : "0px", width: this.props.menuIsOpen ? "calc(100% - 40vw)": "100%"}}>
                 <this.FileDisplay 
                     fileSelected={this.props.selectedFile.fileName !== ''} 
                     status={this.props.fileStatus.status} 
