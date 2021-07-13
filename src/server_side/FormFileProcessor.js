@@ -1,7 +1,7 @@
 const FileReader = require('filereader');
 const { spawn } = require('child_process');
 
-const VERBOSE_OUTPUT = false
+const VERBOSE_OUTPUT = true
 
 function handleForm(err, fields, files, callback, onError) {
     if (VERBOSE_OUTPUT) console.log("Proceeded to handleForm function...");
@@ -73,7 +73,6 @@ function handleUploadedFile(event, fields, callback, onError) {
         }
     );
     if (VERBOSE_OUTPUT) console.log("Python string params: " + pyStringParams);
-    // var pyProcess = spawn('python', ['pyprogs/testprog.py', pyStringParams], { cwd: process.cwd() + "\\src\\server_side"});
     var pyProcess = spawn('python', ['src/server_side/python_programs/multi_sensor_fuser_obj.py', pyStringParams]);
     if (VERBOSE_OUTPUT) console.log("Generated python process pid (greater than 0 on success): " + pyProcess.pid);
     if (VERBOSE_OUTPUT) console.log("Current path: " + process.cwd());
