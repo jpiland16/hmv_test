@@ -1,6 +1,5 @@
 import './TutorialScreen.css';
-import React, { useState, useEffect } from 'react';
-import TitleBar from './TitleBar';
+import TitleBar from '../TitleBar';
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/core/styles';
@@ -25,6 +24,10 @@ export default function Tutorial() {
   function returnHome(){
     history.push('/')
   }
+
+  function upload(){
+    history.push('/upload')
+  }
  
   return (
     
@@ -33,7 +36,7 @@ export default function Tutorial() {
       }} >
         <div style={{overflowY: 'auto', height: '100vh'}}> 
       <TitleBar classes={classes} />
-      <Box mx='20%' mb='5%'>    
+      <Box mx='20%' mb='20px'>    
         <h1 style={{textAlign: 'center'}}>Getting Started</h1>
         <p>The Human Activity Visualizer is a free visualization tool that reads wearable sensor measurements from a file and displays the activities of the sensor wearer via a virtual 3D model. To try out the visualization tool on a sample dataset, click <a href="/visualizer?file=/opportunity-dataset/dataset/S4-ADL4.dat">here</a>. To view your own uploaded dataset, the guide below will explain step-by-step how to get started.</p>
         <h2>Uploading and Viewing Your Own Datasets</h2>
@@ -41,7 +44,7 @@ export default function Tutorial() {
         <p>Your file must: </p>
         <ul>
           <li>be a .dat file</li>
-          <li>be sorted into columns</li>
+          <li>be sorted into space-separated columns</li>
           <li>not contain headers</li>
         </ul>
         <p>The data in your file must:</p>
@@ -51,6 +54,7 @@ export default function Tutorial() {
               <li>Note: other measurement types can be included in the uploaded file but will be ignored</li>
             </ul>
           </li>
+          <li>be multiplied by 1000</li>
           <li>be ordered so that columns for any quaternion values are in WXYZ order for each sensor</li>
           <li>be ordered so that columns for any acc+mag+gyro values are in XYZ order for each sensor</li>
         </ul>
@@ -104,6 +108,8 @@ export default function Tutorial() {
 
       
         </Box> 
+        <Button style={{position: 'absolute', right: '30px', bottom: '20px'}} color='primary' variant= 'contained' id = "submitButton" onClick={()=>upload()}>+ Upload File</Button>
+
  </div>
       
     </div>  
