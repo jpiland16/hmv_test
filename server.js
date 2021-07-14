@@ -453,6 +453,8 @@ app.get('/*',  (req, res)=> {
     }
 });
 
+
+
 io.use((socket, next) => {
     if (VERBOSE_OUTPUT) console.log("A new socket connection is going through middleware: " + socket)
     // // need identication of some sort
@@ -516,6 +518,16 @@ io.on('connection', (socket) => {
 })
 
 scanAllFiles();
+
+app.get('/.well-known/*', (req, res) => {
+    let path = req.url;
+    let fileRoot = `${__dirname}/public`;
+    if (fs.existsSync(fileRoot + "/" + path)) {
+        res.sendFile(path, {root: fileRoot});
+    } else {
+        res.send(`File or directory "${path}" not found!`);
+    }
+});
 
 httpsServer.listen(HTTPS_PORT, () => {
     console.log("Listening on port " + HTTPS_PORT + "...");
