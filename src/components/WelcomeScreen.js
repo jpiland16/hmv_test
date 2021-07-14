@@ -13,7 +13,7 @@ import TitleBar from './TitleBar'
 
 export default function Welcome(props) {
   
-
+  const [ showEgg, setShowEgg ] = React.useState(false);
   const useStyles = makeStyles(() => ({
     title: {
       flexGrow: 1,
@@ -24,7 +24,9 @@ export default function Welcome(props) {
 
   props.setFirstLoad(true)
   const history = useHistory()
+
   const pattern = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
+  
   let current=0;
 
   const keyHandler = function (event) {
@@ -37,7 +39,9 @@ export default function Welcome(props) {
     current++;
     if (pattern.length === current) {
       current = 0;
-      window.alert('One day this easter egg will be a shrine to Claudia in all of her glory');
+      console.log('correct')
+      setShowEgg(true)
+      console.log(showEgg)
     }
     event.Handled = true;
   };
@@ -51,13 +55,17 @@ export default function Welcome(props) {
     history.push('/upload');
   }
 
+  
+
   return (
     
     <div>
       <TitleBar classes={classes}/>
       <Container>
-        <HomeAnimation/>
-        <div className="toplayer">
+      <HomeAnimation/>
+      {showEgg ?  <iframe className="toptoptop" width="560" height="315" src="https://www.youtube.com/embed/dQw4w9WgXcQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      : null}
+       <div className="toplayer">
           <Grid container spacing={2}>
             <Grid item>
               <Button color='primary' variant= 'contained' id = "submitButton" onClick={()=>launchVisualizer()}>Launch Visualizer</Button>

@@ -1,0 +1,17 @@
+.playBar {
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    bottom: 10px;
+}
+
+.timeStamp {
+    display: inline;
+    width: 84px;
+    font-size: 12px;
+    margin-left: 12px;
+    margin-right: 12px;
+    text-align: right;
+}

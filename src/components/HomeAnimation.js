@@ -2,6 +2,7 @@ import { Typography } from "@material-ui/core";
 import React from "react";
 import * as THREE from "three";
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
+import './HomeAnimation.css'
 
 let model, scene, renderer, frameId, camera = null;
 

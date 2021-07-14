@@ -2,12 +2,13 @@ import './Viewport.css'
 import Menu from './menu/Menu'
 import React from 'react'
 import HomeButton from './HomeButton'
-import FileViewer from './visualizer_experimental/FileViewer'
-import { initializeScene } from './visualizer_experimental/SceneInitializer'
-import PlayBar from './PlayBar'
-import TopActionBar from './TopActionBar'
-import CardSet from './cards/CardSet'
+import FileViewer from './view-panel/visualizer_experimental/FileViewer'
+import { initializeScene } from './view-panel/visualizer_experimental/SceneInitializer'
+import PlayBar from './view-panel/PlayBar'
+import TopActionBar from './view-panel/TopActionBar'
+import CardSet from './view-panel/cards/CardSet'
 import Animator from './Animator'
+import ViewPanel from './view-panel/ViewPanel'
 
 import { getMap, getFileList, downloadFile, subscribeToFile } from './viewport-workers/NetOps'
 import { onSelectFileChange, isFileNameValid, clickFile} from './viewport-workers/FileOps'
@@ -58,6 +59,7 @@ export default function Viewport(props) {
      *   ------------------------ */  
 
     const [ selectedPanel, setSelectedPanel ] = React.useState(0);
+    const [ inSplitMode, setInSplitMode ]=React.useState(false);
     const [ expandedItems, setExpandedItems ] = React.useState(initialExpandedItems);
     const [ selectedFile, setSelectedFile ] = React.useState(initialSelectedFile);
     const [ searchFileText, setSearchFileText ] = React.useState("");
@@ -109,6 +111,8 @@ export default function Viewport(props) {
             setSelectedPanel: setSelectedPanel,
 
             // FILE SELECTION PROPERTIES
+            inSplitMode: inSplitMode,
+            setInSplitMode: setInSplitMode,
             expandedItems: expandedItems,
             setExpandedItems: setExpandedItems,
             selectedFile: selectedFile,
@@ -296,15 +300,54 @@ export default function Viewport(props) {
      *  RETURN OF THE RENDER - PROPS -> CHILDREN
      *  ---------------------------------------- */
 
+    const menu_width='40vw'
+    function getSplitFactor(){
+
+    }
+
+    const styles = {
+        splitScreen: {
+            display: 'flex',
+            flexDirection: 'row',
+            alignContent: 'stretch',
+            flex: 1,           
+        },
+        leftPane: {
+            height: '100vh',
+            backgroundColor: 'red',
+            width: menuIsOpen ? '40vw': '0vw',
+            position: 'relative',
+        },
+        midPane: {
+            backgroundColor: 'yellow',
+            height: '100vh',
+            width: '100%',
+            position: 'relative',
+           
+        },
+        rightPane: {
+            backgroundColor: 'purple',
+            height: '100vh',
+            width: '100%',
+            position: 'relative',
+            
+        },
+      };
+
     return (
-        <div className="myView">
+        <div className="myView">           
+          <div style={styles.splitScreen}>
+            <div style={styles.leftPane}>
             <HomeButton />
             <Menu {...propertySet} />
-            <FileViewer targetFile={""} {...propertySet}/>
-            <PlayBar {...propertySet} disabled={!fileStatus || fileStatus.status !== "Complete"} />
-            <CardSet {...propertySet} />
-            <TopActionBar {...propertySet} />
-            <Animator {...propertySet} />
+            </div> 
+            <div style={styles.splitScreen}>
+                <div style={styles.midPane}>
+                    <ViewPanel {...propertySet}/>
+                </div> 
+                    {inSplitMode ? <div style={styles.rightPane}><ViewPanel {...propertySet} isOrange='true'/></div>: null}
+            </div>
+            </div>
         </div>
     )
 }

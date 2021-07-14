@@ -11,7 +11,7 @@ import Button from '@material-ui/core/Button'
 import SyncIcon from '@material-ui/icons/Sync'
 import { useSpring, animated } from 'react-spring'; // web.cjs is required for IE 11 support
 import './ChooseFiles.css'
-import { Typography } from '@material-ui/core';
+import { Grid, Typography } from '@material-ui/core';
 
 const makeRoot = (children) => {
     return {
@@ -167,6 +167,9 @@ export default function CustomizedTreeView(props) {
             </Typography>
             <Button size="small" style={{marginLeft: "0px", opacity: 0.74, marginBottom: "6px", marginTop: "0px"}} onClick={() => window.location.href="/api/scan-all-files"}>
                 <SyncIcon style={{marginRight: "6px", fontSize:"small"}}/> Refresh file list
+            </Button>
+            <Button color= 'primary' variant='contained' onClick={()=>props.setInSplitMode(!props.inSplitMode)}>
+                {props.inSplitMode ? `Exit Split Mode` : `Enter Split Mode` }
             </Button>
         <TreeView
             className={classes.root}

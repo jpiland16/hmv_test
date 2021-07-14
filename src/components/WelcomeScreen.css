@@ -20,3 +20,10 @@
 .file {
   width:0;
 }
+
+.toptoptop{
+  z-index: 3;
+  position: absolute;
+  right: calc(50% - 560px/2);
+  top: calc(50% - 315px/2)
+}
