@@ -429,6 +429,7 @@ app.get('/files/*', (req, res) => {
 });
 
 app.get('/.well-known/*', (req, res) => {
+    console.log('blah blah blah')
     let path = req.url;
     let fileRoot = `${__dirname}/public`;
     if (fs.existsSync(fileRoot + "/" + path)) {
