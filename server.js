@@ -428,8 +428,17 @@ app.get('/files/*', (req, res) => {
     }
 });
 
+app.get('/jsdoc/*', (req, res) => {
+    let path = decodeURI(req.url.substr(7));
+    let fileRoot = `${__dirname}/jsdoc`;
+    if (fs.existsSync(fileRoot + "/" + path)) {
+        res.sendFile(path, {root: fileRoot});
+    } else {
+        res.send(`File or directory "${path}" not found!`);
+    }
+});
+
 app.get('/.well-known/*', (req, res) => {
-    console.log('blah blah blah')
     let path = req.url;
     let fileRoot = `${__dirname}/public`;
     if (fs.existsSync(fileRoot + "/" + path)) {
