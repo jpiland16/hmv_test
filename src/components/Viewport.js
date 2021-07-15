@@ -8,7 +8,7 @@ import PlayBar from './PlayBar'
 import TopActionBar from './TopActionBar'
 import CardSet from './cards/CardSet'
 import Animator from './Animator'
-import Slide from '@material-ui/core/Slide'
+import Visualizer from './shared_visualizer_object/Visualizer'
 
 import { getMap, getFileList, downloadFile, subscribeToFile } from './viewport-workers/NetOps'
 import { onSelectFileChange, isFileNameValid, clickFile} from './viewport-workers/FileOps'
@@ -16,7 +16,6 @@ import { updateSingleQValue, batchUpdateObject } from './viewport-workers/ModelO
 import { getLocalFromGlobal, getGlobalFromLocal } from './viewport-workers/MathOps'
 import { setSliderPositions, onLoadBones } from './viewport-workers/BoneOps'
 import { resetModel } from './viewport-workers/Reset'
-import { Alert } from '@material-ui/lab'
 
 let childrenOf = {};
 let parentOf = {};
@@ -27,6 +26,8 @@ const lastFiles = [null]; // Wrapped in an array to be mutable
 const fileMap = [null]; // Wrapped in an array to be mutable
 
 const VERBOSE_OUTPUT = false
+
+const visualizerObj = new Visualizer()
 
 export default function Viewport(props) {
 
@@ -81,6 +82,7 @@ export default function Viewport(props) {
     const [ sceneInfo, setSceneInfo ] = React.useState({ scene: null, model: null, camera: null, renderer: null });
     const [ scenePromise, setScenePromise ] = React.useState(null);
     const [ modelDownloadProgress, setModelProgress ] = React.useState(0);
+    const [windowDimensions, setWindowDimensions] = React.useState(getWindowDimensions());
     
     /*   ---------------------
      *   REFS (React.useRef())
@@ -213,7 +215,7 @@ export default function Viewport(props) {
             getLocalFromGlobal: getLocalFromGlobal,
 
         // -- WINDOW PROPERTIES --
-            getWindowDimensions: useWindowDimensions,
+            getWindowDimensions: () => windowDimensions,
 
         // -- DEVELOPMENT OPTIONS --
         
@@ -246,11 +248,15 @@ export default function Viewport(props) {
     });
 
     React.useEffect(() => {
+
         console.log("Running useEffect");
+        visualizerObj.createScene()
+
         setScenePromise(new Promise((myResolve, myReject) => {
             const onProgress = (progressPercent) => {
                 setModelProgress(progressPercent);
             }
+
             initializeScene(onProgress).then((newSceneInfo) => {
                 let boneNames = {
                     LUA: "upperarm_l", 
@@ -277,7 +283,15 @@ export default function Viewport(props) {
                 myResolve(newSceneInfo);
             });
         }));
+
         getFileList(propertySet);
+        
+        function handleResize() {
+            setWindowDimensions(getWindowDimensions());
+            // TODO: refresh size of all visualizers
+            visualizerObj.refreshRendererSize();
+        }
+        
         if (selectedFile.fileName !== '' && isFileNameValid(propertySet, selectedFile.fileName)) {
             console.log("Running onSelectFileChange");
             onSelectFileChange(propertySet, selectedFile.fileName, selectedFile.displayName);
@@ -285,6 +299,11 @@ export default function Viewport(props) {
         else {
             console.log("Not running onSelectFileChange");
         }
+        
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+
+
     }, []); // No dependencies, so it runs only once at first render.
 
     /*  ---------------------
@@ -302,16 +321,9 @@ export default function Viewport(props) {
       }
       
     function useWindowDimensions() {
-        const [windowDimensions, setWindowDimensions] = React.useState(getWindowDimensions());
       
         React.useEffect(() => {
-            function handleResize() {
-              setWindowDimensions(getWindowDimensions());
-            }
-        
-            window.addEventListener('resize', handleResize);
-            return () => window.removeEventListener('resize', handleResize);
-        }, []);
+        });
       
         return windowDimensions;
     }        
@@ -336,7 +348,8 @@ export default function Viewport(props) {
         <div className="myView">
             <HomeButton />
             <Menu {...propertySet} />
-            <FileViewer targetFile={""} {...propertySet}/>
+            {/* <FileViewer targetFile={""} {...propertySet}/> */}
+            {visualizerObj.component}
             <CardSet {...propertySet} />
             <PlayBar {...propertySet} disabled={!fileStatus || fileStatus.status !== "Complete"} />
             <Animator {...propertySet} />
