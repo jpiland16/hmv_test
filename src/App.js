@@ -1,6 +1,6 @@
 import Viewport from "./components/Viewport"
-import Welcome from "./components/WelcomeScreen"
-import Tutorial from "./components/TutorialScreen";
+import Welcome from "./components/home-screen/WelcomeScreen"
+import Tutorial from "./components/tutorial/TutorialScreen";
 import './App.css';
 import MaterialCalibrationForm from "./components/MaterialCalibrationForm";
 import { BrowserRouter, Route, Switch } from "react-router-dom";

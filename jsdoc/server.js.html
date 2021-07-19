@@ -1,4 +1,32 @@
-const express = require('express');
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: server.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: server.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>const express = require('express');
 const app = express();
 const serveIndex = require('serve-index');
 const https=require('https');
@@ -75,7 +103,7 @@ function isValidDir(dir) {
                 foundData = foundData || file.name === 'quaternion_data.dat';
                 foundMetadata = foundMetadata || file.name === 'metadata.json';
             }
-            myResolve(containsFolder || (foundData && foundMetadata));
+            myResolve(containsFolder || (foundData &amp;&amp; foundMetadata));
         })
     })
     
@@ -170,7 +198,7 @@ function countItems(root) {
     if (!root.children) return [1, 1]; // [ Total items, files ]
     let allItemCount = 1; // Including self
     let leafCount = 0;
-    for (let i = 0; i < root.children.length; i++) {
+    for (let i = 0; i &lt; root.children.length; i++) {
         let childCount = countItems(root.children[i]);
         allItemCount += childCount[0];
         leafCount += childCount[1];
@@ -180,7 +208,7 @@ function countItems(root) {
 
 function onProjectUpdate() {
     if (VERBOSE_OUTPUT) console.log("Pull operation requested at " + new Date().toUTCString());
-    exec("git pull > git.log && npm run build > build.log")
+    exec("git pull > git.log &amp;&amp; npm run build > build.log")
 }
 
 function writeFilePromise(filePath, data) {
@@ -294,7 +322,7 @@ function fileAvailable(targetFile) {
     let dataFilePath = `${fileRoot}/${targetFile}/quaternion_data.dat`;
     let metadataPath = `${fileRoot}/${targetFile}/metadata.json`;
     if (VERBOSE_OUTPUT) console.log(`Checking for available files: ${dataFilePath}, ${metadataPath}`);
-    return (fs.existsSync(dataFilePath) && fs.existsSync(metadataPath));
+    return (fs.existsSync(dataFilePath) &amp;&amp; fs.existsSync(metadataPath));
 }
 
 app.get("/api/uploadedfiles", (req, res) => {
@@ -349,15 +377,15 @@ app.get("/api/*", (req, res) => {
             scanAllFiles().then((files) => {
                     const [ totalCount, fileCount ] = countItems({ children: files });
                     let time = new Date() - d;
-                    res.send(`<html>
-                                <head>
-                                    <title>Directory Scan</title> 
-                                </head>
-                                <body style="font-size: 24px">
+                    res.send(`&lt;html>
+                                &lt;head>
+                                    &lt;title>Directory Scan&lt;/title> 
+                                &lt;/head>
+                                &lt;body style="font-size: 24px">
                                     Scan complete. ${totalCount - 1} items found (${fileCount} files). 
-                                    Completed in ${time} ms. <a href="/">Return to the home page.</a>
-                                </body>
-                            </html>
+                                    Completed in ${time} ms. &lt;a href="/">Return to the home page.&lt;/a>
+                                &lt;/body>
+                            &lt;/html>
                             `)
                 }, (error) => {
                     if (VERBOSE_OUTPUT) console.log(error);
@@ -397,7 +425,7 @@ app.post('/api/upload-file', (req, res) => {
               res.send('upload failed')
          } else {
             let fileIds = Object.getOwnPropertyNames(files);
-            for (let i = 0; i < fileIds.length; i++) {
+            for (let i = 0; i &lt; fileIds.length; i++) {
                 let fileId = fileIds[i];
                 if (VERBOSE_OUTPUT) console.log(` >>> Attempting to obtain: "${files[fileId].name}" with params: ${fields[fileId + 'params']}`)
                 var oldpath = files[fileId].path;
@@ -428,26 +456,6 @@ app.get('/files/*', (req, res) => {
     }
 });
 
-app.get('/jsdoc/*', (req, res) => {
-    let path = decodeURI(req.url.substr(7));
-    let fileRoot = `${__dirname}/jsdoc`;
-    if (fs.existsSync(fileRoot + "/" + path)) {
-        res.sendFile(path, {root: fileRoot});
-    } else {
-        res.send(`File or directory "${path}" not found!`);
-    }
-});
-
-app.get('/.well-known/*', (req, res) => {
-    let path = req.url;
-    let fileRoot = `${__dirname}/public`;
-    if (fs.existsSync(fileRoot + "/" + path)) {
-        res.sendFile(path, {root: fileRoot});
-    } else {
-        res.send(`File or directory "${path}" not found!`);
-    }
-});
-
 app.use(express.static(`${__dirname}/build`));
 
 app.get('/*',  (req, res)=> {
@@ -459,21 +467,19 @@ app.get('/*',  (req, res)=> {
             "root": __dirname
         });
     } else {
-        res.send(`<html>
-                    <head>
-                        <title>
+        res.send(`&lt;html>
+                    &lt;head>
+                        &lt;title>
                             Wesite under maintenance
-                        </title>
-                    </head>
-                    <body>
+                        &lt;/title>
+                    &lt;/head>
+                    &lt;body>
                         The website is currently being rebuilt. Please refresh the page in 1-2 minutes.
-                        <a href='/files/contact-form.html'>Contact the developers</a> if you believe this message is in error.
-                    </body>
-                  </html>`)
+                        &lt;a href='/files/contact-form.html'>Contact the developers&lt;/a> if you believe this message is in error.
+                    &lt;/body>
+                  &lt;/html>`)
     }
 });
-
-
 
 io.use((socket, next) => {
     if (VERBOSE_OUTPUT) console.log("A new socket connection is going through middleware: " + socket)
@@ -550,4 +556,26 @@ var http = require('http');
 http.createServer(function (req, res) {
     res.writeHead(301, { "Location": "https://" + req.headers['host'] + req.url });
     res.end();
-}).listen(80);
+}).listen(80);</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Tutorials</h3><ul><li><a href="tutorial-https-guide.html">https-guide</a></li><li><a href="tutorial-local-server-https-guide.html">local-server-https-guide</a></li></ul><h3>Global</h3><ul><li><a href="global.html#getDirStructure">getDirStructure</a></li><li><a href="global.html#getFileDisplayName">getFileDisplayName</a></li><li><a href="global.html#getFileList">getFileList</a></li><li><a href="global.html#initializeScene">initializeScene</a></li><li><a href="global.html#isValidDir">isValidDir</a></li><li><a href="global.html#onSelectFileChange">onSelectFileChange</a></li><li><a href="global.html#scanAllFiles">scanAllFiles</a></li><li><a href="global.html#subscribeToFile">subscribeToFile</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.7</a> on Wed Jul 14 2021 15:42:58 GMT-0400 (Eastern Daylight Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
