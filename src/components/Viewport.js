@@ -24,7 +24,7 @@ let globalQs = {};
 let outgoingRequest = false;
 let sliderValuesShadowCopy = {};
 const lastFiles = [null]; // Wrapped in an array to be mutable
-const fileMap = [null]; // Wrapped in an array to be mutable
+const fileMap = [null]; // Wrapped in an array to be mutable (why do we need it declared as a const?)
 
 const VERBOSE_OUTPUT = false
 
