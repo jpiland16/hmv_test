@@ -17,6 +17,7 @@ export default function Animator(props) {
 
     function applyDataQuaternions(props, timeValue) {
         let targets = props.fileMetadata.current.targets;
+        // TODO: Sort bones topologically to avoid incorrect initial join positions
         let GTQ = props.fileMetadata.current.globalTransformQuaternion
 
         for (let i = 0; i < targets.length; i++) {
