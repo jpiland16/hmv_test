@@ -12,7 +12,7 @@ class AGMHandler(DatatypeHandler):
         mag_tuples = []
         time_stamps = []
         for line in data:
-            datapts = line.split(' ')
+            datapts = line
             if datapts[0] == '#' or datapts[0] == '': # Either remove this, or mention somewhere that lines starting with '#' will be ignored 
                 continue
             time_stamps.append(float(datapts[time_column]) / 1000.0)

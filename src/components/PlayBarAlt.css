@@ -1,0 +1,27 @@
+.playBarAlt {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 5;
+    /* position: absolute;
+    bottom: 0px;
+    top: 0px; */
+    width: 100%;
+}
+
+.sliderContainer {
+    width: 60%
+}
+
+.buttonContainer {
+    width: 10%
+}
+
+.timeStamp {
+    display: inline;
+    width: 84px;
+    font-size: 12px;
+    margin-left: 12px;
+    margin-right: 12px;
+    text-align: right;
+}

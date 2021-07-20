@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: src/components/visualizer_experimental/SceneInitializer.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: src/components/visualizer_experimental/SceneInitializer.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import * as THREE from 'three'
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
+
+/**
+ * Asynchronously creates a THREE.js scene with the mannequin model and Grid asset.
+ * @param onProgress (Optional) A function to run on the percentage progress when loading the scene.
+ * @returns A Promise that resolves to an Object with the following keys: 
+ * - scene: The THREE.js scene to render.
+ * 
+ * - model: The Mannequin model to move using the target data.
+ * 
+ * - renderer: A THREE.js Renderer that can render the scene.
+ * 
+ */
+export function initializeScene(onProgress=null) {    
+    let scene = new THREE.Scene();    
+    scene.background = new THREE.Color( 0x87cefa);
+    scene.position.y = -1;
+
+    let light = new THREE.AmbientLight(0xFFFFFF, 3);
+    scene.add(light);
+
+    let renderer = new THREE.WebGLRenderer( { antialias: true } );
+
+    return new Promise((myResolve, myReject) => {
+        loadModel(onProgress).then(([gridModel, mannequinModel])=>{
+            scene.add(gridModel, mannequinModel);
+            // refreshRendererSize(currentScene, width, height);
+            myResolve({ scene: scene, model: mannequinModel, renderer: renderer });
+        });
+    })
+}
+
+function loadModel(onProgress=null) {
+    var loader = new GLTFLoader();
+
+    const compassPath =  window.location.href.substring(0, 22) === "http://localhost:3000/" ? 
+    "https://raw.githubusercontent.com/jpiland16/hmv_test/master/files/figures/compass.glb" :
+    "/files/figures/compass.glb"
+
+    const gridPath = window.location.href.substring(0, 22) === "http://localhost:3000/" ? 
+    "https://raw.githubusercontent.com/jpiland16/hmv_test/master/files/figures/grid.glb" :
+    "/files/figures/grid.glb";
+
+    const modelPath = window.location.href.substring(0, 22) === "http://localhost:3000/" ? 
+    "https://raw.githubusercontent.com/jpiland16/hmv_test/master/files/figures/mannequin.glb" :
+    "/files/figures/mannequin.glb";
+
+    let gridPromise = new Promise((myResolve, myReject) => {
+        loader.load(gridPath, gltf => { 
+            let mesh = gltf.scene.children[0];
+            mesh.material.opacity = 0.4;
+            mesh.material.transparent = true;
+            myResolve(gltf.scene);
+        });
+    }); //TODO: Add error checking to this part like for the mannequin.
+
+    let mannequinPromise = new Promise((myResolve, myReject) => {
+        loader.load(modelPath, gltf => {
+            // gltf.scene.position.set(-2,-2,-2)
+
+            var model = gltf.scene;
+            // https://discourse.threejs.org/t/parts-of-glb-object-disappear-in-certain-angles-and-zoom/21295/4
+		    model.traverse(function(obj) { obj.frustumCulled = false; });
+
+            // let boneList = Object.getOwnPropertyNames(boneNames);
+
+            // for (let i = 0; i &lt; boneList.length; i++) {
+            //     bones[boneList[i]] = model.getObjectByName(boneNames[boneList[i]])
+            // }
+    
+            console.log("Done loading model!")
+            myResolve(model);
+        }, function ( xhr ) {
+            // document.getElementById("pctDownloaded").innerText = "(" + Math.round(xhr.loaded / xhr.total * 100) + "% loaded)"
+            if (onProgress) { onProgress(Math.round(xhr.loaded / xhr.total * 100)); }
+            // setModelDownloadProgress(Math.min(100, Math.round(xhr.loaded / xhr.total * 100)))
+        }, function ( error ) {
+            console.error( error );
+            console.log(error);
+            myReject(error)
+        });
+    });
+
+    return Promise.all([gridPromise, mannequinPromise]);
+}</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Tutorials</h3><ul><li><a href="tutorial-https-guide.html">https-guide</a></li><li><a href="tutorial-local-server-https-guide.html">local-server-https-guide</a></li></ul><h3>Global</h3><ul><li><a href="global.html#getDirStructure">getDirStructure</a></li><li><a href="global.html#getFileDisplayName">getFileDisplayName</a></li><li><a href="global.html#getFileList">getFileList</a></li><li><a href="global.html#initializeScene">initializeScene</a></li><li><a href="global.html#isValidDir">isValidDir</a></li><li><a href="global.html#onSelectFileChange">onSelectFileChange</a></li><li><a href="global.html#scanAllFiles">scanAllFiles</a></li><li><a href="global.html#subscribeToFile">subscribeToFile</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.7</a> on Wed Jul 14 2021 15:42:58 GMT-0400 (Eastern Daylight Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

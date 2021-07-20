@@ -8,6 +8,7 @@ import PlayBar from './PlayBar'
 import TopActionBar from './TopActionBar'
 import CardSet from './cards/CardSet'
 import Animator from './Animator'
+import Slide from '@material-ui/core/Slide'
 
 import { getMap, getFileList, downloadFile, subscribeToFile } from './viewport-workers/NetOps'
 import { onSelectFileChange, isFileNameValid, clickFile} from './viewport-workers/FileOps'
@@ -23,7 +24,7 @@ let globalQs = {};
 let outgoingRequest = false;
 let sliderValuesShadowCopy = {};
 const lastFiles = [null]; // Wrapped in an array to be mutable
-const fileMap = [null]; // Wrapped in an array to be mutable
+const fileMap = [null]; // Wrapped in an array to be mutable (why do we need it declared as a const?)
 
 const VERBOSE_OUTPUT = false
 
@@ -70,7 +71,7 @@ export default function Viewport(props) {
     const [ useRipple, setUseRipple ] = React.useState(false);                   // Limbs move independently by default
     const [ timeSliderValue, setTimeSliderValue ] = React.useState(0);           // Initial position is 0
     const [ playing, setPlaying ] = React.useState(false);                       // Paused by default
-    const [toolTipOpen, setTipOpen] = React.useState(false);
+    const [ toolTipOpen, setTipOpen ] = React.useState(false);
     const [ cardsPos, setCardsPos ] = React.useState(window.localStorage.getItem("cardsPos") || 'right');
     const [ timeDisplay, setTimeDisplay ] = React.useState(window.localStorage.getItem("timeDisplay") || 'msm')
     const [ downloadPercent, setDownloadPercent ] = React.useState(0);
@@ -78,6 +79,8 @@ export default function Viewport(props) {
     const [ openLab, setOpenLab ] = React.useState("");
     const [ fileStatus, setFileStatus ] = React.useState(initialFileStatus);
     const [ sceneInfo, setSceneInfo ] = React.useState({ scene: null, model: null, camera: null, renderer: null });
+    const [ scenePromise, setScenePromise ] = React.useState(null);
+    const [ modelDownloadProgress, setModelProgress ] = React.useState(0);
     
     /*   ---------------------
      *   REFS (React.useRef())
@@ -164,6 +167,7 @@ export default function Viewport(props) {
             sceneInfo: sceneInfo,
             setSceneInfo: setSceneInfo,
             initializeScene: initializeScene,
+            awaitScene: scenePromise,
 
             // QUATERNION PROPERTIES
             globalQs: globalQs,
@@ -182,6 +186,7 @@ export default function Viewport(props) {
             downloadFile: downloadFile,
             outgoingRequest: outgoingRequest, 
             subscribeToFile: subscribeToFile,
+            modelDownloadProgress : modelDownloadProgress,
 
             // DATA
             data: data,
@@ -241,6 +246,37 @@ export default function Viewport(props) {
     });
 
     React.useEffect(() => {
+        console.log("Running useEffect");
+        setScenePromise(new Promise((myResolve, myReject) => {
+            const onProgress = (progressPercent) => {
+                setModelProgress(progressPercent);
+            }
+            initializeScene(onProgress).then((newSceneInfo) => {
+                let boneNames = {
+                    LUA: "upperarm_l", 
+                    LLA: "lowerarm_l", 
+                    RUA: "upperarm_r", 
+                    RLA: "lowerarm_r", 
+                    BACK: "spine_02", /** IMPORTANT */
+                    LSHOE: "foot_l", 
+                    RSHOE: "foot_r",
+                    ROOT: "_rootJoint",
+                    RUL: "right_upper_leg",
+                    LUL: "left_upper_leg",
+                    RLL: "right_lower_leg",
+                    LLL: "left_lower_leg"
+                }
+
+                let modelBoneList = Object.getOwnPropertyNames(boneNames);
+
+                let bones = [];
+                for (let i = 0; i < modelBoneList.length; i++) {
+                    bones[modelBoneList[i]] = newSceneInfo.model.getObjectByName(boneNames[modelBoneList[i]])
+                }
+                onLoadBones(bones);
+                myResolve(newSceneInfo);
+            });
+        }));
         getFileList(propertySet);
         if (selectedFile.fileName !== '' && isFileNameValid(propertySet, selectedFile.fileName)) {
             console.log("Running onSelectFileChange");
@@ -318,9 +354,8 @@ export default function Viewport(props) {
             <HomeButton />
             <Menu {...propertySet} />
             <FileViewer targetFile={""} {...propertySet}/>
-            <PlayBar {...propertySet} disabled={!fileStatus || fileStatus.status !== "Complete"} />
             <CardSet {...propertySet} />
-            <TopActionBar {...propertySet} />
+            <PlayBar {...propertySet} disabled={!fileStatus || fileStatus.status !== "Complete"} />
             <Animator {...propertySet} />
         </div>
     )

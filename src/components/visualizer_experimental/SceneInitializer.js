@@ -3,14 +3,16 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 
 /**
  * Asynchronously creates a THREE.js scene with the mannequin model and Grid asset.
+ * @param onProgress (Optional) A function to run on the percentage progress when loading the scene.
  * @returns A Promise that resolves to an Object with the following keys: 
  * - scene: The THREE.js scene to render.
  * 
  * - model: The Mannequin model to move using the target data.
  * 
  * - renderer: A THREE.js Renderer that can render the scene.
+ * 
  */
-export function initializeScene() {    
+export function initializeScene(onProgress=null) {    
     let scene = new THREE.Scene();    
     scene.background = new THREE.Color( 0x87cefa);
     scene.position.y = -1;
@@ -21,7 +23,7 @@ export function initializeScene() {
     let renderer = new THREE.WebGLRenderer( { antialias: true } );
 
     return new Promise((myResolve, myReject) => {
-        loadModel().then(([gridModel, mannequinModel])=>{
+        loadModel(onProgress).then(([gridModel, mannequinModel])=>{
             scene.add(gridModel, mannequinModel);
             // refreshRendererSize(currentScene, width, height);
             myResolve({ scene: scene, model: mannequinModel, renderer: renderer });
@@ -29,7 +31,7 @@ export function initializeScene() {
     })
 }
 
-function loadModel() {
+function loadModel(onProgress=null) {
     var loader = new GLTFLoader();
 
     const compassPath =  window.location.href.substring(0, 22) === "http://localhost:3000/" ? 
@@ -71,7 +73,7 @@ function loadModel() {
             myResolve(model);
         }, function ( xhr ) {
             // document.getElementById("pctDownloaded").innerText = "(" + Math.round(xhr.loaded / xhr.total * 100) + "% loaded)"
-            console.log(Math.round(xhr.loaded / xhr.total * 100) + "% loaded")
+            if (onProgress) { onProgress(Math.round(xhr.loaded / xhr.total * 100)); }
             // setModelDownloadProgress(Math.min(100, Math.round(xhr.loaded / xhr.total * 100)))
         }, function ( error ) {
             console.error( error );

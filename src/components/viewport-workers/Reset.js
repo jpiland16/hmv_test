@@ -79,13 +79,21 @@ const resetValues = {
 
 export function resetModel(props) {
 
+    if (props.bones === null) {
+        // If the bones haven't been loaded yet, then they don't need to be reset,
+        // iff we assume their initial positions are the desired positions after reset.
+        return;
+    }
+
     let boneNames = Object.getOwnPropertyNames(resetValues);
 
     for (let i = 0; i < boneNames.length; i++) {
         let q = resetValues[boneNames[i]];
         props.globalQs[boneNames[i]] = new THREE.Quaternion(q.x, q.y, q.z, q.w);
         let lq = getLocalFromGlobal(props, props.globalQs[boneNames[i]], boneNames[i]);
-        props.bones[boneNames[i]].quaternion.set(lq.x, lq.y, lq.z, lq.w);
+        if (props.bones[boneNames[i]]) {
+            props.bones[boneNames[i]].quaternion.set(lq.x, lq.y, lq.z, lq.w);
+        }
     }
     
     props.sliderValuesShadowCopy = {...props.globalQs};

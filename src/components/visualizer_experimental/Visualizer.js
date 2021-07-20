@@ -72,14 +72,6 @@ export default function ThreeScene(props) {
         animate();
     }
 
-    function updateModelPosition() {
-        console.log("Attempting to render the scene.");
-        // if (model != null) {
-        //     model.position.y += 0.25;
-        // }
-        // requestAnimationFrame(()=>{ renderer.render(scene,camera)});
-    }
-
     const measuredRef = useCallback(node => {
         currentDiv = node;
         if (node === null) return;
@@ -95,7 +87,6 @@ export default function ThreeScene(props) {
         window.addEventListener('resize', handleResize);
         return () => window.removeEventListener('resize', handleResize)
     });
-
 
     return (
         <div

@@ -34,7 +34,7 @@ class MaterialCalibrationForm extends React.Component {
     this.state = {
       name: "",
       boneOptions: ["RUA", "RLA", "LUA", "LLA", "BACK", "ROOT"],
-      typeOptions: ["Quaternion", "Accel+Gyro+Magnet"],
+      typeOptions: ["Quaternion", "Accel+Gyro+Magnet", "Euler angles"],
       sensors: [{ dataType: "Quaternion", bone: "RUA", startColumn: "" }],
       timeColumn: 0,
       validity: {

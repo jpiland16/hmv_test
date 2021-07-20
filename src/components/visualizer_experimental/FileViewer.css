@@ -1,7 +1,23 @@
 .loading {
+    position: absolute;
     text-align: center;
     width: 100%;
     height: 200px;
-    margin: auto;
+    margin: 0 auto;
     margin-top: calc(50vh - 100px);
+}
+
+.fileViewBottomBar {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    bottom: 0px;
+    width: 100%;
+    height: 7.5%;
+}
+
+.fileViewContainer {
+    display: flex;
+    align-content: center;
 }
