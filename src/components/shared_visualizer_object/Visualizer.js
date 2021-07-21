@@ -106,7 +106,7 @@ class Visualizer extends React.Component {
     }
 
     render() {
-        return <div style={{width: "100%", height: "100%"}} id={this.props.divId}>Hello world!</div>
+        return <div style={{width: "100%", height: "100%"}} id={this.props.divId}></div>
     }
 
 }
@@ -132,11 +132,11 @@ class VisualizerObject {
         return document.getElementById(this.divId) || null;
     }
 
-    createScene() {
+    createScene(props) {
         const parentElement = this.getParentElement(); 
 
         if (parentElement == null) {
-            console.log("Unable to initialize the scene because no scene exists.");
+            console.log("Unable to initialize the scene because no parent element exists.");
             return Promise.reject();
         }
 
@@ -158,7 +158,7 @@ class VisualizerObject {
         this.renderer.render(this.scene, this.camera);
     
         return new Promise((myResolve, myReject) => {
-            this.loadModel(this.scene).then(() => {
+            this.loadModel(props).then(() => {
                 this.controls = new OrbitControls( this.camera, this.renderer.domElement );
                 this.controls.addEventListener( 'change', () => {
                     this.renderer.render(this.scene, this.camera); 
@@ -172,13 +172,11 @@ class VisualizerObject {
         });
     }
 
-    loadModel() {
+    loadModel(props) {
     
         var loader = new GLTFLoader();
 
-        const gridPath = window.location.href.substring(0, 22) === "http://localhost:3000/" ? 
-        "https://raw.githubusercontent.com/jpiland16/hmv_test/master/files/figures/grid.glb" :
-        "/files/figures/grid.glb";
+        const gridPath = props.baseURL + "/files/figures/grid.glb";
 
         loader.load(gridPath, gltf => { 
             let mesh = gltf.scene.children[0];
@@ -189,9 +187,7 @@ class VisualizerObject {
 
         return new Promise((myResolve, myReject) => {
 
-            const modelPath = window.location.href.substring(0, 22) === "http://localhost:3000/" ? 
-            "https://raw.githubusercontent.com/jpiland16/hmv_test/master/files/figures/mannequin.glb" :
-            "/files/figures/mannequin.glb";
+            const modelPath = props.baseURL + "/files/figures/mannequin.glb";
 
             loader.load(modelPath, gltf => {
 
@@ -221,9 +217,10 @@ class VisualizerObject {
         const parentElement = this.getParentElement();
         
         if (parentElement == null) {
-            console.log("Unable to modify the scene's size because no scene exists.");
+            console.log("Unable to modify the scene's size because no parent element exists.");
             return;
         }
+
         this.renderer.setSize( parentElement.offsetWidth, parentElement.offsetHeight );
         this.camera.aspect = parentElement.offsetWidth / parentElement.offsetHeight;
         this.camera.updateProjectionMatrix();

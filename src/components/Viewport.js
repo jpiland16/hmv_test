@@ -26,6 +26,9 @@ const lastFiles = [null]; // Wrapped in an array to be mutable
 const fileMap = [null]; // Wrapped in an array to be mutable
 
 const VERBOSE_OUTPUT = false
+const isReactDevServer = (window.location.href.substring(0, 22) === "http://localhost:3000/")
+const SKIP_SOCKET = false
+const useProxy = !(isReactDevServer && SKIP_SOCKET)
 
 const visualizerObj = new Visualizer()
 
@@ -225,6 +228,7 @@ export default function Viewport(props) {
 
             // DEV MODE
             dev: props.dev,
+            baseURL: useProxy ? "" : "https://raw.githubusercontent.com/jpiland16/hmv_test/master/files",
 
             // console.log
             verbose: VERBOSE_OUTPUT
@@ -250,7 +254,7 @@ export default function Viewport(props) {
     React.useEffect(() => {
 
         console.log("Running useEffect");
-        visualizerObj.createScene()
+        visualizerObj.createScene(propertySet)
 
         setScenePromise(new Promise((myResolve, myReject) => {
             const onProgress = (progressPercent) => {
@@ -313,20 +317,12 @@ export default function Viewport(props) {
     // Window resize code: see https://stackoverflow.com/questions/36862334/get-viewport-window-height-in-reactjs
 
     function getWindowDimensions() {
-            const { innerWidth: width, innerHeight: height } = window;
-            return [
-                width,
-                height
-            ];
-      }
-      
-    function useWindowDimensions() {
-      
-        React.useEffect(() => {
-        });
-      
-        return windowDimensions;
-    }        
+        const { innerWidth: width, innerHeight: height } = window;
+        return [
+            width,
+            height
+        ];
+    }      
 
     /*  ---------------------------------
      *  THREE.JS REFERENCE GETTER METHODS
