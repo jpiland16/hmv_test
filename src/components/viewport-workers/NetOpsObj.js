@@ -160,6 +160,63 @@ function getFilePart(fileName, type, onProgress=null) {
     });
 }
 
+const message_types = [
+    "Processing data",
+    "File missing",
+    "Loading file",
+    "Load progress",
+]
+
+// Essentially just a multi-stage Promise, or a promise with progress updates
+class FileRequest {
+
+    constructor(targetFile) {
+        this.targetFile = targetFile;
+        this.socket = io({
+            autoConnect: false,
+            auth: {
+                username: "placeholder_username"
+            },
+            query: {
+                "file": mySelectedFile
+            },
+        });
+        this.eventHandlers = {
+            'Processing data' : () => {},
+            'File missing': () => {},
+            'Loading file': () => {},
+            'Load progress': (progressPercent) => {}
+        }
+    }
+
+    on(eventName, callback) {
+        if (!message_types.includes(eventName)) {
+            console.log("SHOULD THROW ERROR: Ordering socket to respond to invalid event!")
+        }
+        this.eventHandlers[eventName] = callback;
+    }
+
+    execute() {
+        this.socket.on("Processing data", this.eventHandlers['Processing data']);
+        this.socket.on("File missing", this.eventHandlers['File missing']);
+
+        return new Promise((resolve, reject) => {
+            this.socket.on("File ready", () => {
+                this.eventHandlers['Loading file']();
+                getFile(this.targetFile, (progressPercent) => this.eventHandlers['Load progress'](progressPercent)).then((responses) => {
+                    this.socket.disconnect();
+                    resolve(responses[0], responses[1]);
+                });
+            });
+            this.socket.connect();
+        });
+    }
+
+    abort() {
+        this.socket.disconnect();
+    }
+}
+
 /**
  * Notifies the server that this client has subscribed to the target dataset file. Unsubscribes from any
  * other file that the component with properties `props` is subscribed to.
@@ -321,11 +378,63 @@ export function subscribeToFile(props, mySelectedFile) {
         socket.connect();
         console.log("Connected with socket.");
         props.setFileStatus({ status: "Contacting server", currentSocket: socket });
-    }
+        // Not yet tested code. Should have same functionality and should help
+        // us separate the NetOps functionality from the prop modification.
+        //===================================================================================================
+        let reqSocket = FileRequest(mySelectedFile);
+        reqSocket.on("File missing", () => {
+            console.log("File doesn't exist.");
+            props.setFileStatus({ status: "Error", message: "The requested file doesn't exist. Try reselecting the file or resubmitting." });
+            reqSocket.abort();
+        });
 
-    // Idea: socket wrapper with callbacks for the following:
-    //     but there's a reason that I don't want to do callbacks. It's that I would be undoing
-    //      the entire intention behind Jonathan's rafactor, which is to get private methods
-    //      out of the file that contains said methods.
-    //      so really if I make this refactor, I have to officially disagree.
+        reqSocket.on("Processing data", () => {
+            console.log("Received processing data message");
+            props.setFileStatus({ status: "Processing data" });
+        });
+
+        reqSocket.on("Load progress", (progressPercent) => {
+            props.setFileStatus({ status: "Loading file", progress: progressPercent });
+        });
+
+        reqSocket.on("File ready", () => {
+            props.setFileStatus({ status: "Loading file", progress: 0 });
+            getFileList(props);
+        });
+
+        // Honestly would probably be more graceful to just use a callback like the
+        // others.
+        reqSocket.execute().then((responses) => {
+            //When we get the files, we should use the original code to assign them as quaternions (after decoding from metadata)
+            let inputArray = responses[0].split("\n");
+            let linesArray = [];
+    
+            for (let i = 2; i < inputArray.length - 1; i++) {
+                linesArray.push(inputArray[i].split(" ").filter(item => item !== '\r'));
+            }
+    
+            props.data.current = linesArray;
+            props.setDownloading(false);
+            props.outgoingRequest = false;
+
+            props.fileMetadata.current = JSON.parse(responses[1]);
+
+            socket.disconnect();
+            props.setFileStatus({ status: "Loading models" });
+            // Note that this awaitScene dependence means that subscribeToFile will not work if we haven't yet rendered the viewport!
+            // ...Which probably means we should throw an exception or otherwise notify caller if props.awaitScene doesn't exist.
+            // Or better yet: Require it as a function argument!
+            props.awaitScene.then((newSceneInfo)=> { // This call gets us way too nested. This should be extracted as a function.
+                props.setSceneInfo({
+                    scene: newSceneInfo.scene,
+                    model: newSceneInfo.model,
+                    camera: null,
+                    renderer: newSceneInfo.renderer,
+                });
+                props.resetModel();
+                props.setTimeSliderValue(0);
+                props.setFileStatus({ status: "Complete" }); // Determining the next stage by completing the previous stage forces sequential loading. Try using progress flags.
+            });
+        })
+    }
 }

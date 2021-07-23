@@ -77,7 +77,7 @@ export function getGlobalQuats(bones) {
 }
 
 /**
- * 
+ * Creates a mapping from bone names to their quaternion orientation.
  * @param {Object} globalQs Maps the name of a bone to its global quaternion orientation.
  * @param {Object} bones Maps the name of a bone to its THREE.js Bone in the model.
  * @param {boolean} useGlobalQs True iff the slider positions should represent global orientations.
@@ -93,7 +93,7 @@ export function getNewSliderPositions(globalQs, bones, useGlobalQs) {
         let boneName = boneList[i];
         let sliderQ = useGlobalQs ? 
             globalQs[boneName] :
-            proplessLocalFromGlobal(globalQs[boneName], boneName, bones, boneParentMap)
+            proplessLocalFromGlobal(boneParentMap, bones, globalQs[boneName], boneName)
         newSliderPositions[boneName] = [sliderQ.x, sliderQ.y, sliderQ.z, sliderQ.w];           
     }
     return newSliderPositions;
