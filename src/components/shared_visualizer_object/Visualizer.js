@@ -79,21 +79,6 @@ const defaultGlobalQuaternions = {
     },
 }
 
-let boneNames = {
-    ROOT: "_rootJoint",
-    BACK: "spine_02",
-    LUA: "upperarm_l", 
-    LLA: "lowerarm_l", 
-    RUA: "upperarm_r", 
-    RLA: "lowerarm_r", 
-    LUL: "left_upper_leg",
-    LLL: "left_lower_leg",
-    LSHOE: "foot_l", 
-    RUL: "right_upper_leg",
-    RLL: "right_lower_leg",
-    RSHOE: "foot_r"
-}
-
 let initializationCount = 0;
 
 class Visualizer extends React.Component {
@@ -106,12 +91,12 @@ class Visualizer extends React.Component {
     }
 
     render() {
-        return <div style={{width: "100%", height: "100%"}} id={this.props.divId}></div>
+        return <div style={{width: "100%", height: "100%", marginTop: "-48px" /* marginTop here accounts for transparent title bar */ }} id={this.props.divId}></div>
     }
 
 }
 
-class VisualizerObject {
+class BasicVisualizerObject {
     constructor() {
         this.divId = `VisualizerBaseDiv${initializationCount}`
         this.component = <Visualizer divId={this.divId}/>;
@@ -133,37 +118,54 @@ class VisualizerObject {
     }
 
     createScene(props) {
+
+        const MIN_CAMERA_DISTANCE = 1.25;
+        const MAX_CAMERA_DISTANCE = 7.5;
+
         const parentElement = this.getParentElement(); 
-
-        if (parentElement == null) {
-            console.log("Unable to initialize the scene because no parent element exists.");
-            return Promise.reject();
+    
+        if (parentElement === null) {
+            console.log("Node is null! No rendering should take place.");
+            return;
         }
-
-        this.camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 0.1, 500 );
         
+        const width = parentElement.clientWidth;
+        const height = parentElement.clientHeight;
+
+        this.camera = new THREE.PerspectiveCamera( 45, width / height, 0.01, 500 );
         this.camera.position.z = 3;
         this.camera.position.y = 0;
-    
+
         this.scene = new THREE.Scene();
         this.renderer = new THREE.WebGLRenderer( { antialias: true } );
         this.refreshRendererSize(parentElement);
+
         this.scene.background = new THREE.Color( 0x87cefa);
         this.scene.position.y = -1;
-    
-        parentElement.appendChild(this.renderer.domElement);
-    
-        var lightA1 = new THREE.AmbientLight(0xFFFFFF, 3)
-        this.scene.add(lightA1)
-        this.renderer.render(this.scene, this.camera);
+        var light = new THREE.AmbientLight(0xFFFFFF, 3)
+        this.scene.add(light)
+
+        // For simplicity, re-render every frame rather than on updates.
+        // For performance, it might be better to render on updates only.
+        this.controls = new OrbitControls( this.camera, this.renderer.domElement );
+        this.controls.minDistance = MIN_CAMERA_DISTANCE;
+        this.controls.maxDistance = MAX_CAMERA_DISTANCE;
+
+        this.controls.addEventListener( 'change', () => {
+            this.renderer.render(this.scene, this.camera); 
+        });
+
+        const animate = () => {
+            requestAnimationFrame(animate);
+            this.renderer.render(this.scene, this.camera);
+        }
+
+        animate();
+
     
         return new Promise((myResolve, myReject) => {
-            this.loadModel(props).then(() => {
-                this.controls = new OrbitControls( this.camera, this.renderer.domElement );
-                this.controls.addEventListener( 'change', () => {
-                    this.renderer.render(this.scene, this.camera); 
-                });
-                this.renderer.render(this.scene, this.camera);
+            this.loadModel(props.baseURL).then(() => {
+                parentElement.appendChild(this.renderer.domElement);
                 this.modelLoaded = true;
                 myResolve();
             }, () => {
@@ -172,44 +174,37 @@ class VisualizerObject {
         });
     }
 
-    loadModel(props) {
+    /**
+     * Loads a model by obtaining a GLB file which is located at 
+     * `baseURL` + (some path to the file). The `baseURL` parameter
+     * might need to be removed, as it was a way to use files stored on 
+     * GitHub rather than on the developer's machine. This method should
+     * be overridden by classes in the Models.js file to implement 
+     * different models. (Right now, it shows just an empty grid.)
+     * 
+     * @param {string} baseURL a root where the server files are stored
+     */
+    loadModel(baseURL) {
     
+        this.loadGrid(baseURL)
+        return Promise.resolve()
+    }
+
+    /**
+     * Loads a simple cartesian grid (in the XZ plane) into the scene.
+     * 
+     * @param {string} baseURL a root where the server files are stored
+     */
+    loadGrid(baseURL) {
         var loader = new GLTFLoader();
 
-        const gridPath = props.baseURL + "/files/figures/grid.glb";
+        const gridPath = baseURL + "/files/figures/grid.glb";
 
         loader.load(gridPath, gltf => { 
             let mesh = gltf.scene.children[0];
             mesh.material.opacity = 0.4;
             mesh.material.transparent = true;
             this.scene.add(gltf.scene) 
-        });
-
-        return new Promise((myResolve, myReject) => {
-
-            const modelPath = props.baseURL + "/files/figures/mannequin.glb";
-
-            loader.load(modelPath, gltf => {
-
-                    var model = gltf.scene;
-
-                    this.scene.add( model );
-
-                    let boneList = Object.getOwnPropertyNames(boneNames);
-
-                    for (let i = 0; i < boneList.length; i++) {
-                        this.bones[boneList[i]] = model.getObjectByName(boneNames[boneList[i]])
-                    }
-
-                    //console.log("Done loading")
-                    myResolve();
-                }, function ( xhr ) {
-                    console.log(Math.round(xhr.loaded / xhr.total * 100) + "% loaded")
-                }, function ( error ) {
-                    console.error( error );
-                    myReject(error)
-                }
-            );
         });
     }
 
@@ -229,4 +224,4 @@ class VisualizerObject {
 
 }
 
-export default VisualizerObject;
+export default BasicVisualizerObject;

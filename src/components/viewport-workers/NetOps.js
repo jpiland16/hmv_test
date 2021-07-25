@@ -179,7 +179,7 @@ function getFilePart(fileName, type, onProgress=null) {
  * the response to a GET request to 'api/get-file-list'.
  */
 export function subscribeToFile(props, mySelectedFile) {
-    if (!props.useProxy) {
+    if (props.baseURL !== "") {
         // Do special stuff for React Dev mode
 
         // Get metadata file

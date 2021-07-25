@@ -8,7 +8,7 @@ import PlayBar from './PlayBar'
 import TopActionBar from './TopActionBar'
 import CardSet from './cards/CardSet'
 import Animator from './Animator'
-import Visualizer from './shared_visualizer_object/Visualizer'
+import { MannequinVisualizer } from './shared_visualizer_object/Models'
 
 import { getMap, getFileList, downloadFile, subscribeToFile } from './viewport-workers/NetOps'
 import { onSelectFileChange, isFileNameValid, clickFile} from './viewport-workers/FileOps'
@@ -30,7 +30,7 @@ const isReactDevServer = (window.location.href.substring(0, 22) === "http://loca
 const SKIP_SOCKET = false
 const useProxy = !(isReactDevServer && SKIP_SOCKET)
 
-const visualizerObj = new Visualizer()
+const mannequinVisualizer = new MannequinVisualizer()
 
 export default function Viewport(props) {
 
@@ -254,7 +254,7 @@ export default function Viewport(props) {
     React.useEffect(() => {
 
         console.log("Running useEffect");
-        visualizerObj.createScene(propertySet)
+        mannequinVisualizer.createScene(propertySet)
 
         setScenePromise(new Promise((myResolve, myReject) => {
             const onProgress = (progressPercent) => {
@@ -293,7 +293,7 @@ export default function Viewport(props) {
         function handleResize() {
             setWindowDimensions(getWindowDimensions());
             // TODO: refresh size of all visualizers
-            visualizerObj.refreshRendererSize();
+            mannequinVisualizer.refreshRendererSize();
         }
         
         if (selectedFile.fileName !== '' && isFileNameValid(propertySet, selectedFile.fileName)) {
@@ -345,7 +345,7 @@ export default function Viewport(props) {
             <HomeButton />
             <Menu {...propertySet} />
             {/* <FileViewer targetFile={""} {...propertySet}/> */}
-            {visualizerObj.component}
+            {mannequinVisualizer.component}
             <CardSet {...propertySet} />
             <PlayBar {...propertySet} disabled={!fileStatus || fileStatus.status !== "Complete"} />
             <Animator {...propertySet} />
