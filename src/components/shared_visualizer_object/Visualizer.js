@@ -4,96 +4,12 @@ import * as THREE from 'three'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 
-const defaultGlobalQuaternions = {
-    ROOT: {
-        x: 0,
-        y: 0,
-        z: 0,
-        w: 1
-    },
-    BACK: {
-        x: -0.06,
-        y: 0,
-        z: 0,
-        w: 0.998
-    },
-    LUA: {
-        x: -0.472,
-        y: -0.468,
-        z: 0.561,
-        w: -0.494
-    },
-    LLA: {
-        x: -0.471,
-        y: -0.466,
-        z: 0.51,
-        w: -0.549
-    },
-    RUA: {
-        x: 0.471,
-        y: -0.471,
-        z: 0.561,
-        w: 0.492
-    },
-    RLA: {
-        x: 0.471,
-        y: -0.468,
-        z: 0.509,
-        w: 0.547
-    },
-    RUL: {
-        x: 0.001,
-        y:-0.029,
-        z: 0.999,
-        w: 0.044,
-    },
-    RLL: {
-        x:0.001,
-        y:-0.035,
-        z:0.999,
-        w: 0.04,
-    },
-    RSHOE: {
-        x: 0.006,
-        y: 0.467,
-        z: 0.883,
-        w: 0.043
-    },
-    LUL: {
-        x:-0.001,
-        y:-0.032,
-        z: 0.999,
-        w: -0.044,
-    },
-    LLL: {
-        x:-0.001,
-        y:-0.034,
-        z:0.999,
-        w:-0.04,
-    },
-    LSHOE: {
-        x: -0.006,
-        y: 0.465,
-        z: 0.884,
-        w: -0.043
-    },
-}
-
 let initializationCount = 0;
 
 class Visualizer extends React.Component {
-    constructor() {
-        super();
-        this.state = {
-            loaded: false,
-            quaternions: defaultGlobalQuaternions
-        }
-    }
-
     render() {
         return <div style={{width: "100%", height: "100%", marginTop: "-48px" /* marginTop here accounts for transparent title bar */ }} id={this.props.divId}></div>
     }
-
 }
 
 class BasicVisualizerObject {
@@ -123,9 +39,10 @@ class BasicVisualizerObject {
         const MAX_CAMERA_DISTANCE = 7.5;
 
         const parentElement = this.getParentElement(); 
+        parentElement.style.visibility = "hidden"
     
         if (parentElement === null) {
-            console.log("Node is null! No rendering should take place.");
+            console.warn("Node is null! No rendering should take place.");
             return;
         }
         
@@ -188,6 +105,17 @@ class BasicVisualizerObject {
     
         this.loadGrid(baseURL)
         return Promise.resolve()
+    }
+
+    /**
+     * Accept incoming data from a file. No format or data type is specified
+     * here; that will depend on the data source and model implementation.
+     * This method shoul be overridden by classes in the Models.js file 
+     * to implement different models. (Right now, it does nothing.)
+     * @param {object} obj incoming data
+     */
+    acceptData(obj) {
+
     }
 
     /**

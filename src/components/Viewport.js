@@ -146,6 +146,7 @@ export default function Viewport(props) {
         // -- MOVING THE 3-D MODEL -- 
 
             // MODEL PROPERTIES
+            visualizer: mannequinVisualizer,
             modelLoaded: modelLoaded,
             setModelLoaded: setModelLoaded,
             bones: bones,
@@ -344,7 +345,7 @@ export default function Viewport(props) {
         <div className="myView">
             <HomeButton />
             <Menu {...propertySet} />
-            {/* <FileViewer targetFile={""} {...propertySet}/> */}
+            <FileViewer targetFile={""} {...propertySet}/>
             {mannequinVisualizer.component}
             <CardSet {...propertySet} />
             <PlayBar {...propertySet} disabled={!fileStatus || fileStatus.status !== "Complete"} />

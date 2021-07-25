@@ -6,7 +6,7 @@ class MannequinVisualizer extends BasicVisualizerObject {
 
     constructor() {
         super()
-        this.boneNames = {
+        this.targets = {
             ROOT: "_rootJoint",
             BACK: "spine_02",
             LUA: "upperarm_l", 
@@ -20,6 +20,81 @@ class MannequinVisualizer extends BasicVisualizerObject {
             RLL: "right_lower_leg",
             RSHOE: "foot_r"
         }
+        this.targetDefaults = {
+            ROOT: {
+                x: 0,
+                y: 0,
+                z: 0,
+                w: 1
+            },
+            BACK: {
+                x: -0.06,
+                y: 0,
+                z: 0,
+                w: 0.998
+            },
+            LUA: {
+                x: -0.472,
+                y: -0.468,
+                z: 0.561,
+                w: -0.494
+            },
+            LLA: {
+                x: -0.471,
+                y: -0.466,
+                z: 0.51,
+                w: -0.549
+            },
+            RUA: {
+                x: 0.471,
+                y: -0.471,
+                z: 0.561,
+                w: 0.492
+            },
+            RLA: {
+                x: 0.471,
+                y: -0.468,
+                z: 0.509,
+                w: 0.547
+            },
+            RUL: {
+                x: 0.001,
+                y:-0.029,
+                z: 0.999,
+                w: 0.044,
+            },
+            RLL: {
+                x:0.001,
+                y:-0.035,
+                z:0.999,
+                w: 0.04,
+            },
+            RSHOE: {
+                x: 0.006,
+                y: 0.467,
+                z: 0.883,
+                w: 0.043
+            },
+            LUL: {
+                x:-0.001,
+                y:-0.032,
+                z: 0.999,
+                w: -0.044,
+            },
+            LLL: {
+                x:-0.001,
+                y:-0.034,
+                z:0.999,
+                w:-0.04,
+            },
+            LSHOE: {
+                x: -0.006,
+                y: 0.465,
+                z: 0.884,
+                w: -0.043
+            },
+        }
+        
     }
 
     /**
@@ -38,15 +113,17 @@ class MannequinVisualizer extends BasicVisualizerObject {
 
             loader.load(modelPath, gltf => {
 
+                    console.log("STARTING!!!!!!!!!!!")
                     var model = gltf.scene;
 
                     this.scene.add( model );
 
-                    let boneList = Object.getOwnPropertyNames(this.boneNames);
+                    let boneList = Object.getOwnPropertyNames(this.targets);
 
                     for (let i = 0; i < boneList.length; i++) {
-                        this.bones[boneList[i]] = model.getObjectByName(this.boneNames[boneList[i]])
+                        this.bones[boneList[i]] = model.getObjectByName(this.targets[boneList[i]])
                     }
+                    console.log("DONE!!!!!!!!!!!")
                     myResolve();
                 }, function ( xhr ) {
                     console.log(Math.round(xhr.loaded / xhr.total * 100) + "% loaded")
@@ -56,6 +133,13 @@ class MannequinVisualizer extends BasicVisualizerObject {
                 }
             );
         });
+    }
+
+    /**
+     * Uses the incoming data to move the mannequin.
+     */
+    acceptData(obj) {
+
     }
 }
 

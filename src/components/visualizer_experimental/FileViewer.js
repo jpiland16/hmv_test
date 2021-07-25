@@ -1,9 +1,11 @@
 import React from 'react'
 import { Alert } from '@material-ui/lab'
 import { withRouter } from "react-router-dom";
-import Visualizer from './Visualizer';
 import CircularProgress from '@material-ui/core/CircularProgress'
 import LinearProgress from '@material-ui/core/LinearProgress'
+
+// For JSDoc
+import BasicVisualizerObject from '../shared_visualizer_object/Visualizer';
 
 import './FileViewer.css';
 
@@ -76,7 +78,13 @@ class FileViewer extends React.Component {
 
     // TODO: Split this up into multiple files or use some other method to (1) separate the outer and inner choice and (2) prevent
     // importing 'library'
+    /**
+     * @param props {Object}
+     * @param props.visualizer {BasicVisualizerObject}
+     * 
+     */
     FileDisplay(props) {
+        if (props.visualizer.modelLoaded) props.visualizer.getParentElement().style.display = "hidden"
         if (!props.fileSelected) {
             return <div style={{marginLeft: props.menuIsOpen ? "6px" : "48px" }}><Alert severity="info">Please select a file to view from the 'Choose File' section of the menu on the left. You can also click "Choose a file" above.</Alert></div>;
         }
@@ -92,9 +100,11 @@ class FileViewer extends React.Component {
             case 'Error':
                 return <props.library.ErrorMessage errorMessage={props.errorMessage} />
             case 'Complete':
-                return <Visualizer sceneInfo={props.sceneInfo} />
+                props.visualizer.getParentElement().style.visibility = "visible" 
+                return <div></div>;
+            default:
+                return <div style={{marginLeft: props.menuIsOpen ? "6px" : "48px" }}><Alert severity="error">Unable to determine the state "{props.status}" of this file. Try re-uploading.</Alert></div>;
         }
-        return <div style={{marginLeft: props.menuIsOpen ? "6px" : "48px" }}><Alert severity="error">Unable to determine the state "{props.status}" of this file. Try re-uploading.</Alert></div>;
     }
 
     // Why do we need the double arrow? Because using a function in JSX for onClick will evaluate whatever you pass in.
@@ -176,6 +186,7 @@ class FileViewer extends React.Component {
                     sceneInfo={this.props.sceneInfo}
                     library={this}
                     menuIsOpen={this.props.menuIsOpen}
+                    visualizer={this.props.visualizer}
                 />
             </div>
         )
