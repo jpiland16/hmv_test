@@ -5,6 +5,40 @@ const USE_GLOBAL = true;
 const REPEAT = false;
 const FPS = 30;
 
+// Topological sorted order of bones:
+// Bone A comes before bone B iff bone A's orientation affects the
+// position of bone B.
+const bonesToplogical = [
+    "ROOT",
+    "RUL",
+    "RLL",
+    "RSHOE",
+    "LUL",
+    "LLL",
+    "LSHOE",
+    "RUA",
+    "RLA",
+    "LUA",
+    "LLA"
+]
+
+/**
+ * Compares two items based on their position in a reference array.
+ * Allows sorting a subset of the reference array based on the order of the 
+ * full array. Can be passed into `Array.sort()`.
+ * @param {Array} targetArray The target order for all possible items.
+ * @param firstItem The item that comes first in the array being sorted.
+ * @param secondItem An item that comes after `secondItem` in the array being
+ * sorted.
+ * @returns A number <= 0 if the items are in the correct order, and a
+ * value > 0 otherwise.
+ */
+function compareByArrayFit(targetArray, firstItem, secondItem) {
+    let firstItemIndex = targetArray.indexOf(firstItem);
+    let secondItemIndex = targetArray.indexOf(secondItem);
+    return firstItemIndex - secondItemIndex;
+}
+
 export default function Animator(props) {
 
     if (props.data.current.length === 0 && props.selectedFile !== "") {
@@ -17,6 +51,7 @@ export default function Animator(props) {
 
     function applyDataQuaternions(props, timeValue) {
         let targets = props.fileMetadata.current.targets;
+        targets.sort((firstBone, secondBone) => compareByArrayFit(bonesToplogical, firstBone.bone, secondBone.bone));
         let GTQ = props.fileMetadata.current.globalTransformQuaternion
 
         for (let i = 0; i < targets.length; i++) {

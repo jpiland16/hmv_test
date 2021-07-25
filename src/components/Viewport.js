@@ -14,12 +14,12 @@ import { getMap, getFileList, downloadFile, subscribeToFile } from './viewport-w
 import { onSelectFileChange, isFileNameValid, clickFile} from './viewport-workers/FileOps'
 import { updateSingleQValue, batchUpdateObject } from './viewport-workers/ModelOps'
 import { getLocalFromGlobal, getGlobalFromLocal } from './viewport-workers/MathOps'
-import { setSliderPositions, onLoadBones } from './viewport-workers/BoneOps'
+import { attachBones, getGlobalQuats, getNewSliderPositions, boneChildMap, boneParentMap } from './viewport-workers/BoneOps'
 import { resetModel } from './viewport-workers/Reset'
 import { Alert } from '@material-ui/lab'
 
-let childrenOf = {};
-let parentOf = {};
+let childrenOf = boneChildMap;
+let parentOf = boneParentMap;
 let globalQs = {};
 let outgoingRequest = false;
 let sliderValuesShadowCopy = {};
@@ -145,7 +145,7 @@ export default function Viewport(props) {
             setModelLoaded: setModelLoaded,
             bones: bones,
             setBones: setBones,
-            onLoadBones: (bones) => onLoadBones(propertySet, bones),
+            onLoadBones: (bones) => onLoadBones(bones),
             resetModel: () => { resetModel(propertySet) },
             parentOf: parentOf,
             childrenOf: childrenOf,
@@ -174,7 +174,7 @@ export default function Viewport(props) {
             useGlobalQs: useGlobalQs,
             useRipple: useRipple,
             setUseRipple: setUseRipple,
-            refreshGlobalLocal: (bones, useGlobal) => setSliderPositions(propertySet, bones, useGlobal),
+            refreshGlobalLocal: (bones, useGlobal) => setSliderValues(getNewSliderPositions(globalQs, bones, useGlobal)),
 
         // -- FILE VIEWING & PLAYBACK --
 
@@ -273,7 +273,7 @@ export default function Viewport(props) {
                 for (let i = 0; i < modelBoneList.length; i++) {
                     bones[modelBoneList[i]] = newSceneInfo.model.getObjectByName(boneNames[modelBoneList[i]])
                 }
-                onLoadBones(propertySet, bones);
+                onLoadBones(bones);
                 myResolve(newSceneInfo);
             });
         }));
@@ -326,6 +326,23 @@ export default function Viewport(props) {
 
     function getControls() {
         return orbitControls.current;
+    }
+
+    /* -------------------------------
+     * STATE-SETTING FUNCTIONS
+     * ------------------------------- */
+
+    const setGlobalQs = (newGlobalQs) => {
+        for (let boneName of Object.keys(newGlobalQs)) {
+            globalQs[boneName] = newGlobalQs[boneName] // Not sure if the copying is necessary
+        }
+    }
+    
+    const onLoadBones = (bones) => {
+        setBones(bones);
+        attachBones(bones);
+        setGlobalQs(getGlobalQuats(bones));
+        setSliderValues(getNewSliderPositions(globalQs, bones, useGlobalQs));
     }
 
     /*  ----------------------------------------
