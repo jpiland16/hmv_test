@@ -102,42 +102,30 @@ class MannequinVisualizer extends ThreeJSVisualizer {
     }
 
     /**
-     * Move a single bone, and recursively move each of its children.
+     * Move a single bone to have a specified global orientation, and 
+     * recursively move each of its children by keeping track of relative
+     * orientations.
      * 
      * @param {QuaternionTarget} root
      * @param {Object<string, THREE.Quaternion>} quaternions
+     * @param {THREE.Quaternion} currentInversionQ
      */
-    moveBone(root, quaternions) {
+    moveBone(root, quaternions, currentInversionQ = new THREE.Quaternion()) {
         const quaternion = quaternions[root.shortName]
-        if (quaternion) {
-            let newGlobalQ = quaternions[root.shortName];
-            let newLocalQ = this.getLocalFromGlobal(newGlobalQ, root);
-            this.bones[root.shortName].quaternion.copy(newLocalQ);
-        }
-        for (let i = 0; i < root.children.length; i++) {
-            this.moveBone(root.children[i], quaternions)
-        }
-    }
+        let nextInversionQ = new THREE.Quaternion().copy(currentInversionQ)
 
-    /**
-     * Returns the local quaternion needed in order to make the given bone
-     * have the desired global quaternion.
-     * 
-     * @param {THREE.Quaternion} globalQ
-     * @param {QuaternionTarget} target
-     */
-     getLocalFromGlobal(globalQ, target) {
-        let localQ = new THREE.Quaternion();
-    
-        while (target.parent !== null) {
-            let parentQ = new THREE.Quaternion();
-            parentQ.copy(this.bones[target.parent.shortName].quaternion);
-            localQ.multiply(parentQ.invert())
-            target = target.parent;
+        if (quaternion) { 
+            let newGlobalQ = quaternions[root.shortName];
+            let newLocalQ = new THREE.Quaternion().copy(currentInversionQ).multiply(newGlobalQ)
+            this.bones[root.shortName].quaternion.copy(newLocalQ);
+            nextInversionQ.premultiply(newLocalQ.invert())
+        } else {
+            nextInversionQ.premultiply(new THREE.Quaternion().copy(this.bones[root.shortName].quaternion).invert())
         }
-    
-        localQ.multiply(globalQ);
-        return localQ;
+
+        for (let i = 0; i < root.children.length; i++) {
+            this.moveBone(root.children[i], quaternions, nextInversionQ)
+        }
     }
 }
 

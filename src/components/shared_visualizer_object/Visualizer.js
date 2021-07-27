@@ -77,8 +77,8 @@ class ThreeJSVisualizer extends BasicVisualizerObject {
         this.scene = null;
         this.controls = null;
 
-        this.bones = { }
-        
+        /** @type {Object.<string, THREE.Object3D>} */
+        this.bones = { }        
         /** @type {Object.<string, QuaternionTarget>} */
         this.quaternionTargets = { }
     }
