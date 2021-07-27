@@ -53,6 +53,24 @@ class BasicVisualizerObject {
         initializationCount++;
 
         this.modelLoaded = false;
+    }
+
+    getParentElement() {
+        return document.getElementById(this.divId) || null;
+    }
+
+    initialize(props) {
+        this.modelLoaded = true;
+        return Promise.resolve()
+    }
+
+}
+
+class ThreeJSVisualizer extends BasicVisualizerObject {
+
+    constructor() {
+
+        super()
 
         this.renderer = null;
         this.camera = null;
@@ -69,7 +87,7 @@ class BasicVisualizerObject {
         return document.getElementById(this.divId) || null;
     }
 
-    createScene(props) {
+    initialize(props) {
 
         const MIN_CAMERA_DISTANCE = 1.25;
         const MAX_CAMERA_DISTANCE = 7.5;
@@ -188,4 +206,4 @@ class BasicVisualizerObject {
 
 }
 
-export { BasicVisualizerObject, QuaternionTarget };
+export { BasicVisualizerObject, ThreeJSVisualizer, QuaternionTarget };

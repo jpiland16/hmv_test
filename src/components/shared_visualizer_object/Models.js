@@ -1,8 +1,8 @@
 import * as THREE from 'three'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
-import { BasicVisualizerObject, QuaternionTarget } from "./Visualizer";
+import { ThreeJSVisualizer, QuaternionTarget } from "./Visualizer";
 
-class MannequinVisualizer extends BasicVisualizerObject {
+class MannequinVisualizer extends ThreeJSVisualizer {
 
     constructor() {
         super()

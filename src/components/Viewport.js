@@ -255,7 +255,7 @@ export default function Viewport(props) {
     React.useEffect(() => {
 
         console.log("Running useEffect");
-        mannequinVisualizer.createScene(propertySet)
+        mannequinVisualizer.initialize(propertySet)
 
         setScenePromise(new Promise((myResolve, myReject) => {
             const onProgress = (progressPercent) => {
