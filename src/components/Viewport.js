@@ -3,7 +3,6 @@ import Menu from './menu/Menu'
 import React from 'react'
 import HomeButton from './HomeButton'
 import FileViewer from './visualizer_experimental/FileViewer'
-import { initializeScene } from './visualizer_experimental/SceneInitializer'
 import PlayBar from './PlayBar'
 import TopActionBar from './TopActionBar'
 import CardSet from './cards/CardSet'
@@ -12,7 +11,6 @@ import { MannequinVisualizer } from './shared_visualizer_object/Models'
 
 import { getFileList, downloadFile, subscribeToFile } from './viewport-workers/NetOps'
 import { onSelectFileChange, isFileNameValid, clickFile} from './viewport-workers/FileOps'
-import { getLocalFromGlobal, getGlobalFromLocal } from './viewport-workers/MathOps'
 
 let outgoingRequest = false;
 const lastFiles = [null]; // Wrapped in an array to be mutable
@@ -165,10 +163,6 @@ export default function Viewport(props) {
             lastIndex: lastIndex,   
             toolTipOpen: toolTipOpen, //tooltip for play button can only be viewed when play button is disabled
             setTipOpen: setTipOpen,     
-
-        // -- MATH --
-            getGlobalFromLocal: getGlobalFromLocal,
-            getLocalFromGlobal: getLocalFromGlobal,
 
         // -- WINDOW PROPERTIES --
             getWindowDimensions: () => windowDimensions,
