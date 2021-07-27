@@ -7,21 +7,23 @@ class MannequinVisualizer extends BasicVisualizerObject {
     constructor() {
         super()
 
-        /** @type {Object.<string, QuaternionTarget>} */
-        this.quaternionTargets = {
-            ROOT:  new QuaternionTarget("_rootJoint",      new THREE.Quaternion(0, 0, 0, 1), "ROOT"),
-            BACK:  new QuaternionTarget("spine_02",        new THREE.Quaternion(-0.06, 0, 0, 0.998), "BACK"),
-            LUA:   new QuaternionTarget("upperarm_l",      new THREE.Quaternion(-0.472, -0.468, 0.561, -0.494), "LUA"),
-            LLA:   new QuaternionTarget("lowerarm_l",      new THREE.Quaternion(-0.471, -0.466, 0.51, -0.549), "LLA"),
-            RUA:   new QuaternionTarget("upperarm_r",      new THREE.Quaternion(0.471, -0.471, 0.561, 0.492), "RUA"),
-            RLA:   new QuaternionTarget("lowerarm_r",      new THREE.Quaternion(0.471, -0.468, 0.509, 0.547), "RLA"),
-            LUL:   new QuaternionTarget("left_upper_leg",  new THREE.Quaternion(-0.001, -0.032, 0.999, -0.044), "LUL"),
-            LLL:   new QuaternionTarget("left_lower_leg",  new THREE.Quaternion(-0.001, -0.034, 0.999, -0.04), "LLL"),
-            LSHOE: new QuaternionTarget("foot_l",          new THREE.Quaternion(-0.006, 0.465, 0.884, -0.043), "LSHOE"),
-            RUL:   new QuaternionTarget("right_upper_leg", new THREE.Quaternion(0.001, -0.029, 0.999, 0.044), "RUL"),
-            RLL:   new QuaternionTarget("right_lower_leg", new THREE.Quaternion(0.001, -0.035, 0.999, 0.04), "RLL"),
-            RSHOE: new QuaternionTarget("foot_r",          new THREE.Quaternion(0.006, 0.467, 0.883, 0.043), "RSHOE") 
-        }
+        this.quaternionRoot = new QuaternionTarget( "ROOT", "_rootJoint", new THREE.Quaternion(0, 0, 0, 1))
+
+        const back = this.quaternionRoot.addChild("BACK", "spine_02", new THREE.Quaternion(-0.06, 0, 0, 0.998) )
+
+        const lua = back.addChild("LUA", "upperarm_l", new THREE.Quaternion(-0.472, -0.468, 0.561, -0.494) )
+        lua.addChild("LLA", "lowerarm_l", new THREE.Quaternion(-0.471, -0.466, 0.51, -0.549) )
+
+        const rua = back.addChild("RUA", "upperarm_r", new THREE.Quaternion(0.471, -0.471, 0.561, 0.492) )
+        rua.addChild("RLA", "lowerarm_r", new THREE.Quaternion(0.471, -0.468, 0.509, 0.547) )
+        
+        const lul = back.addChild("LUL", "left_upper_leg", new THREE.Quaternion(-0.001, -0.032, 0.999, -0.044) )
+        const lll = lul.addChild("LLL", "left_lower_leg", new THREE.Quaternion(-0.001, -0.034, 0.999, -0.04) )
+        lll.addChild("LSHOE", "foot_l", new THREE.Quaternion(-0.006, 0.465, 0.884, -0.043) )
+
+        const rul = back.addChild("RUL", "right_upper_leg", new THREE.Quaternion(0.001, -0.029, 0.999, 0.044) )
+        const rll = rul.addChild("RLL", "right_lower_leg", new THREE.Quaternion(0.001, -0.035, 0.999, 0.04) )
+        rll.addChild("RSHOE", "foot_r", new THREE.Quaternion(0.006, 0.467, 0.883, 0.043) ) 
 
     }
 
@@ -48,25 +50,21 @@ class MannequinVisualizer extends BasicVisualizerObject {
 
                     var model = gltf.scene;
                     this.scene.add( model );
-                    let boneList = Object.getOwnPropertyNames(this.quaternionTargets);
 
-                    for (let i = 0; i < boneList.length; i++) {
-                        this.bones[boneList[i]] = model.getObjectByName(this.quaternionTargets[boneList[i]].name)
+                    /**
+                     * Recursively add bones from the model to this.bones.
+                     * 
+                     * @param {QuaternionTarget} root
+                     */
+                    const addBones = (root) => {
+                        this.bones[root.shortName] = model.getObjectByName(root.boneName)
+                        for (let i = 0; i < root.children.length; i++) {
+                            addBones(root.children[i])
+                        }
                     }
-
-                    this.setParentOf("RUA", "BACK");
-                    this.setParentOf("RLA", "RUA");
-                    this.setParentOf("LUA", "BACK");
-                    this.setParentOf("LLA", "LUA");
-                    this.setParentOf("BACK", "ROOT");
                     
-                    this.setParentOf("RSHOE","RLL")
-                    this.setParentOf("RLL", "RUL");
-                    this.setParentOf("RUL", "ROOT");
-
-                    this.setParentOf("LSHOE", "LLL")
-                    this.setParentOf("LLL", "LUL")
-                    this.setParentOf("LUL","ROOT");
+                    addBones(this.quaternionRoot)
+                    this.attachBones(this.quaternionRoot)
 
                     myResolve();
 
@@ -81,15 +79,43 @@ class MannequinVisualizer extends BasicVisualizerObject {
     }
 
     /**
+     * Attaches all the children of the specified bone to that bone.
+     * 
+     * @param {QuaternionTarget} target
+     */
+    attachBones(target) {
+        for (let i = 0; i < target.children.length; i++) {
+            const childTarget = target.children[i]
+            this.bones[target.shortName].attach(this.bones[childTarget.shortName])
+            // Recursively traverse the tree to connect all bones in the THREE.js model.
+            this.attachBones(childTarget)
+        }
+    }
+
+    /**
      * Uses the incoming data to move the mannequin.
      * 
      * @param {Object<string, THREE.Quaternion>} quaternions - quaternion data
      */
     acceptData(quaternions) {
-        for (const bone in quaternions) {
-            let newGlobalQ = quaternions[bone];
-            let newLocalQ = this.getLocalFromGlobal(newGlobalQ, this.quaternionTargets[bone]);
-            this.bones[bone].quaternion.copy(newLocalQ);
+        this.moveBone(this.quaternionRoot, quaternions)
+    }
+
+    /**
+     * Move a single bone, and recursively move each of its children.
+     * 
+     * @param {QuaternionTarget} root
+     * @param {Object<string, THREE.Quaternion>} quaternions
+     */
+    moveBone(root, quaternions) {
+        const quaternion = quaternions[root.shortName]
+        if (quaternion) {
+            let newGlobalQ = quaternions[root.shortName];
+            let newLocalQ = this.getLocalFromGlobal(newGlobalQ, root);
+            this.bones[root.shortName].quaternion.copy(newLocalQ);
+        }
+        for (let i = 0; i < root.children.length; i++) {
+            this.moveBone(root.children[i], quaternions)
         }
     }
 
@@ -105,7 +131,6 @@ class MannequinVisualizer extends BasicVisualizerObject {
     
         while (target.parent !== null) {
             let parentQ = new THREE.Quaternion();
-            console.log(target)
             parentQ.copy(this.bones[target.parent.shortName].quaternion);
             localQ.multiply(parentQ.invert())
             target = target.parent;

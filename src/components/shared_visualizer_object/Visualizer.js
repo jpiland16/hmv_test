@@ -11,16 +11,31 @@ class QuaternionTarget {
      * for the bone whenever the model is in some standard position and the 
      * parent bone of this bone.
      * 
-     * @param {string} name - the name of the bone
+     * @param {string} shortName - the all-caps bone abbreviation   
+     * @param {string} boneName - the name of the bone
      * @param {THREE.Quaternion} defaultQ - default quaternion
      * @param {QuaternionTarget} parent - parent bone
      */
-    constructor(name, defaultQ = new THREE.Quaternion(), shortName, parent = null) {
-        this.name = name
-        this.default = defaultQ
+    constructor(shortName, boneName, defaultQ = new THREE.Quaternion(), parent = null) {
         this.shortName = shortName
+        this.boneName = boneName
+        this.default = defaultQ
         this.parent = parent
+        /** @type QuaternionTarget[] */
+        this.children = []
     }
+
+    /**
+    * @param {string} shortName - the all-caps bone abbreviation   
+    * @param {string} boneName - the name of the bone
+    * @param {THREE.Quaternion} defaultQ - default quaternion
+    */
+    addChild(shortName, boneName, defaultQ = new THREE.Quaternion()) {
+        const newChild = new QuaternionTarget(shortName, boneName, defaultQ, this);
+        this.children.push(newChild);
+        return newChild;
+    }
+
 }
 
 class Visualizer extends React.Component {
