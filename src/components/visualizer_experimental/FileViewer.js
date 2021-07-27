@@ -20,12 +20,12 @@ class FileViewer extends React.Component {
     }
 
     componentDidMount() {
-        console.log("Target file: ");
-        console.log(this.props.targetFile);
+        if (this.props.verbose) console.log("Target file: ");
+        if (this.props.verbose) console.log(this.props.targetFile);
     }
 
     LoadingMessage(props) {
-        console.log("Loaded: " + props.loaded);
+        if (this.props.verbose) console.log("Loaded: " + props.loaded);
         if (props.loaded) {
             return null;
         }
@@ -84,7 +84,7 @@ class FileViewer extends React.Component {
      * 
      */
     FileDisplay(props) {
-        if (props.visualizer.modelLoaded) props.visualizer.getParentElement().style.display = "hidden"
+        if (props.visualizer.modelLoaded) props.visualizer.getParentElement().style.visibility = "hidden"
         if (!props.fileSelected) {
             return <div style={{marginLeft: props.menuIsOpen ? "6px" : "48px" }}><Alert severity="info">Please select a file to view from the 'Choose File' section of the menu on the left. You can also click "Choose a file" above.</Alert></div>;
         }
@@ -137,11 +137,11 @@ class FileViewer extends React.Component {
     getFilePart = (type) => {
         return new Promise((resolve, reject) => {
             if (type !== 'data' && type !== 'metadata') {
-                console.log("Inappropriate data type: Should either be data or metadata.");
+                if (this.props.verbose) console.log("Inappropriate data type: Should either be data or metadata.");
             }
             let dataReq = new XMLHttpRequest();
             dataReq.onload = (event => {
-                console.log(dataReq);
+                if (this.props.verbose) console.log(dataReq);
                 switch (dataReq.status) {
                     case (200):
                         resolve(dataReq.responseText);
@@ -162,19 +162,19 @@ class FileViewer extends React.Component {
             params.set('file', this.fileName);
             params.set('type', type);
             params.set('accessCode', 'password_wrong');
-            console.log(params.toString());
+            if (this.props.verbose) console.log(params.toString());
             const target = targetURL + params.toString();
             dataReq.open("GET", target);
             // TODO: Right now the response is in the default 'text' format, but it might
             // be more appropriate to use another format.
             dataReq.send();
-            console.log("GET request has been sent: ");
+            if (this.props.verbose) console.log("GET request has been sent: ");
         })
     }
 
 
     render() {
-        console.log("Selected file: " + this.props.selectedFile.fileName);
+        if (this.props.verbose) console.log("Selected file: " + this.props.selectedFile.fileName);
         return (
             <div style={{ marginLeft: this.props.menuIsOpen ? "40vw" : "0px", width: this.props.menuIsOpen ? "calc(100% - 40vw)": "100%"}}>
                 <this.FileDisplay 

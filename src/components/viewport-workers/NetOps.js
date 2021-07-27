@@ -24,7 +24,7 @@ async function doXHR(method, url) {
 export async function getFileList(props) {
     doXHR("GET", "/api/get-file-list").then(
         (xhrr) => {
-            console.log("Did XHR to get file list.");
+            if (props.verbose) console.log("Did XHR to get file list.");
             let res;
             try {
                 res = JSON.parse(xhrr.responseText);
@@ -44,34 +44,12 @@ export async function getFileList(props) {
             props.lastFiles[0] = res;
         },
         (errXhrr) => {
-            console.error("XHR Error");
-            console.log(errXhrr.status);
-            console.log(errXhrr.statusText);
-            console.log(errXhrr.responseText);
+            if (props.verbose) console.error("XHR Error");
+            if (props.verbose) console.log(errXhrr.status);
+            if (props.verbose) console.log(errXhrr.statusText);
+            if (props.verbose) console.log(errXhrr.responseText);
         }
     )
-}
-
-export async function getMap(props) {
-    const mapPath = (window.location.href.substring(0, 22) === "http://localhost:3000/" ? 
-    "https://raw.githubusercontent.com/jpiland16/hmv_test/master" :
-    "") + "/files/meta/map.json"
-    return new Promise((myResolve, myReject) => {
-        doXHR('GET', mapPath).then(
-            (xhrr) => {
-                try {
-                    props.fileMap[0] = JSON.parse(xhrr.responseText)
-                    myResolve()
-                } catch (e) {
-                    console.error("File map not found!")
-                    myReject()
-                }
-            }, (errXhrr) => {
-                console.log(errXhrr)
-                myReject()
-            }
-        )
-    });
 }
 
 // NETWORK METHODS THAT MAY BE CALLED MULTIPLE TIMES
@@ -103,7 +81,7 @@ export function downloadFile(props, fname) {
     }
 
     x.onerror = (error) => {
-        console.log(error);
+        console.error(error);
     }
 
     x.send();
@@ -117,10 +95,10 @@ function getFile(fileName, onProgress) {
     return Promise.all([dataPromise, metadataPromise]);
 }
 
-function getFilePart(fileName, type, onProgress=null) {
+function getFilePart(fileName, type, onProgress=null, verbose = false) {
     return new Promise((resolve, reject) => {
         if (type !== 'data' && type !== 'metadata') {
-            console.log("Inappropriate data type: Should either be data or metadata.");
+            if (verbose) console.log("Inappropriate data type: Should either be data or metadata.");
         }   
         let dataReq = new XMLHttpRequest();
         if (onProgress) {
@@ -131,7 +109,7 @@ function getFilePart(fileName, type, onProgress=null) {
         }
 
         dataReq.onload = (event => {
-            console.log(dataReq);
+            if (verbose) console.log(dataReq);
             switch(dataReq.status) {
                 case (200):
                     resolve(dataReq.responseText);
@@ -152,11 +130,11 @@ function getFilePart(fileName, type, onProgress=null) {
         params.set('file', fileName);
         params.set('type', type);
         params.set('accessCode', 'password_wrong');
-        console.log(params.toString());
+        if (verbose) console.log(params.toString());
         const target = targetURL + params.toString();
         dataReq.open("GET", target);
         dataReq.send();
-        console.log("GET request has been sent: ");
+        if (verbose) console.log("GET request has been sent: ");
     });
 }
 
@@ -259,15 +237,15 @@ export function subscribeToFile(props, mySelectedFile) {
         });
     
         socket.on("Processing data", () => {
-            console.log("Received processing data message");
+            if (props.verbose) console.log("Received processing data message");
             props.setFileStatus({ status: "Processing data" }); // What should I use as a stand-in for changing status here? Probably props.setStatus("Processing Data"), or just use a flag
         });
     
         socket.on("File ready", () => {
             props.setFileStatus({ status: "Loading file", progress: 0 });
-            console.log(mySelectedFile);
+            if (props.verbose) console.log(mySelectedFile);
             getFileList(props);
-            getFile(mySelectedFile, (progressPercent) => props.setFileStatus({ status: "Loading file", progress: progressPercent }))
+            getFile(mySelectedFile, (progressPercent) => props.setFileStatus({ status: "Loading file", progress: progressPercent }), props.verbose)
             .then((responses) => {
                 //When we get the files, we should use the original code to assign them as quaternions (after decoding from metadata)
                 let inputArray = responses[0].split("\n");
@@ -304,12 +282,12 @@ export function subscribeToFile(props, mySelectedFile) {
         })
     
         socket.onAny((event, ...args) => {
-            console.log("Received data through socket.");
-            console.log(event, args);
+            if (props.verbose) console.log("Received data through socket.");
+            if (props.verbose) console.log(event, args);
         });
     
         socket.connect();
-        console.log("Connected with socket.");
+        if (props.verbose) console.log("Connected with socket.");
         props.setFileStatus({ status: "Contacting server", currentSocket: socket });
     }
 }

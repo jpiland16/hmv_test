@@ -16,6 +16,7 @@ let outgoingRequest = false;
 const lastFiles = [null]; // Wrapped in an array to be mutable
 
 const VERBOSE_OUTPUT = false
+
 const isReactDevServer = (window.location.href.substring(0, 22) === "http://localhost:3000/")
 const SKIP_SOCKET = false
 const useProxy = !(isReactDevServer && SKIP_SOCKET)
@@ -200,7 +201,7 @@ export default function Viewport(props) {
 
     React.useEffect(() => {
 
-        console.log("Running useEffect");
+        if (VERBOSE_OUTPUT) console.log("Running useEffect");
         setScenePromise(mannequinVisualizer.initialize(propertySet));
 
         getFileList(propertySet);
@@ -212,11 +213,11 @@ export default function Viewport(props) {
         }
         
         if (selectedFile.fileName !== '' && isFileNameValid(propertySet, selectedFile.fileName)) {
-            console.log("Running onSelectFileChange");
+            if (VERBOSE_OUTPUT) console.log("Running onSelectFileChange");
             onSelectFileChange(propertySet, selectedFile.fileName, selectedFile.displayName);
         }
         else {
-            console.log("Not running onSelectFileChange");
+            if (VERBOSE_OUTPUT) console.log("Not running onSelectFileChange");
         }
         
         window.addEventListener('resize', handleResize);

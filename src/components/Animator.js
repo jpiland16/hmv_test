@@ -55,7 +55,7 @@ export default function Animator(props) {
             
             props.lastIndex.current = props.timeSliderValue;
 
-            console.log("Animator is ordering a batch update for time slider value " + props.timeSliderValue);
+            if (props.verbose) console.log("Animator is ordering a batch update for time slider value " + props.timeSliderValue);
 
             newQs[boneName] = targetQ;
         }
