@@ -5,7 +5,7 @@ import CircularProgress from '@material-ui/core/CircularProgress'
 import LinearProgress from '@material-ui/core/LinearProgress'
 
 // For JSDoc
-import BasicVisualizerObject from '../shared_visualizer_object/Visualizer';
+import { BasicVisualizerObject } from '../shared_visualizer_object/Visualizer';
 
 import './FileViewer.css';
 

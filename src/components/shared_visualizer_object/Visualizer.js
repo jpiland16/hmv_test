@@ -1,10 +1,27 @@
 import React from 'react'
-
 import * as THREE from 'three'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 
 let initializationCount = 0;
+
+class QuaternionTarget {
+    /**
+     * Holds a name of a bone in the model, as well as a default quaternion
+     * for the bone whenever the model is in some standard position and the 
+     * parent bone of this bone.
+     * 
+     * @param {string} name - the name of the bone
+     * @param {THREE.Quaternion} defaultQ - default quaternion
+     * @param {QuaternionTarget} parent - parent bone
+     */
+    constructor(name, defaultQ = new THREE.Quaternion(), shortName, parent = null) {
+        this.name = name
+        this.default = defaultQ
+        this.shortName = shortName
+        this.parent = parent
+    }
+}
 
 class Visualizer extends React.Component {
     render() {
@@ -13,6 +30,7 @@ class Visualizer extends React.Component {
 }
 
 class BasicVisualizerObject {
+
     constructor() {
         this.divId = `VisualizerBaseDiv${initializationCount}`
         this.component = <Visualizer divId={this.divId}/>;
@@ -27,6 +45,9 @@ class BasicVisualizerObject {
         this.controls = null;
 
         this.bones = { }
+        
+        /** @type {Object.<string, QuaternionTarget>} */
+        this.quaternionTargets = { }
     }
 
     getParentElement() {
@@ -152,4 +173,4 @@ class BasicVisualizerObject {
 
 }
 
-export default BasicVisualizerObject;
+export { BasicVisualizerObject, QuaternionTarget };

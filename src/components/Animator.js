@@ -1,6 +1,9 @@
 import React from 'react'
 import * as THREE from 'three'
 
+// For JSdoc
+import { BasicVisualizerObject } from './shared_visualizer_object/Visualizer';
+
 const USE_GLOBAL = true;
 const REPEAT = false;
 const FPS = 30;
@@ -15,9 +18,15 @@ export default function Animator(props) {
 
     }
 
+    /**
+     * @param {Object} props
+     * @param {BasicVisualizerObject} props.visualizer
+     */
     function applyDataQuaternions(props, timeValue) {
         let targets = props.fileMetadata.current.targets;
         let GTQ = props.fileMetadata.current.globalTransformQuaternion
+
+        let newQs = { }
 
         for (let i = 0; i < targets.length; i++) {
             let boneName = targets[i].bone
@@ -48,7 +57,11 @@ export default function Animator(props) {
 
             console.log("Animator is ordering a batch update for time slider value " + props.timeSliderValue);
             props.batchUpdate(boneName, [targetQ.x, targetQ.y, targetQ.z, targetQ.w]);
+
+            newQs[boneName] = targetQ;
         }
+        
+        props.visualizer.acceptData(newQs);
     }
 
     React.useEffect(() => {
