@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: src/components/visualizer_experimental/Visualizer.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: src/components/visualizer_experimental/Visualizer.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React from 'react';
+import { useEffect, useCallback } from 'react';
+import * as THREE from 'three';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+
+import './Visualizer.css';
+
+let camera;
+let currentDiv;
+
+function refreshRendererSize(parentElement, renderer, scene) {
+    if (parentElement == null) {
+        console.log("Unable to modify the scene's size because no scene exists.");
+        return;
+    }
+    renderer.setSize( parentElement.offsetWidth, parentElement.offsetHeight );
+    camera.aspect = parentElement.offsetWidth / parentElement.offsetHeight;
+    camera.updateProjectionMatrix();
+    renderer.render(scene, camera);
+}
+
+export default function ThreeScene(props) {
+
+    const MIN_CAMERA_DISTANCE = 1.25;
+    const MAX_CAMERA_DISTANCE = 7.5;
+
+    // const [camera, setCamera] = useState(null);
+    console.log("Printing scene info:");
+    console.log(props.sceneInfo);
+
+    /**
+     * Begins a THREE.js render loop on a given scene.
+     * @param parentElement The reference to the DOM element THREE will render to.
+     * @param currentScene The Scene to render.
+     * @param renderer The renderer to use. 
+     */
+    function renderScene(parentElement, currentScene, renderer) {    
+        if (parentElement === null) {
+            console.log("Node is null! No rendering should take place.");
+            return;
+        }
+        console.log(parentElement);
+        if (currentScene === null) {
+            console.log("No scene to render! No rendering should take place.");
+            return;
+        }
+        console.log("Rendering should take place.");
+        const width = parentElement.clientWidth;
+        const height = parentElement.clientHeight;
+
+        camera = new THREE.PerspectiveCamera( 45, width / height, 0.01, 500 );
+        camera.position.z = 3;
+        camera.position.y = 0;
+
+        // refreshRendererSize(currentScene, width, height);
+        renderer.setSize(width, height);
+
+        // For simplicity, re-render every frame rather than on updates.
+        // For performance, it might be better to render on updates only.
+        let controls = new OrbitControls( camera, renderer.domElement );
+        controls.minDistance = MIN_CAMERA_DISTANCE;
+        controls.maxDistance = MAX_CAMERA_DISTANCE;
+        controls.addEventListener( 'change', () => {
+            renderer.render(currentScene, camera); 
+        });
+        const animate = () => {
+            requestAnimationFrame(animate);
+
+            renderer.render(currentScene, camera);
+        }
+
+        animate();
+    }
+
+    const measuredRef = useCallback(node => {
+        currentDiv = node;
+        if (node === null) return;
+        currentDiv.appendChild(props.sceneInfo.renderer.domElement);
+        renderScene(node, props.sceneInfo.scene, props.sceneInfo.renderer);
+    }, []);
+
+    useEffect(() => {
+        function handleResize() {
+            refreshRendererSize(currentDiv, props.sceneInfo.renderer, props.sceneInfo.scene, props.sceneInfo.camera);
+        }
+
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize)
+    });
+
+    return (
+        &lt;div
+            ref={measuredRef}
+            id="visualizationBase" 
+        />
+    )
+}</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Tutorials</h3><ul><li><a href="tutorial-https-guide.html">https-guide</a></li><li><a href="tutorial-local-server-https-guide.html">local-server-https-guide</a></li></ul><h3>Global</h3><ul><li><a href="global.html#getDirStructure">getDirStructure</a></li><li><a href="global.html#getFileDisplayName">getFileDisplayName</a></li><li><a href="global.html#getFileList">getFileList</a></li><li><a href="global.html#initializeScene">initializeScene</a></li><li><a href="global.html#isValidDir">isValidDir</a></li><li><a href="global.html#onSelectFileChange">onSelectFileChange</a></li><li><a href="global.html#scanAllFiles">scanAllFiles</a></li><li><a href="global.html#subscribeToFile">subscribeToFile</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.7</a> on Wed Jul 14 2021 15:42:58 GMT-0400 (Eastern Daylight Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

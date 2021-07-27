@@ -4,23 +4,14 @@ import React from 'react';
 import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
-import DialogSelect from './DatasetDialog'
+import DialogSelect from '../DatasetDialog'
 import HomeAnimation from './HomeAnimation'
 import Grid from '@material-ui/core/Grid';
-import TitleBar from './TitleBar'
+import TitleBar from '../TitleBar'
 
 
 
 export default function Welcome(props) {
-  
-
-  const useStyles = makeStyles(() => ({
-    title: {
-      flexGrow: 1,
-    },
-  }));
-  
-  const classes = useStyles();
 
   props.setFirstLoad(true)
   const history = useHistory()
@@ -43,30 +34,22 @@ export default function Welcome(props) {
   };
   window.addEventListener('keydown', keyHandler, false);
 
-  function launchVisualizer(){
-    history.push('/visualizer')
-  }
-
-  function launchUploadForm(){
-    history.push('/upload');
-  }
-
   return (
     
     <div>
-      <TitleBar classes={classes}/>
+      <TitleBar/>
       <Container>
         <HomeAnimation/>
         <div className="toplayer">
           <Grid container spacing={2}>
             <Grid item>
-              <Button color='primary' variant= 'contained' id = "submitButton" onClick={()=>launchVisualizer()}>Launch Visualizer</Button>
+              <Button color='primary' variant= 'contained' id = "submitButton" onClick={()=>history.push('/visualizer')}>Launch Visualizer</Button>
             </Grid>
             <Grid item>
               <DialogSelect/>
             </Grid>
             <Grid item>
-              <Button color='primary' variant= 'contained' id = "submitButton" onClick={()=>launchUploadForm()}>Upload Dataset</Button>
+              <Button color='primary' variant= 'contained' id = "submitButton" onClick={()=>history.push('/upload')}>Upload Dataset</Button>
             </Grid>
           </Grid> 
         </div>
