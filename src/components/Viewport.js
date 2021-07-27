@@ -10,20 +10,12 @@ import CardSet from './cards/CardSet'
 import Animator from './Animator'
 import { MannequinVisualizer } from './shared_visualizer_object/Models'
 
-import { getMap, getFileList, downloadFile, subscribeToFile } from './viewport-workers/NetOps'
+import { getFileList, downloadFile, subscribeToFile } from './viewport-workers/NetOps'
 import { onSelectFileChange, isFileNameValid, clickFile} from './viewport-workers/FileOps'
-import { updateSingleQValue, batchUpdateObject } from './viewport-workers/ModelOps'
 import { getLocalFromGlobal, getGlobalFromLocal } from './viewport-workers/MathOps'
-import { setSliderPositions, onLoadBones } from './viewport-workers/BoneOps'
-import { resetModel } from './viewport-workers/Reset'
 
-let childrenOf = {};
-let parentOf = {};
-let globalQs = {};
 let outgoingRequest = false;
-let sliderValuesShadowCopy = {};
 const lastFiles = [null]; // Wrapped in an array to be mutable
-const fileMap = [null]; // Wrapped in an array to be mutable
 
 const VERBOSE_OUTPUT = false
 const isReactDevServer = (window.location.href.substring(0, 22) === "http://localhost:3000/")
@@ -66,10 +58,6 @@ export default function Viewport(props) {
     const [ expandedItems, setExpandedItems ] = React.useState(initialExpandedItems);
     const [ selectedFile, setSelectedFile ] = React.useState(initialSelectedFile);
     const [ searchFileText, setSearchFileText ] = React.useState("");
-    const [ modelLoaded, setModelLoaded ] = React.useState(false);
-    const [ bones, setBones ] = React.useState(null);
-    const [ sliderValues, setSliderValues ] = React.useState(null);
-    const [ modelNeedsUpdating, setModelNeedsUpdating ] = React.useState(false);
     const [ menuIsOpen, setMenuIsOpen ] = React.useState(false);                 // Menu is closed by default
     const [ menuIsPinned, setMenuIsPinned ] = React.useState(true);              // Menu is pinned by default
     const [ useRipple, setUseRipple ] = React.useState(false);                   // Limbs move independently by default
@@ -82,19 +70,14 @@ export default function Viewport(props) {
     const [ downloading, setDownloading ] = React.useState(false);
     const [ openLab, setOpenLab ] = React.useState("");
     const [ fileStatus, setFileStatus ] = React.useState(initialFileStatus);
-    const [ sceneInfo, setSceneInfo ] = React.useState({ scene: null, model: null, camera: null, renderer: null });
-    const [ scenePromise, setScenePromise ] = React.useState(null);
     const [ modelDownloadProgress, setModelProgress ] = React.useState(0);
-    const [windowDimensions, setWindowDimensions] = React.useState(getWindowDimensions());
+    const [ scenePromise, setScenePromise ] = React.useState(null)
+    const [ windowDimensions, setWindowDimensions ] = React.useState(getWindowDimensions());
     
     /*   ---------------------
      *   REFS (React.useRef())
      *   --------------------- */  
 
-    const useGlobalQs = React.useRef(true); // Use global quaternions by default
-    const camera = React.useRef(undefined);
-    const orbitControls = React.useRef(undefined);
-    const outputTypes = React.useRef([]);
     const data = React.useRef([]);
     const FPS = React.useRef(30);
     const repeat = React.useRef(false);
@@ -103,8 +86,13 @@ export default function Viewport(props) {
     const lineNumberRef = React.useRef(0); // Start from beginning of file by default
     const fileMetadata = React.useRef(null)
     const files = React.useRef([]);
+    const outputTypes = React.useRef([]);
 
     const propertySet = {
+
+        // -- VISUALIZER --
+            visualizer: mannequinVisualizer,
+            awaitScene: scenePromise,
 
         // -- MENU OPTIONS --
 
@@ -129,7 +117,6 @@ export default function Viewport(props) {
             checkFileName: (fname) => isFileNameValid(propertySet, fname),
             files: files,
             lastFiles: lastFiles,
-            fileMap: fileMap,
 
             // FILE SEARCH PROPERTIES
             searchFileText: searchFileText,
@@ -143,44 +130,9 @@ export default function Viewport(props) {
             timeDisplay: timeDisplay,
             setTimeDisplay: setTimeDisplay,
 
-        // -- MOVING THE 3-D MODEL -- 
-
-            // MODEL PROPERTIES
-            visualizer: mannequinVisualizer,
-            modelLoaded: modelLoaded,
-            setModelLoaded: setModelLoaded,
-            bones: bones,
-            setBones: setBones,
-            onLoadBones: (bones) => onLoadBones(propertySet, bones),
-            resetModel: () => { resetModel(propertySet) },
-            parentOf: parentOf,
-            childrenOf: childrenOf,
-
-            // MODEL MANIPULATION
-            sliderValues: sliderValues,
-            setSliderValues: setSliderValues,
-            updateModel: (boneId, qIndex, newValue) => updateSingleQValue(propertySet, boneId, qIndex, newValue),
-            batchUpdate: (boneId, slideArray) => batchUpdateObject(propertySet, boneId, slideArray),
-            modelNeedsUpdating: modelNeedsUpdating,
-            setModelNeedsUpdating: setModelNeedsUpdating,
-            sliderValuesShadowCopy: sliderValuesShadowCopy,
-
-            // THREE.JS OBJECTS
-            camera: camera,
-            getCamera: getCamera,
-            orbitControls: orbitControls,
-            getControls: getControls,
-            sceneInfo: sceneInfo,
-            setSceneInfo: setSceneInfo,
-            initializeScene: initializeScene,
-            awaitScene: scenePromise,
-
-            // QUATERNION PROPERTIES
-            globalQs: globalQs,
-            useGlobalQs: useGlobalQs,
+            // MODEL OPTIONS
             useRipple: useRipple,
             setUseRipple: setUseRipple,
-            refreshGlobalLocal: (bones, useGlobal) => setSliderPositions(propertySet, bones, useGlobal),
 
         // -- FILE VIEWING & PLAYBACK --
 
@@ -255,39 +207,7 @@ export default function Viewport(props) {
     React.useEffect(() => {
 
         console.log("Running useEffect");
-        mannequinVisualizer.initialize(propertySet)
-
-        setScenePromise(new Promise((myResolve, myReject) => {
-            const onProgress = (progressPercent) => {
-                setModelProgress(progressPercent);
-            }
-
-            initializeScene(onProgress).then((newSceneInfo) => {
-                let boneNames = {
-                    LUA: "upperarm_l", 
-                    LLA: "lowerarm_l", 
-                    RUA: "upperarm_r", 
-                    RLA: "lowerarm_r", 
-                    BACK: "spine_02", /** IMPORTANT */
-                    LSHOE: "foot_l", 
-                    RSHOE: "foot_r",
-                    ROOT: "_rootJoint",
-                    RUL: "right_upper_leg",
-                    LUL: "left_upper_leg",
-                    RLL: "right_lower_leg",
-                    LLL: "left_lower_leg"
-                }
-
-                let modelBoneList = Object.getOwnPropertyNames(boneNames);
-
-                let bones = [];
-                for (let i = 0; i < modelBoneList.length; i++) {
-                    bones[modelBoneList[i]] = newSceneInfo.model.getObjectByName(boneNames[modelBoneList[i]])
-                }
-                onLoadBones(propertySet, bones);
-                myResolve(newSceneInfo);
-            });
-        }));
+        setScenePromise(mannequinVisualizer.initialize(propertySet));
 
         getFileList(propertySet);
         
@@ -324,18 +244,6 @@ export default function Viewport(props) {
             height
         ];
     }      
-
-    /*  ---------------------------------
-     *  THREE.JS REFERENCE GETTER METHODS
-     *  --------------------------------- */
-
-    function getCamera() {
-        return camera.current;
-    }
-
-    function getControls() {
-        return orbitControls.current;
-    }
 
     /*  ----------------------------------------
      *  RETURN OF THE RENDER - PROPS -> CHILDREN

@@ -56,7 +56,6 @@ export default function Animator(props) {
             props.lastIndex.current = props.timeSliderValue;
 
             console.log("Animator is ordering a batch update for time slider value " + props.timeSliderValue);
-            props.batchUpdate(boneName, [targetQ.x, targetQ.y, targetQ.z, targetQ.w]);
 
             newQs[boneName] = targetQ;
         }
@@ -66,8 +65,6 @@ export default function Animator(props) {
 
     React.useEffect(() => {
         if (props.selectedFile.fileName === "") { return; }
-
-        props.useGlobalQs.current = USE_GLOBAL;
 
         props.outputTypes.current = [{
             startCol: 243,

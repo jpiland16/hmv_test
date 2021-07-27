@@ -38,44 +38,48 @@ class MannequinVisualizer extends ThreeJSVisualizer {
      * @override
      */
     loadModel(baseURL) {
-        this.loadGrid(baseURL)
+
         
         return new Promise((myResolve, myReject) => {
             
-            var loader = new GLTFLoader();
+            this.loadGrid(baseURL).then(() => {
 
-            const modelPath = baseURL + "/files/figures/mannequin.glb";
+                var loader = new GLTFLoader();
 
-            loader.load(modelPath, gltf => {
+                const modelPath = baseURL + "/files/figures/mannequin.glb";
 
-                    var model = gltf.scene;
-                    this.scene.add( model );
+                loader.load(modelPath, gltf => {
 
-                    /**
-                     * Recursively add bones from the model to this.bones.
-                     * 
-                     * @param {QuaternionTarget} root
-                     */
-                    const addBones = (root) => {
-                        this.bones[root.shortName] = model.getObjectByName(root.boneName)
-                        for (let i = 0; i < root.children.length; i++) {
-                            addBones(root.children[i])
+                            var model = gltf.scene;
+                            this.scene.add( model );
+
+                            /**
+                             * Recursively add bones from the model to this.bones.
+                             * 
+                             * @param {QuaternionTarget} root
+                             */
+                            const addBones = (root) => {
+                                this.bones[root.shortName] = model.getObjectByName(root.boneName)
+                                for (let i = 0; i < root.children.length; i++) {
+                                    addBones(root.children[i])
+                                }
+                            }
+                            
+                            addBones(this.quaternionRoot)
+                            this.attachBones(this.quaternionRoot)
+
+                            myResolve();
+
+                        }, function ( xhr ) {
+                            console.log(Math.round(xhr.loaded / xhr.total * 100) + "% loaded")
+                        }, function ( error ) {
+                            console.error( error );
+                            myReject(error)
                         }
-                    }
-                    
-                    addBones(this.quaternionRoot)
-                    this.attachBones(this.quaternionRoot)
+                    );
 
-                    myResolve();
-
-                }, function ( xhr ) {
-                    console.log(Math.round(xhr.loaded / xhr.total * 100) + "% loaded")
-                }, function ( error ) {
-                    console.error( error );
-                    myReject(error)
-                }
-            );
-        });
+                }, (error) => myReject(error));
+            });
     }
 
     /**

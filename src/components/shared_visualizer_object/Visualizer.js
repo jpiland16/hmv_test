@@ -156,9 +156,7 @@ class ThreeJSVisualizer extends BasicVisualizerObject {
      * @param {string} baseURL a root where the server files are stored
      */
     loadModel(baseURL) {
-    
-        this.loadGrid(baseURL)
-        return Promise.resolve()
+        return this.loadGrid(baseURL)
     }
 
     /**
@@ -182,11 +180,14 @@ class ThreeJSVisualizer extends BasicVisualizerObject {
 
         const gridPath = baseURL + "/files/figures/grid.glb";
 
-        loader.load(gridPath, gltf => { 
-            let mesh = gltf.scene.children[0];
-            mesh.material.opacity = 0.4;
-            mesh.material.transparent = true;
-            this.scene.add(gltf.scene) 
+        return new Promise((myResolve, myReject) => {
+                loader.load(gridPath, gltf => { 
+                let mesh = gltf.scene.children[0];
+                mesh.material.opacity = 0.4;
+                mesh.material.transparent = true;
+                this.scene.add(gltf.scene) 
+                myResolve();
+            }, (progress) => { }, (error) => myReject(error));
         });
     }
 
