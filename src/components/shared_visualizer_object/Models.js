@@ -17,11 +17,11 @@ class MannequinVisualizer extends ThreeJSVisualizer {
         const rua = back.addChild("RUA", "upperarm_r", new THREE.Quaternion(0.471, -0.471, 0.561, 0.492) )
         rua.addChild("RLA", "lowerarm_r", new THREE.Quaternion(0.471, -0.468, 0.509, 0.547) )
         
-        const lul = back.addChild("LUL", "left_upper_leg", new THREE.Quaternion(-0.001, -0.032, 0.999, -0.044) )
+        const lul = this.quaternionRoot.addChild("LUL", "left_upper_leg", new THREE.Quaternion(-0.001, -0.032, 0.999, -0.044) )
         const lll = lul.addChild("LLL", "left_lower_leg", new THREE.Quaternion(-0.001, -0.034, 0.999, -0.04) )
         lll.addChild("LSHOE", "foot_l", new THREE.Quaternion(-0.006, 0.465, 0.884, -0.043) )
 
-        const rul = back.addChild("RUL", "right_upper_leg", new THREE.Quaternion(0.001, -0.029, 0.999, 0.044) )
+        const rul = this.quaternionRoot.addChild("RUL", "right_upper_leg", new THREE.Quaternion(0.001, -0.029, 0.999, 0.044) )
         const rll = rul.addChild("RLL", "right_lower_leg", new THREE.Quaternion(0.001, -0.035, 0.999, 0.04) )
         rll.addChild("RSHOE", "foot_r", new THREE.Quaternion(0.006, 0.467, 0.883, 0.043) ) 
 
@@ -50,6 +50,8 @@ class MannequinVisualizer extends ThreeJSVisualizer {
                 loader.load(modelPath, gltf => {
 
                             var model = gltf.scene;
+                            model.traverse(function(obj) { obj.frustumCulled = false; });
+                            
                             this.scene.add( model );
 
                             /**
@@ -66,7 +68,6 @@ class MannequinVisualizer extends ThreeJSVisualizer {
                             
                             addBones(this.quaternionRoot)
                             this.attachBones(this.quaternionRoot)
-                            console.log("DONE LOADING MODEL")
                             myResolve();
 
                         }, function ( xhr ) {
@@ -119,11 +120,12 @@ class MannequinVisualizer extends ThreeJSVisualizer {
      * @param {THREE.Quaternion} currentInversionQ
      */
     moveBone(root, quaternions, currentInversionQ = new THREE.Quaternion()) {
-        const quaternion = quaternions[root.shortName]
+        let quaternion = quaternions[root.shortName]
+
         let nextInversionQ = new THREE.Quaternion().copy(currentInversionQ)
 
         if (quaternion) { 
-            let newGlobalQ = quaternions[root.shortName];
+            let newGlobalQ = quaternion;
             let newLocalQ = new THREE.Quaternion().copy(currentInversionQ).multiply(newGlobalQ)
             this.bones[root.shortName].quaternion.copy(newLocalQ);
             nextInversionQ.premultiply(newLocalQ.invert())

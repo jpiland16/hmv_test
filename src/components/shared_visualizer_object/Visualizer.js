@@ -40,7 +40,7 @@ class QuaternionTarget {
 
 class Visualizer extends React.Component {
     render() {
-        return <div style={{width: "100%", height: "100%", marginTop: "-48px" /* marginTop here accounts for transparent title bar */ }} id={this.props.divId}></div>
+        return <div style={{width: "100%", height: "100%", position: "absolute", top: "0px", left: "0px" }} id={this.props.divId}></div>
     }
 }
 

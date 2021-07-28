@@ -57,7 +57,7 @@ export default function Viewport(props) {
     const [ expandedItems, setExpandedItems ] = React.useState(initialExpandedItems);
     const [ selectedFile, setSelectedFile ] = React.useState(initialSelectedFile);
     const [ searchFileText, setSearchFileText ] = React.useState("");
-    const [ menuIsOpen, setMenuIsOpen ] = React.useState(false);                 // Menu is closed by default
+    const [ menuIsOpen, setMenuIsOpen ] = React.useState(urlParams.has('menu'));                 
     const [ menuIsPinned, setMenuIsPinned ] = React.useState(true);              // Menu is pinned by default
     const [ useRipple, setUseRipple ] = React.useState(false);                   // Limbs move independently by default
     const [ timeSliderValue, setTimeSliderValue ] = React.useState(0);           // Initial position is 0
@@ -246,6 +246,7 @@ export default function Viewport(props) {
         <div className="myView">
             <HomeButton />
             <Menu {...propertySet} />
+            <TopActionBar {...propertySet} />
             <FileViewer targetFile={""} {...propertySet}/>
             {mannequinVisualizer.component}
             <CardSet {...propertySet} />
