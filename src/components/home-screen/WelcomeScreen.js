@@ -43,7 +43,7 @@ export default function Welcome(props) {
         <div className="toplayer">
           <Grid container spacing={2}>
             <Grid item>
-              <Button color='primary' variant= 'contained' id = "submitButton" onClick={()=>history.push('/visualizer')}>Launch Visualizer</Button>
+              <Button color='primary' variant= 'contained' id = "submitButton" onClick={()=>history.push('/visualizer?menu')}>Launch Visualizer</Button>
             </Grid>
             <Grid item>
               <DialogSelect/>

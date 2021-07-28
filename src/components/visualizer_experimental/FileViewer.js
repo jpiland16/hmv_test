@@ -84,7 +84,8 @@ class FileViewer extends React.Component {
      * 
      */
     FileDisplay(props) {
-        if (props.visualizer.modelLoaded) props.visualizer.getParentElement().style.visibility = "hidden"
+        const visualizerParentElement = props.visualizer.getParentElement()
+        if (visualizerParentElement) visualizerParentElement.style.visibility = "hidden"
         if (!props.fileSelected) {
             return <div style={{marginLeft: props.menuIsOpen ? "6px" : "48px" }}><Alert severity="info">Please select a file to view from the 'Choose File' section of the menu on the left. You can also click "Choose a file" above.</Alert></div>;
         }
@@ -100,7 +101,7 @@ class FileViewer extends React.Component {
             case 'Error':
                 return <props.library.ErrorMessage errorMessage={props.errorMessage} />
             case 'Complete':
-                props.visualizer.getParentElement().style.visibility = "visible" 
+                visualizerParentElement.style.visibility = "visible" 
                 return <div></div>;
             default:
                 return <div style={{marginLeft: props.menuIsOpen ? "6px" : "48px" }}><Alert severity="error">Unable to determine the state "{props.status}" of this file. Try re-uploading.</Alert></div>;
