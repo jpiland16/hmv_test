@@ -34,19 +34,18 @@ class MannequinVisualizer extends ThreeJSVisualizer {
 
     /**
      * Loads a mannequin into the scene, in addition to the cartesian grid.
-     * @param {string} baseURL a root where the server files are stored
      * @override
      */
-    loadModel(baseURL) {
+    loadModel(onProgress) {
 
         
         return new Promise((myResolve, myReject) => {
             
-            this.loadGrid(baseURL).then(() => {
+            this.loadGrid(() => { }).then(() => {
 
                 var loader = new GLTFLoader();
 
-                const modelPath = baseURL + "/files/figures/mannequin.glb";
+                const modelPath = "/files/figures/mannequin.glb";
 
                 loader.load(modelPath, gltf => {
 
@@ -67,11 +66,11 @@ class MannequinVisualizer extends ThreeJSVisualizer {
                             
                             addBones(this.quaternionRoot)
                             this.attachBones(this.quaternionRoot)
-
+                            console.log("DONE LOADING MODEL")
                             myResolve();
 
                         }, function ( xhr ) {
-                            console.log(Math.round(xhr.loaded / xhr.total * 100) + "% loaded")
+                            onProgress(Math.round(xhr.loaded / xhr.total * 100))
                         }, function ( error ) {
                             console.error( error );
                             myReject(error)
@@ -102,7 +101,12 @@ class MannequinVisualizer extends ThreeJSVisualizer {
      * @param {Object<string, THREE.Quaternion>} quaternions - quaternion data
      */
     acceptData(quaternions) {
-        this.moveBone(this.quaternionRoot, quaternions)
+        if (this.modelLoaded) {
+            this.moveBone(this.quaternionRoot, quaternions)
+        } else {
+            console.warn("WARNING: An attempt was made to move the model before it had fully loaded! " + 
+                         "Please check to see that the model-loading promise has been fulfilled first.")
+        }
     }
 
     /**

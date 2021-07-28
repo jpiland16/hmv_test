@@ -8,7 +8,7 @@ export function isFileNameValid(props, fname) {
 export function clickFile(props, id, name) {
     if(isFileNameValid(props, id)) {
         onSelectFileChange(props, id, name);
-        // window.history.replaceState(null, null, "?file=" + id);
+        window.history.replaceState(null, null, "?file=" + id);
     }
 }
 

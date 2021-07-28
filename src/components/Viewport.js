@@ -70,7 +70,6 @@ export default function Viewport(props) {
     const [ openLab, setOpenLab ] = React.useState("");
     const [ fileStatus, setFileStatus ] = React.useState(initialFileStatus);
     const [ modelDownloadProgress, setModelProgress ] = React.useState(0);
-    const [ scenePromise, setScenePromise ] = React.useState(null)
     const [ windowDimensions, setWindowDimensions ] = React.useState(getWindowDimensions());
     
     /*   ---------------------
@@ -86,6 +85,7 @@ export default function Viewport(props) {
     const fileMetadata = React.useRef(null)
     const files = React.useRef([]);
     const outputTypes = React.useRef([]);
+    const scenePromise = React.useRef(null);
 
     const propertySet = {
 
@@ -188,6 +188,7 @@ export default function Viewport(props) {
      *   ------------------- */  
 
     React.useEffect(() => {
+
         if(props.firstLoad) {
             // getMap(propertySet).then(() => {
             // }, () => { });
@@ -197,12 +198,9 @@ export default function Viewport(props) {
                 files.current = propertySet.lastFiles[0];
             }
         }
-    });
-
-    React.useEffect(() => {
 
         if (VERBOSE_OUTPUT) console.log("Running useEffect");
-        setScenePromise(mannequinVisualizer.initialize(propertySet));
+        scenePromise.current = mannequinVisualizer.initialize((percent) => setModelProgress(percent));
 
         getFileList(propertySet);
         

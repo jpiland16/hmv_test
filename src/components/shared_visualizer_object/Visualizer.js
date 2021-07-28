@@ -59,7 +59,7 @@ class BasicVisualizerObject {
         return document.getElementById(this.divId) || null;
     }
 
-    initialize(props) {
+    initialize(onProgress) {
         this.modelLoaded = true;
         return Promise.resolve()
     }
@@ -87,7 +87,7 @@ class ThreeJSVisualizer extends BasicVisualizerObject {
         return document.getElementById(this.divId) || null;
     }
 
-    initialize(props) {
+    initialize(onProgress) {
 
         const MIN_CAMERA_DISTANCE = 1.25;
         const MAX_CAMERA_DISTANCE = 7.5;
@@ -135,7 +135,7 @@ class ThreeJSVisualizer extends BasicVisualizerObject {
 
     
         return new Promise((myResolve, myReject) => {
-            this.loadModel(props.baseURL).then(() => {
+            this.loadModel(onProgress).then(() => {
                 parentElement.appendChild(this.renderer.domElement);
                 this.modelLoaded = true;
                 myResolve();
@@ -153,10 +153,11 @@ class ThreeJSVisualizer extends BasicVisualizerObject {
      * be overridden by classes in the Models.js file to implement 
      * different models. (Right now, it shows just an empty grid.)
      * 
-     * @param {string} baseURL a root where the server files are stored
+     * @param {function} onProgress - function to be called while the model
+     *      is loading
      */
-    loadModel(baseURL) {
-        return this.loadGrid(baseURL)
+    loadModel(onProgress) {
+        return this.loadGrid(onProgress)
     }
 
     /**
@@ -164,6 +165,7 @@ class ThreeJSVisualizer extends BasicVisualizerObject {
      * here; that will depend on the data source and model implementation.
      * This method shoul be overridden by classes in the Models.js file 
      * to implement different models. (Right now, it does nothing.)
+     * 
      * @param {object} obj incoming data
      */
     acceptData(obj) {
@@ -173,12 +175,11 @@ class ThreeJSVisualizer extends BasicVisualizerObject {
     /**
      * Loads a simple cartesian grid (in the XZ plane) into the scene.
      * 
-     * @param {string} baseURL a root where the server files are stored
      */
-    loadGrid(baseURL) {
+    loadGrid(onProgress) {
         var loader = new GLTFLoader();
 
-        const gridPath = baseURL + "/files/figures/grid.glb";
+        const gridPath = "/files/figures/grid.glb";
 
         return new Promise((myResolve, myReject) => {
                 loader.load(gridPath, gltf => { 
@@ -187,7 +188,8 @@ class ThreeJSVisualizer extends BasicVisualizerObject {
                 mesh.material.transparent = true;
                 this.scene.add(gltf.scene) 
                 myResolve();
-            }, (progress) => { }, (error) => myReject(error));
+            }, (progress) => onProgress(progress.loaded / progress.target * 100), 
+            (error) => myReject(error));
         });
     }
 
