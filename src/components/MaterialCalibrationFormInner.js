@@ -6,7 +6,11 @@ import { Grid } from '@material-ui/core';
 import { Input } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
 import { withRouter } from "react-router-dom";
+import { FormControl } from '@material-ui/core';
 import Typography from '@material-ui/core/Typography';
+import { FormLabel } from '@material-ui/core';
+import { RadioGroup, Radio, FormControlLabel } from '@material-ui/core';
+
 
 
 function listWithNewVal(list, index, key, newVal) {
@@ -32,6 +36,11 @@ class MaterialCalibrationForm extends React.Component {
       timeColumn: 0,
       validity: {
         noSensors: false
+      },
+      timeInfo: {
+        type: "timeColumn",
+        columnNum: 0,
+        sampleRate: 25,
       }
     };
   }
@@ -46,6 +55,12 @@ class MaterialCalibrationForm extends React.Component {
     formData.append('displayName', this.state.displayName);
     formData.append('sensorData', JSON.stringify(this.state.sensors));
     formData.append('timeColumn', this.state.timeColumn);
+    formData.append('timeType', this.state.timeInfo.type);
+    formData.append('timeValue', 
+      (this.state.timeInfo.type === 'timeColumn')? 
+        this.state.timeInfo.timeColumn : 
+        this.state.timeInfo.sampleRate
+    );
   
     let formPostReq = new XMLHttpRequest();
     formPostReq.onload = (event => {
@@ -95,8 +110,13 @@ class MaterialCalibrationForm extends React.Component {
   }
 
   handleTimecolChange = (event) => {
+    const key = (this.state.timeInfo.type === "timeColumn")? "columnNum" : "sampleRate";
     this.setState({
-      timeColumn: event.target.value
+      timeColumn: event.target.value,
+      timeInfo: {
+        ...this.state.timeInfo,
+        [key]: event.target.value,
+      }
     });
   }
 
@@ -131,6 +151,10 @@ class MaterialCalibrationForm extends React.Component {
     return null;
   }
 
+  handleTimeChange = ({ target: { value }}) => {
+    this.setState({timeInfo: {...this.state.timeInfo, type: value } });
+  }
+
   render() {
     return (<div>
           <Typography component="h1" variant="h4" align="center">
@@ -153,22 +177,38 @@ class MaterialCalibrationForm extends React.Component {
           />
         </Grid>
         <Grid item xs={12} sm={6}>
-          <TextField
-            fullWidth
-            type="number"
-            label="Time column"
-            onChange={this.handleTimecolChange}
-              InputProps={{
-                inputProps: {
-                  id: "timeColumn",
-                  name: "timeColumn",
-                  defaultValue: "0",
-                  min: "0",
-                  placeholder: "Column number"
-                }
-              }}
-           required
-          />
+          <FormControl>
+            <FormLabel component="legend">Time measurement</FormLabel>
+            <RadioGroup aria-label="time" 
+              value={this.state.timeInfo.type}
+              onChange={this.handleTimeChange}
+            >
+              <FormControlLabel value="timeColumn" control={<Radio/>} 
+                label="Column" 
+              />
+              <FormControlLabel value="sampleRate" control={<Radio/>} 
+                label="Sample rate" 
+              />
+            </RadioGroup>
+            <TextField
+              fullWidth
+              type="number"
+              label={(this.state.timeInfo.type === "timeColumn")? "Time column" : "Sample rate (Hz)"}
+              onChange={this.handleTimecolChange}
+              value = {(this.state.timeInfo.type === "timeColumn")? this.state.timeInfo.columnNum : this.state.timeInfo.sampleRate}
+                InputProps={{
+                  inputProps: {
+                    id: "timeColumn",
+                    name: "timeColumn",
+                    defaultValue: "0",
+                    min: (this.state.timeInfo.type === "timeColumn")? "0" : "1",
+                    placeholder: "Column number"
+                  }
+                }}
+              required
+            />
+          </FormControl>
+
         </Grid>
         </Grid>
         <Typography variant="h6" gutterBottom style={{marginTop:20}}>
@@ -250,7 +290,7 @@ class MaterialCalibrationForm extends React.Component {
       
     </React.Fragment>
     <div>
-      <Button type="submit" color="primary" variant="contained" className="button-submit" disabled={this.state.validity.noSensors}>Submit</Button>
+      <Button onClick={this.handleSubmit} color="primary" variant="contained" className="button-submit" disabled={this.state.validity.noSensors}>Submit</Button>
     </div>
     </div>
      
