@@ -100,7 +100,7 @@ export default function Tutorial() {
        
         <p>For Example 2, you would input:</p>
         
-        <img src={example2} width='60%'/> 
+        <img src={example2} width='50%'/> 
 
         <p>Check that all of the information has been entered correctly, and click the 'Submit" button at the bottom of the form. A landing screen will appear when the file has been successfully submitted. Select the file you want to view first and continue to the visualizer page. Once the file has downloaded, press the play button the in bottom left corner of your screen to begin the animation.</p>
         <p>To view a different upload file, click on the hamburger icon in the top left corner and you will see the file directory. In the user-uploads folder, you will be able to access any additional files you uploaded. These files are only accessible by you but will be deleted from the server after two days.</p>
