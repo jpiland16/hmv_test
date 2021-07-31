@@ -250,7 +250,7 @@ class MaterialCalibrationForm extends React.Component {
       
     </React.Fragment>
     <div>
-      <Button type="submit" color="primary" variant="contained" className="button-submit" disabled={this.state.validity.noSensors}>Submit</Button>
+      <Button type="submit" color="primary" variant="contained" className="button-submit" onClick={this.handleSubmit} disabled={this.state.validity.noSensors}>Submit</Button>
     </div>
     </div>
      
