@@ -4,8 +4,6 @@ import { QuaternionTarget } from './Visualizer';
 import * as THREE from 'three'
 import React from 'react';
 
-const propertyNames = ["x", "y", "z", "w"]
-
 /**
  * @param {Object} props
  * @param {QuaternionTarget} props.quaternionTarget
@@ -13,10 +11,8 @@ const propertyNames = ["x", "y", "z", "w"]
  */
 export default function QuaternionEditor(props) {
 
-    const oldQuaternion = [props.oldQ.x, props.oldQ.y, props.oldQ.z, props.oldQ.w]
-    const [ quaternionValues, setQuaternionValues ] = React.useState([0, 0, 0, 0])
-
-    for (let i = 0; i < 4; i++) quaternionValues[i] = oldQuaternion[i]
+    const oldQ = props.quaternionTarget.current
+    const oldQuaternion = [oldQ.x, oldQ.y, oldQ.z, oldQ.w]
 
     const handleSliderUpdate = (quaternionId, newValue) => {
 
@@ -55,7 +51,6 @@ export default function QuaternionEditor(props) {
         }
 
         props.onChange(newQarray)
-        setQuaternionValues(newQarray)
     }
 
     return (
@@ -63,7 +58,7 @@ export default function QuaternionEditor(props) {
             <Typography>{props.quaternionTarget.shortName}</Typography>
                 <div style={{backgroundColor: "#eeeeee", padding: "6px"}}>
                     {[0, 1, 2, 3].map((myIndex) => 
-                        <QSlider2 key={myIndex} index={myIndex} {...props} sliderValue={quaternionValues[myIndex]}
+                        <QSlider2 key={myIndex} index={myIndex} {...props} sliderValue={oldQuaternion[myIndex]}
                         onChange={(event, newValue) => handleSliderUpdate(myIndex, newValue)}/>)}
                 </div>
         </div>

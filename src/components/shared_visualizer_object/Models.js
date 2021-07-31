@@ -148,6 +148,7 @@ class MannequinVisualizer extends ThreeJSVisualizer {
     reset() {
         const resetQs = this.getResetQuaternions(this.quaternionRoot)
         const resetObj = { }
+        if (this.setQObj) this.setQObj(resetObj)
         for (let i = 0; i < resetQs.length; i++) {
             resetObj[resetQs[i].name] = resetQs[i].default
         }
@@ -214,29 +215,37 @@ class MannequinVisualizer extends ThreeJSVisualizer {
     /**
      * @override
      */
-    getSliders() {
+    getSliders(qVals, setQVals) {
         if (!this.modelLoaded) return null;
-        return this.getAllQSliders(this.quaternionRoot)
+        return this.getAllQSliders(this.quaternionRoot, qVals, setQVals)
     }
 
     /**
      * @param {QuaternionTarget} root
      */
-    getAllQSliders(root) {
+    getAllQSliders(root, qObj, setQObj) {
+
+        this.setQObj = setQObj
+
+        qObj = {...qObj}
+
+        qObj[root.shortName] = root.current
+
         const sliders = [<QuaternionEditor2 
             quaternionTarget={root} 
-            oldQ={root.current}
+            qObj={qObj}
             onChange={newQ => { 
                 if (this.modelLoaded) {
                     const myObj = {}
                     myObj[root.shortName] = new THREE.Quaternion(newQ[0], newQ[1], newQ[2], newQ[3])
                     this.acceptData(myObj)
+                    setQObj(myObj)
                 }
             }}
         />]
 
         for (let i = 0; i < root.children.length; i++) {
-            sliders.push(this.getAllQSliders(root.children[i]))
+            sliders.push(this.getAllQSliders(root.children[i], qObj, setQObj))
         }
 
         return sliders
