@@ -11,13 +11,15 @@ class QuaternionTarget {
      * 
      * @param {string} shortName - the all-caps bone abbreviation   
      * @param {string} boneName - the name of the bone
-     * @param {THREE.Quaternion} defaultQ - default quaternion
+     * @param {THREE.Quaternion} defaultQ - default global quaternion
      * @param {QuaternionTarget} parent - parent bone
      */
     constructor(shortName, boneName, defaultQ = new THREE.Quaternion(), parent = null) {
         this.shortName = shortName
         this.boneName = boneName
         this.default = defaultQ
+        /** the current global orientation of this bone */
+        this.current = new THREE.Quaternion().copy(defaultQ)
         this.parent = parent
         /** @type QuaternionTarget[] */
         this.children = []
@@ -79,6 +81,10 @@ class BasicVisualizerObject {
     }
 
     getTools() {
+        return null;
+    }
+
+    getSliders() {
         return null;
     }
 

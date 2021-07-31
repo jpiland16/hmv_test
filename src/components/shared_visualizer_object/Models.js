@@ -2,12 +2,14 @@ import * as THREE from 'three'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 import { ThreeJSVisualizer, QuaternionTarget } from "./Visualizer";
 import Button from '@material-ui/core/Button'
+import QuaternionEditor2 from './QuaternionEditor2';
 
 class MannequinVisualizer extends ThreeJSVisualizer {
 
     constructor() {
         super()
 
+        this.showSliders = false
         this.quaternionRoot = new QuaternionTarget( "ROOT", "_rootJoint", new THREE.Quaternion(0, 0, 0, 1))
 
         const back = this.quaternionRoot.addChild("BACK", "spine_02", new THREE.Quaternion(-0.06, 0, 0, 0.998) )
@@ -135,13 +137,21 @@ class MannequinVisualizer extends ThreeJSVisualizer {
             nextInversionQ.premultiply(new THREE.Quaternion().copy(this.bones[root.shortName].quaternion).invert())
         }
 
+        // Store the current globalQ (for sliders)
+        if (this.showSliders) root.current.copy(nextInversionQ).invert()
+
         for (let i = 0; i < root.children.length; i++) {
             this.moveBone(root.children[i], quaternions, nextInversionQ)
         }
     }
 
     reset() {
-        this.resetBone(this.quaternionRoot)
+        const resetQs = this.getResetQuaternions(this.quaternionRoot)
+        const resetObj = { }
+        for (let i = 0; i < resetQs.length; i++) {
+            resetObj[resetQs[i].name] = resetQs[i].default
+        }
+        this.acceptData(resetObj)
     }
 
     /**
@@ -149,11 +159,16 @@ class MannequinVisualizer extends ThreeJSVisualizer {
      * 
      * @param {QuaternionTarget} root
      */
-    resetBone(root) {
-        this.bones[root.shortName].quaternion.copy(root.default)
-        for (let i = 0; i < root.children.length; i++) {
-            this.resetBone(root.children[i])
+    getResetQuaternions(root) {
+        const singleResetObj = {
+            name: root.shortName,
+            default: root.default
         }
+        let resetQs = [ singleResetObj ]
+        for (let i = 0; i < root.children.length; i++) {
+            resetQs = resetQs.concat(this.getResetQuaternions(root.children[i]))
+        }
+        return resetQs
     }
 
     /**
@@ -162,7 +177,7 @@ class MannequinVisualizer extends ThreeJSVisualizer {
     getTools() {
         return (<div>
             <Button onClick={() => { if (this.modelLoaded) this.reset()}} style={{opacity: 0.6, margin: "6px"}} color="secondary" size="small" variant="outlined">Reset Model</Button>
-            {["front", "back", "left", "right", "top", "bottom"].map((direction) => <Button key={direction} onClick={() => { if (this.modelLoaded) this.setCamera(direction)}}  style={{opacity: 0.6}} size="small">
+            {["front", "right", "top"].map((direction) => <Button key={direction} onClick={() => { if (this.modelLoaded) this.setCamera(direction)}}  style={{opacity: 0.6}} size="small">
                 {direction}
             </Button>)}
         </div>)
@@ -194,6 +209,37 @@ class MannequinVisualizer extends ThreeJSVisualizer {
         this.camera.position.y = y
         this.camera.position.z = z
         this.controls.update()
+    }
+
+    /**
+     * @override
+     */
+    getSliders() {
+        if (!this.modelLoaded) return null;
+        return this.getAllQSliders(this.quaternionRoot)
+    }
+
+    /**
+     * @param {QuaternionTarget} root
+     */
+    getAllQSliders(root) {
+        const sliders = [<QuaternionEditor2 
+            quaternionTarget={root} 
+            oldQ={root.current}
+            onChange={newQ => { 
+                if (this.modelLoaded) {
+                    const myObj = {}
+                    myObj[root.shortName] = new THREE.Quaternion(newQ[0], newQ[1], newQ[2], newQ[3])
+                    this.acceptData(myObj)
+                }
+            }}
+        />]
+
+        for (let i = 0; i < root.children.length; i++) {
+            sliders.push(this.getAllQSliders(root.children[i]))
+        }
+
+        return sliders
     }
 }
 
