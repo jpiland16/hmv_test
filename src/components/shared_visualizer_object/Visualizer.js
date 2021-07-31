@@ -3,8 +3,6 @@ import * as THREE from 'three'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 
-let initializationCount = 0;
-
 class QuaternionTarget {
     /**
      * Holds a name of a bone in the model, as well as a default quaternion
@@ -38,25 +36,25 @@ class QuaternionTarget {
 
 }
 
-class Visualizer extends React.Component {
-    render() {
-        return <div style={{width: "100%", height: "100%", position: "absolute", top: "0px", left: "0px" }} id={this.props.divId}></div>
-    }
+function Visualizer(props) {
+
+    const thisElementRef = React.useRef(null)
+
+    React.useEffect(() => {
+        props.onChangeWindowDimensions(thisElementRef.current)
+        if (thisElementRef.current.children.length === 0) {
+            thisElementRef.current.appendChild(props.childElement);
+        }
+    })
+
+    return <div style={{width: "100%", height: "100%", position: "absolute", top: "0px", left: "0px" }} ref={thisElementRef}></div>
 }
 
 class BasicVisualizerObject {
 
-    constructor() {
-        this.divId = `VisualizerBaseDiv${initializationCount}`
-        this.component = <Visualizer divId={this.divId}/>;
-        console.log(`This is new VisualizerObject initialization #${initializationCount + 1}.`);
-        initializationCount++;
-
+    constructor(onChangeWindowDimensions = (element) => {}, childElement = null) {
+        this.component = (windowDimensions) => <Visualizer childElement={childElement} windowDimensions={windowDimensions} onChangeWindowDimensions={onChangeWindowDimensions}/>;
         this.modelLoaded = false;
-    }
-
-    getParentElement() {
-        return document.getElementById(this.divId) || null;
     }
 
     initialize(onProgress) {
@@ -70,9 +68,13 @@ class ThreeJSVisualizer extends BasicVisualizerObject {
 
     constructor() {
 
-        super()
+        const renderer = new THREE.WebGLRenderer( { antialias: true } );
 
-        this.renderer = null;
+        super((element) => {
+            this.refreshRendererSize(element)
+        }, renderer.domElement)
+    
+        this.renderer = renderer
         this.camera = null;
         this.scene = null;
         this.controls = null;
@@ -83,33 +85,18 @@ class ThreeJSVisualizer extends BasicVisualizerObject {
         this.quaternionTargets = { }
     }
 
-    getParentElement() {
-        return document.getElementById(this.divId) || null;
-    }
-
     initialize(onProgress) {
 
         const MIN_CAMERA_DISTANCE = 1.25;
         const MAX_CAMERA_DISTANCE = 7.5;
 
-        const parentElement = this.getParentElement(); 
-        parentElement.style.visibility = "hidden"
-    
-        if (parentElement === null) {
-            console.warn("Node is null! No rendering should take place.");
-            return;
-        }
-        
-        const width = parentElement.clientWidth;
-        const height = parentElement.clientHeight;
-
-        this.camera = new THREE.PerspectiveCamera( 45, width / height, 0.01, 500 );
+        // NOTE: the aspect ratio passed here (1) is IRRELEVANT because we 
+        // update it later
+        this.camera = new THREE.PerspectiveCamera( 45, 1, 0.01, 500 );
         this.camera.position.z = 3;
         this.camera.position.y = 0;
 
         this.scene = new THREE.Scene();
-        this.renderer = new THREE.WebGLRenderer( { antialias: true } );
-        this.refreshRendererSize(parentElement);
 
         this.scene.background = new THREE.Color( 0x87cefa);
         this.scene.position.y = -1;
@@ -132,11 +119,9 @@ class ThreeJSVisualizer extends BasicVisualizerObject {
         }
 
         animate();
-
     
         return new Promise((myResolve, myReject) => {
             this.loadModel(onProgress).then(() => {
-                parentElement.appendChild(this.renderer.domElement);
                 this.modelLoaded = true;
                 myResolve();
             }, () => {
@@ -193,14 +178,7 @@ class ThreeJSVisualizer extends BasicVisualizerObject {
         });
     }
 
-    refreshRendererSize() {
-        const parentElement = this.getParentElement();
-        
-        if (parentElement == null) {
-            console.log("Unable to modify the scene's size because no parent element exists.");
-            return;
-        }
-
+    refreshRendererSize(parentElement) {
         this.renderer.setSize( parentElement.offsetWidth, parentElement.offsetHeight );
         this.camera.aspect = parentElement.offsetWidth / parentElement.offsetHeight;
         this.camera.updateProjectionMatrix();

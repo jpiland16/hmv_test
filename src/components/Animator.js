@@ -60,7 +60,7 @@ export default function Animator(props) {
             newQs[boneName] = targetQ;
         }
         
-        props.visualizer.acceptData(newQs);
+        if (props.visualizer.modelLoaded) props.visualizer.acceptData(newQs);
     }
 
     React.useEffect(() => {

@@ -199,17 +199,23 @@ export function subscribeToFile(props, mySelectedFile) {
             socket.disconnect();
             props.setFileStatus({ status: "Loading models" });
             // Note that this awaitScene dependence means that subscribeToFile will not work if we haven't yet rendered the viewport!
-            props.awaitScene.current.then( () => {
-                    if (props.selectedFile.displayName === "Loading...") {
-                        // Then this load must have been triggered from the initial load of the page, not from the user clicking the file tree
-                        props.setSelectedFile({
-                            fileName: props.selectedFile.fileName,
-                            displayName: props.fileMetadata.current.displayName
-                        })
-                    } 
-                    props.setFileStatus({ status: "Complete" }) // Determining the next stage by completing the previous stage forces sequential loading. Try using progress flags.
-                }
-            );
+            try {
+                    props.awaitScene.current.then( () => {
+                        if (props.selectedFile.displayName === "Loading...") {
+                            // Then this load must have been triggered from the initial load of the page, not from the user clicking the file tree
+                            props.setSelectedFile({
+                                fileName: props.selectedFile.fileName,
+                                displayName: props.fileMetadata.current.displayName
+                            })
+                        } 
+                        props.setFileStatus({ status: "Complete" }) // Determining the next stage by completing the previous stage forces sequential loading. Try using progress flags.
+                    }
+                );
+            } catch (error) {
+                props.setFileStatus({status: "Error", message: "Unexpected scene-loading issue. Check console.log for details."})
+                console.error(error)
+            }
+            
         })
         .catch((error) => {
             props.setFileStatus({ status: "Error", message: "The file could not be retrieved from the server. Try refreshing or resubmitting." });
@@ -220,7 +226,7 @@ export function subscribeToFile(props, mySelectedFile) {
 
     socket.on("File missing", () => {
         console.log("File doesn't exist.");
-        props.setFileStatus({ status: "Error", message: "The requested file doesn't exist. Try reselecting the file or resubmitting." });
+        props.setFileStatus({ status: "Error", message: "The requested file doesn't exist or is of an invalid format. Try reselecting the file or resubmitting." });
         socket.disconnect();
     })
 

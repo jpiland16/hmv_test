@@ -206,8 +206,6 @@ export default function Viewport(props) {
         
         function handleResize() {
             setWindowDimensions(getWindowDimensions());
-            // TODO: refresh size of all visualizers
-            mannequinVisualizer.refreshRendererSize();
         }
         
         if (selectedFile.fileName !== '' && isFileNameValid(propertySet, selectedFile.fileName)) {
@@ -248,7 +246,6 @@ export default function Viewport(props) {
             <Menu {...propertySet} />
             <TopActionBar {...propertySet} />
             <FileViewer targetFile={""} {...propertySet}/>
-            {mannequinVisualizer.component}
             <CardSet {...propertySet} />
             <PlayBar {...propertySet} disabled={!fileStatus || fileStatus.status !== "Complete"} />
             <Animator {...propertySet} />
