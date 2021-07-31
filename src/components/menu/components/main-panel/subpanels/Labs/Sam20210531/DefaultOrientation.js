@@ -78,12 +78,13 @@ export default function GeneratedData(props) {
     }
 
     React.useEffect(() => {
-        props.useGlobalQs.current = USE_GLOBAL;
         if (props.timeSliderValue !== props.lastIndex.current) { // We need to update the model, because the timeSlider has moved
+            const dataObj = { }
             boneList.forEach(bone => {
                 props.lastIndex.current = props.timeSliderValue;
-                props.batchUpdate(bone, [0, 0, 0, 1]);
-            })
+                dataObj[bone] = new THREE.Quaternion(0, 0, 0, 1)
+            })  
+            props.visualizer.acceptData(dataObj)
         }
     });
 

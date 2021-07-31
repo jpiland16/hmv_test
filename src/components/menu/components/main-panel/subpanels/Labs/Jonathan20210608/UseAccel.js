@@ -46,9 +46,7 @@ export default function GeneratedData(props) {
             }]
 
             let x = new XMLHttpRequest();
-            x.open("GET", window.location.href.substring(0, 22) === "http://localhost:3000/" ? 
-                "https://raw.githubusercontent.com/jpiland16/hmv_test/master/files/demo/S4-ADL4.dat" : 
-                "/files/demo/S4-ADL4.dat");
+            x.open("GET", "/files/demo/demo-anyname/quaternion_data.dat");
 
             x.onload = () => {
                 let inputArray = x.responseText.split("\n");
@@ -59,7 +57,7 @@ export default function GeneratedData(props) {
                 }
 
                 props.data.current = linesArray;
-                props.resetModel();
+                props.visualizer.reset();
                 outgoingRequest = false;
             }
 
@@ -78,12 +76,13 @@ export default function GeneratedData(props) {
     }
 
     React.useEffect(() => {
-        props.useGlobalQs.current = USE_GLOBAL;
+        
         if (props.timeSliderValue !== props.lastIndex.current && props.data.current.length > 0) { // We need to update the model, because the timeSlider has moved
             let boneNames = Object.getOwnPropertyNames(boneList);
 
             props.lastIndex.current = props.timeSliderValue;
             
+            const dataObj = { }
             for (let i = 0; i < boneNames.length; i++) {
                 let columnStart = boneList[boneNames[i]];
 
@@ -106,7 +105,7 @@ export default function GeneratedData(props) {
 
                 targetQ.premultiply(new THREE.Quaternion(s, 0, 0, -s)) //rotates body to stand upright
 
-                props.batchUpdate(boneNames[i], [targetQ.x, targetQ.y, targetQ.z, targetQ.w]);
+                dataObj[boneNames[i]] = targetQ
 
                 if (i == 0) { // ROOT
                     
@@ -149,10 +148,10 @@ export default function GeneratedData(props) {
                     let lowerLeftLegElevationQ = new THREE.Quaternion(multiply * Math.sin(lowerRightLegElevationAngle/2), 0, 0, Math.cos(lowerRightLegElevationAngle / 2))
                     lowerLeftLegQuaternion.multiply(lowerLeftLegElevationQ)
 
-                    props.batchUpdate("LUL", [upperLeftLegQuaternion.x, upperLeftLegQuaternion.y, upperLeftLegQuaternion.z, upperLeftLegQuaternion.w]);
-                    props.batchUpdate("RUL", [upperRightLegQuaternion.x, upperRightLegQuaternion.y, upperRightLegQuaternion.z, upperRightLegQuaternion.w]);
-                    props.batchUpdate("LLL", [lowerLeftLegQuaternion.x, lowerLeftLegQuaternion.y, lowerLeftLegQuaternion.z, lowerLeftLegQuaternion.w]);
-                    props.batchUpdate("RLL", [lowerRightLegQuaternion.x, lowerRightLegQuaternion.y, lowerRightLegQuaternion.z, lowerRightLegQuaternion.w]);
+                    dataObj["LUL"] = upperLeftLegQuaternion
+                    dataObj["RUL"] = upperRightLegQuaternion
+                    dataObj["LLL"] = lowerLeftLegQuaternion
+                    dataObj["RLL"] = lowerRightLegQuaternion
 
                     // Adjust position
 
@@ -162,11 +161,13 @@ export default function GeneratedData(props) {
 
                     let ROOT_MIDHEIGHT = 90
 
-                    props.bones.ROOT.position.x = ROOT_MIDHEIGHT *  ( - newVector.x);
-                    props.bones.ROOT.position.y = ROOT_MIDHEIGHT * (1 - newVector.y);
-                    props.bones.ROOT.position.z = ROOT_MIDHEIGHT *  ( - newVector.z);
+                    props.visualizer.bones.ROOT.position.x = ROOT_MIDHEIGHT *  ( - newVector.x);
+                    props.visualizer.bones.ROOT.position.y = ROOT_MIDHEIGHT * (1 - newVector.y);
+                    props.visualizer.bones.ROOT.position.z = ROOT_MIDHEIGHT *  ( - newVector.z);
                 
                 }
+
+                props.visualizer.acceptData(dataObj)
 
             }
 

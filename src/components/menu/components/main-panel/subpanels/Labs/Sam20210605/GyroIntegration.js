@@ -146,7 +146,7 @@ export default function GeneratedData(props) {
     }
 
     React.useEffect(() => {
-        props.useGlobalQs.current = USE_GLOBAL;
+        
         if (props.timeSliderValue !== props.lastIndex.current && props.data.current.length > 0) { // We need to update the model, because the timeSlider has moved
             let clockwise_down_quat = new THREE.Quaternion();
             clockwise_down_quat.setFromAxisAngle(new THREE.Vector3(0, 0, -1), Math.PI/2);
@@ -155,15 +155,19 @@ export default function GeneratedData(props) {
             let align_arm_quat = new THREE.Quaternion();
             align_arm_quat.multiplyQuaternions(set_y_up_quat, clockwise_down_quat);
 
+            const dataObj = { }
+
             for (let i = 0; i < LIMBS.length; i ++) {
                 //This quaternion is the one that we want to get from gyro values.
                 let lineQuat = (quatStorage[i][props.timeSliderValue]);
                 let transformed_q = new THREE.Quaternion().multiplyQuaternions(quat_o_t, lineQuat);
                 let final_q = new THREE.Quaternion().multiplyQuaternions(transformed_q, align_arm_quat); //FIRST align the arm, THEN apply the movement
                 let q = final_q;
-                props.batchUpdate(LIMBS[i].boneName, [q.x, q.y, q.z, q.w]);
+                dataObj[LIMBS[i].boneName] = q;
                 props.lastIndex.current = props.timeSliderValue;
             }
+
+            props.visualizer.acceptData(dataObj)
         }
     });
 

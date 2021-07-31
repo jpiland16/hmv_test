@@ -98,8 +98,11 @@ class ThreeJSVisualizer extends BasicVisualizerObject {
 
         super((element) => {
             if (this.modelLoaded) this.refreshRendererSize(element)
-            else this.element = element // Dangerous to hold on to, but we need to refresh the renderer size in dev mode (not the React kind, our kind)
-                                        // Be sure to delete immediately after use (check the returned promise at the end of this method)
+            else { 
+                this.element = element // Dangerous to hold on to, but we need to refresh the renderer size in dev mode (not the React kind, our kind)
+                                       // Be sure to delete immediately after use (check the returned promise at the end of this method)
+                element.style.visibility = "hidden"
+            }
         }, renderer.domElement)
     
         this.renderer = renderer
@@ -153,6 +156,7 @@ class ThreeJSVisualizer extends BasicVisualizerObject {
                 this.modelLoaded = true;
                 if (this.element) {
                     this.refreshRendererSize(this.element)
+                    this.element.style.visibility = "visible"
                     this.element = null;
                 }
                 myResolve();
