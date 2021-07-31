@@ -62,6 +62,26 @@ class BasicVisualizerObject {
         return Promise.resolve()
     }
 
+    /**
+     * Accept incoming data from a file. No format or data type is specified
+     * here; that will depend on the data source and model implementation.
+     * This method shoul be overridden by classes in the Models.js file 
+     * to implement different models. (Right now, it does nothing.)
+     * 
+     * @param {object} obj incoming data
+     */
+    acceptData(obj) {
+
+    }
+
+    reset() {
+
+    }
+
+    getTools() {
+        return null;
+    }
+
 }
 
 class ThreeJSVisualizer extends BasicVisualizerObject {
@@ -71,7 +91,7 @@ class ThreeJSVisualizer extends BasicVisualizerObject {
         const renderer = new THREE.WebGLRenderer( { antialias: true } );
 
         super((element) => {
-            this.refreshRendererSize(element)
+            if (this.modelLoaded) this.refreshRendererSize(element)
         }, renderer.domElement)
     
         this.renderer = renderer
@@ -143,18 +163,6 @@ class ThreeJSVisualizer extends BasicVisualizerObject {
      */
     loadModel(onProgress) {
         return this.loadGrid(onProgress)
-    }
-
-    /**
-     * Accept incoming data from a file. No format or data type is specified
-     * here; that will depend on the data source and model implementation.
-     * This method shoul be overridden by classes in the Models.js file 
-     * to implement different models. (Right now, it does nothing.)
-     * 
-     * @param {object} obj incoming data
-     */
-    acceptData(obj) {
-
     }
 
     /**

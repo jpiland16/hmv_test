@@ -1,6 +1,7 @@
 import * as THREE from 'three'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 import { ThreeJSVisualizer, QuaternionTarget } from "./Visualizer";
+import Button from '@material-ui/core/Button'
 
 class MannequinVisualizer extends ThreeJSVisualizer {
 
@@ -100,6 +101,7 @@ class MannequinVisualizer extends ThreeJSVisualizer {
      * Uses the incoming data to move the mannequin.
      * 
      * @param {Object<string, THREE.Quaternion>} quaternions - quaternion data
+     * @override
      */
     acceptData(quaternions) {
         if (this.modelLoaded) {
@@ -136,6 +138,62 @@ class MannequinVisualizer extends ThreeJSVisualizer {
         for (let i = 0; i < root.children.length; i++) {
             this.moveBone(root.children[i], quaternions, nextInversionQ)
         }
+    }
+
+    reset() {
+        this.resetBone(this.quaternionRoot)
+    }
+
+    /**
+     * Reset a single bone, and recursively reset all of that bone's children.
+     * 
+     * @param {QuaternionTarget} root
+     */
+    resetBone(root) {
+        this.bones[root.shortName].quaternion.copy(root.default)
+        for (let i = 0; i < root.children.length; i++) {
+            this.resetBone(root.children[i])
+        }
+    }
+
+    /**
+     * @override
+     */
+    getTools() {
+        return (<div>
+            <Button onClick={() => { if (this.modelLoaded) this.reset()}} style={{opacity: 0.6, margin: "6px"}} color="secondary" size="small" variant="outlined">Reset Model</Button>
+            {["front", "back", "left", "right", "top", "bottom"].map((direction) => <Button key={direction} onClick={() => { if (this.modelLoaded) this.setCamera(direction)}}  style={{opacity: 0.6}} size="small">
+                {direction}
+            </Button>)}
+        </div>)
+    }
+
+    setCamera(positionDescription) {
+        let x, y, z;
+        switch (positionDescription) {
+            case "top":
+                x = 0; y = 3; z = 0;
+                break;
+            case "bottom":
+                x = 0; y = -3; z = 0;
+                break;
+            case "right":
+                x = 3; y = 0; z = 0;
+                break;
+            case "left":
+                x = -3; y = 0; z = 0;
+                break;
+            case "back":
+                x = 0; y = 0; z = -3;
+                break;
+            case "front":
+            default:
+                x = 0; y = 0; z = 3;
+        }
+        this.camera.position.x = x
+        this.camera.position.y = y
+        this.camera.position.z = z
+        this.controls.update()
     }
 }
 

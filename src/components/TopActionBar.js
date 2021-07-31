@@ -33,7 +33,7 @@ export default function TopActionBar(props) {
                             //if(window.confirm("Are you sure you want to close the file " + props.selectedFile + "?")) 
                                 window.history.replaceState(null, null, "?") || props.onSelectFileChange("", "None")
                         }
-            }} size="small">
+            }} size="small" variant="outlined">
                 { props.selectedFile.fileName === "" ?
                     <div style={{display: "flex", alignItems: "center"}}>
                         <FolderOpenIcon style={{marginRight: "6px"}}/>
@@ -45,6 +45,7 @@ export default function TopActionBar(props) {
                     </div>
                 }    
             </Button>
+            {props.visualizer.getTools()}
         </div>
     )
 }

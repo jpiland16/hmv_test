@@ -38,6 +38,7 @@ export function onSelectFileChange(props, mySelectedFile, myDisplayName) {
     props.data.current = [];
     props.setTimeSliderValue(0);
     props.lineNumberRef.current = 0;
+    if (props.visualizer.modelLoaded) props.visualizer.reset()
     if (props.verbose) console.log("Selected file has been changed to " + mySelectedFile + " (re-printed below)");
     if (props.verbose) console.log(mySelectedFile);
     if (props.verbose) console.log("Display name: " + myDisplayName);

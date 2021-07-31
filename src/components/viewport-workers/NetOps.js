@@ -205,7 +205,7 @@ export function subscribeToFile(props, mySelectedFile) {
                             // Then this load must have been triggered from the initial load of the page, not from the user clicking the file tree
                             props.setSelectedFile({
                                 fileName: props.selectedFile.fileName,
-                                displayName: props.fileMetadata.current.displayName
+                                displayName: props.fileMetadata.current.displayName // Pull the display name from the metadata file (rather than from the file list)
                             })
                         } 
                         props.setFileStatus({ status: "Complete" }) // Determining the next stage by completing the previous stage forces sequential loading. Try using progress flags.
