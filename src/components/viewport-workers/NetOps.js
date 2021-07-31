@@ -208,6 +208,8 @@ export function subscribeToFile(props, mySelectedFile) {
                                 displayName: props.fileMetadata.current.displayName // Pull the display name from the metadata file (rather than from the file list)
                             })
                         } 
+                        
+                        props.setOpenLab("")
                         props.setFileStatus({ status: "Complete" }) // Determining the next stage by completing the previous stage forces sequential loading. Try using progress flags.
                     }
                 );

@@ -16,23 +16,22 @@ export default function LabOpener(props) {
                     } else {
                         props.setOpenLab(props.title);  
                     }
+                    props.onSelectFileChange("", "None")                        // Close any open file
                     props.data.current = [];                                    // Allow either refresh or disable
-                    props.outputTypes.current = []                              // Clear all graphs
                     props.setTimeSliderValue(0);                                // Move to start
                     props.lineNumberRef.current = 0;                            // (same as above)
-                    props.setUseRipple(true)                                    // For the initialization of the model
-                    props.resetModel()                                          // Same as above
+                    props.visualizer.reset()                                    // Same as above
                     if (props.playTimerId.current !== 0) {                      // Stop playback if it is occuring
                             window.clearInterval(props.playTimerId.current);   
                             props.playTimerId.current = 0;
                             props.setPlaying(false);
                     } 
-                    if (props.getCamera()) {
-                        props.getCamera().position.x = 0;
-                        props.getCamera().position.y = 0;
-                        props.getCamera().position.z = 3;
-                        props.getCamera().up.set(0, 1, 0);
-                        props.getControls().update();
+                    if (props.visualizer.camera) {
+                        props.visualizer.camera.position.x = 0;
+                        props.visualizer.camera.position.y = 0;
+                        props.visualizer.camera.position.z = 3;
+                        props.visualizer.camera.up.set(0, 1, 0);
+                        props.visualizer.controls.update();
                     }                          
                 }}>
                     <IconButton>

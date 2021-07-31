@@ -43,10 +43,10 @@ function Visualizer(props) {
     const thisElementRef = React.useRef(null)
 
     React.useEffect(() => {
-        props.onChangeWindowDimensions(thisElementRef.current)
         if (thisElementRef.current.children.length === 0) {
             thisElementRef.current.appendChild(props.childElement);
         }
+        props.onChangeWindowDimensions(thisElementRef.current)
     })
 
     return <div style={{width: "100%", height: "100%", position: "absolute", top: "0px", left: "0px" }} ref={thisElementRef}></div>
@@ -67,7 +67,7 @@ class BasicVisualizerObject {
     /**
      * Accept incoming data from a file. No format or data type is specified
      * here; that will depend on the data source and model implementation.
-     * This method shoul be overridden by classes in the Models.js file 
+     * This method should be overridden by classes in the Models.js file 
      * to implement different models. (Right now, it does nothing.)
      * 
      * @param {object} obj incoming data
@@ -98,6 +98,8 @@ class ThreeJSVisualizer extends BasicVisualizerObject {
 
         super((element) => {
             if (this.modelLoaded) this.refreshRendererSize(element)
+            else this.element = element // Dangerous to hold on to, but we need to refresh the renderer size in dev mode (not the React kind, our kind)
+                                        // Be sure to delete immediately after use (check the returned promise at the end of this method)
         }, renderer.domElement)
     
         this.renderer = renderer
@@ -149,6 +151,10 @@ class ThreeJSVisualizer extends BasicVisualizerObject {
         return new Promise((myResolve, myReject) => {
             this.loadModel(onProgress).then(() => {
                 this.modelLoaded = true;
+                if (this.element) {
+                    this.refreshRendererSize(this.element)
+                    this.element = null;
+                }
                 myResolve();
             }, () => {
                 myReject();

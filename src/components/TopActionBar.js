@@ -45,7 +45,7 @@ export default function TopActionBar(props) {
                     </div>
                 }    
             </Button>
-            {props.visualizer.getTools()}
+            {props.selectedFile.fileName !== "" && props.visualizer.getTools()}
         </div>
     )
 }

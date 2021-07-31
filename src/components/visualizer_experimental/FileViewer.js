@@ -84,8 +84,10 @@ class FileViewer extends React.Component {
      * 
      */
     FileDisplay(props) {
-        if (!props.fileSelected) {
+        if (!props.fileSelected && !props.dev) {
             return <div style={{marginLeft: props.menuIsOpen ? "6px" : "48px" }}><Alert severity="info">Please select a file to view from the 'Choose File' section of the menu on the left. You can also click "Choose a file" above.</Alert></div>;
+        } else if (props.dev) {
+            return props.visualizer.component(props.windowDimensions);
         }
         switch (props.status) {
             case 'Contacting server':
@@ -186,6 +188,7 @@ class FileViewer extends React.Component {
                     menuIsOpen={this.props.menuIsOpen}
                     visualizer={this.props.visualizer}
                     windowDimensions={this.props.windowDimensions}
+                    dev={this.props.dev}
                 />
             </div>
         )

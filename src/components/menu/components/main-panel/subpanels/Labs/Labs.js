@@ -21,18 +21,15 @@ export default function Labs(props) {
     return (
         <div style={{display: props.display, marginTop: "12px"}}>
 
-            <Tooltip title={props.playTimerId.current !== 0 ? "Cannot reset model while viewing pre-recorded data. Pause playback first, then try again." : ""} >
-                <div>
-                    <Button style={{marginLeft: "6px", marginBottom: "12px"}}
-                        color="secondary"
-                        variant="contained"
-                        disabled={props.playTimerId.current !== 0}
-                        onClick={() => props.resetModel()}
-                    >
-                        Reset model
-                    </Button>
-                </div>
-            </Tooltip>
+            <div>
+                <Button style={{marginLeft: "6px", marginBottom: "12px"}}
+                    color="secondary"
+                    variant="contained"
+                    onClick={() => props.visualizer.reset()}
+                >
+                    Reset model
+                </Button>
+            </div>
 
             <LabOpener title="Sam 5/21/2021" {...props}>
                 <Sam20210521 {...props}/>

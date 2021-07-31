@@ -93,10 +93,11 @@ export default function GeneratedData(props) {
     }
 
     React.useEffect(() => {
-        props.useGlobalQs.current = USE_GLOBAL;
+        const dataObj = { }
         if (props.timeSliderValue !== props.lastIndex.current) { // We need to update the model, because the timeSlider has moved
             let q = getQuaternionFromLine(props.timeSliderValue);
-            props.batchUpdate(TARGET_BONE, [q.x, q.y, q.z, q.w]);
+            dataObj[TARGET_BONE] = new THREE.Quaternion(q.x, q.y, q.z, q.w);
+            props.visualizer.acceptData(dataObj)
             props.lastIndex.current = props.timeSliderValue;
         }
     });

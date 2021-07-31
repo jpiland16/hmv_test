@@ -247,7 +247,7 @@ export default function Viewport(props) {
             <TopActionBar {...propertySet} />
             <FileViewer targetFile={""} {...propertySet}/>
             <CardSet {...propertySet} />
-            <PlayBar {...propertySet} disabled={!fileStatus || fileStatus.status !== "Complete"} />
+            <PlayBar {...propertySet} disabled={(!fileStatus || fileStatus.status !== "Complete" || selectedFile.fileName === "") && openLab === ""} />
             <Animator {...propertySet} />
         </div>
     )
