@@ -206,9 +206,9 @@ class MannequinVisualizer extends ThreeJSVisualizer {
             default:
                 x = 0; y = 0; z = 3;
         }
-        this.camera.position.x = x
-        this.camera.position.y = y
-        this.camera.position.z = z
+
+        this.controls.reset()
+        this.camera.position.set(x, y, z)
         this.controls.update()
     }
 
