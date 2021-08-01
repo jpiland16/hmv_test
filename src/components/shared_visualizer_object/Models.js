@@ -231,7 +231,7 @@ class MannequinVisualizer extends ThreeJSVisualizer {
 
         qObj[root.shortName] = root.current
 
-        const sliders = [<QuaternionEditor2 
+        let sliders = [<QuaternionEditor2 
             quaternionTarget={root} 
             qObj={qObj}
             onChange={newQ => { 
@@ -245,7 +245,7 @@ class MannequinVisualizer extends ThreeJSVisualizer {
         />]
 
         for (let i = 0; i < root.children.length; i++) {
-            sliders.push(this.getAllQSliders(root.children[i], qObj, setQObj))
+            sliders = sliders.concat(this.getAllQSliders(root.children[i], qObj, setQObj))
         }
 
         return sliders
