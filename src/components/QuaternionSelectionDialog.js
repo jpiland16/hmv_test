@@ -91,7 +91,7 @@ export default function DialogSelect(props) {
             fullWidth
             required
             label="Local transform quaternion (X, Y, Z, W)"
-            value={quaternionToString(props.localTransformQuaternion)}
+            value={props.localTransformQuaternion ? quaternionToString(props.localTransformQuaternion) : "click here to select"}
             onClick={handleClickOpen}
             InputProps={{
             inputProps: {
@@ -104,8 +104,11 @@ export default function DialogSelect(props) {
         <Dialog disableBackdropClick disableEscapeKeyDown open={open} fullWidth maxWidth="lg">
         <DialogTitle>Edit local transform quaternion</DialogTitle>
         <DialogContent>
-            <div style={{height: "50vh", paddingRight: "20px", width: "calc(50% - 20px)", float: "left", overflowY: "scroll"}} ref={elementRef}>
-                {props.visualizer.modelLoaded && thisSlider()}
+            <div style={{height: "50vh", paddingRight: "20px", width: "calc(50% - 20px)", float: "left"}} ref={elementRef}>
+                <div style={{width: "100%"}}>
+                    {props.visualizer.modelLoaded && thisSlider()}
+                </div>
+                {props.visualizer.getTools()}
             </div>
             <div style={{height: "50vh", width: "50%", float: "left", position: "relative"}} ref={elementRef}>
                 {props.visualizer.component(windowDimensions)}

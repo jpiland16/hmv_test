@@ -34,7 +34,7 @@ class MaterialCalibrationForm extends React.Component {
       name: "",
       boneOptions: ["RUA", "RLA", "LUA", "LLA", "BACK", "ROOT"],
       typeOptions: ["Quaternion", "Accel+Gyro+Magnet"],
-      sensors: [{ dataType: "Quaternion", bone: "RUA", startColumn: "", localTransformQuaternion: new THREE.Quaternion() }],
+      sensors: [{ dataType: "Quaternion", bone: "RUA", startColumn: "", localTransformQuaternion: null }],
       timeColumn: 0,
       validity: {
         noSensors: false
@@ -44,7 +44,6 @@ class MaterialCalibrationForm extends React.Component {
   }
 
   setQuaternions = (newQObj) => {
-    console.log(newQObj)
     this.setState({
       modelQuaternions: newQObj
     });
@@ -99,7 +98,7 @@ class MaterialCalibrationForm extends React.Component {
   addSensor = () => {
     this.setState({
       displayName: "",
-      sensors: this.state.sensors.concat([{ dataType: "Quaternion", bone: "RUA", startColumn: "", localTransformQuaternion: new THREE.Quaternion() }]),
+      sensors: this.state.sensors.concat([{ dataType: "Quaternion", bone: "RUA", startColumn: "", localTransformQuaternion: null }]),
       validity: {
         noSensors: (this.state.sensors.length+1 < 1)
       }
