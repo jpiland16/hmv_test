@@ -72,7 +72,8 @@ export default function Animator(props) {
         }];
 
         if (props.timeSliderValue !== props.lastIndex.current // We need to update the model, because the timeSlider has moved
-                && props.data.current.length > 0 && props.fileMetadata.current !== null) { // Make sure we have the data we need
+                && props.data.current.length > 0 && props.fileMetadata.current !== null // Make sure we have the data we need
+                && props.fileStatus.status !== "Loading file") { // Make sure we aren't in the process of loading data
             
             props.lastIndex.current = props.timeSliderValue;
             applyDataQuaternions(props, props.timeSliderValue);
