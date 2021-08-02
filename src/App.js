@@ -2,9 +2,10 @@ import Viewport from "./components/Viewport"
 import Welcome from "./components/home-screen/WelcomeScreen"
 import Tutorial from "./components/tutorial/TutorialScreen";
 import './App.css';
-import MaterialCalibrationForm from "./components/MaterialCalibrationForm";
+import MaterialCalibrationForm from "./components/UploadScreen";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import React from 'react';
+import UploadScreen from "./components/UploadScreen";
 
 export default function App() {
 
@@ -26,7 +27,7 @@ export default function App() {
                 <Welcome setFirstLoad={setFirstLoad}/>
             </Route>
             <Route exact path="/upload">
-                <MaterialCalibrationForm/>
+                <UploadScreen/>
             </Route>
             <Route>
                 <div>
