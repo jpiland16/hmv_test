@@ -1,1 +1,30 @@
 # Table of Contents for Documentation
+
+- Tour of the Website
+    - Index.js - Renders React App
+        - App.js - Contains the browser router for the the main pages of the website most importantly:
+            - HomeScreen.js (needs page)
+                - TitleBar.js (needs page)
+                - HomeAnimation.js (needs page)
+                - DialogSelect.js (possibly needs page)
+            - Viewport.js
+                - HomeButton.js
+                - Menu.js
+                - TopActionBar.js
+                - FileViewer.js
+                - CardSet.js
+                - PlayBar.js
+                - Animator.js
+                    - BasicVisualizerObject
+            - UploadScreen.js
+                - TitleBar.js (needs page)
+                - MaterialsCalibrationForm.js
+                    - QuaternionSelectionDialog.js
+                    - Form File Processor.js
+                    - multi_sensor_fuser_obj.py
+            - NotFound.js
+    - Server.js
+        -HTTPS
+- Side Branches
+- Current Bugs
+- Ideas for Improvement
