@@ -82,8 +82,9 @@ export default function ServerSideProcessing(props) {
     }
 
     React.useEffect(() => {
-        props.useGlobalQs.current = USE_GLOBAL;
+        
         if (props.timeSliderValue !== props.lastIndex.current && quatStorage.length > 0) { // We need to update the model, because the timeSlider has moved
+            const dataObj = { }
             let q1 = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0,0,1), -Math.PI/2);
             let q2 = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0,1,0), Math.PI);
 
@@ -96,8 +97,9 @@ export default function ServerSideProcessing(props) {
             final_q.multiply(lineQuat);
             final_q.multiply(q_post1);
             let q = final_q;
-            props.batchUpdate("LUA", [q.x, q.y, q.z, q.w]);
+            dataObj.LUA = q
             props.lastIndex.current = props.timeSliderValue;
+            props.visualizer.acceptData(dataObj)
         }
     });
 

@@ -1,10 +1,11 @@
 import React from 'react'
 import { Alert } from '@material-ui/lab'
 import { withRouter } from "react-router-dom";
-import Visualizer from './Visualizer';
 import CircularProgress from '@material-ui/core/CircularProgress'
-import PlayBarAlt from '../PlayBarAlt';
-import TopActionBar from '../TopActionBar';
+import LinearProgress from '@material-ui/core/LinearProgress'
+
+// For JSDoc
+import { BasicVisualizerObject } from '../shared_visualizer_object/Visualizer';
 
 import './FileViewer.css';
 
@@ -19,12 +20,12 @@ class FileViewer extends React.Component {
     }
 
     componentDidMount() {
-        console.log("Target file: ");
-        console.log(this.props.targetFile);
+        if (this.props.verbose) console.log("Target file: ");
+        if (this.props.verbose) console.log(this.props.targetFile);
     }
 
     LoadingMessage(props) {
-        console.log("Loaded: " + props.loaded);
+        if (this.props.verbose) console.log("Loaded: " + props.loaded);
         if (props.loaded) {
             return null;
         }
@@ -34,11 +35,9 @@ class FileViewer extends React.Component {
     LoadingModelMessage(props) {
         return (
             <div className='loading'>
-                <CircularProgress variant="determinate" value={props.progress}></CircularProgress>
+                <LinearProgress variant="determinate" value={props.progress} style={{width: "90%", margin: "auto"}}></LinearProgress>
                 <br/>
-                {props.progress}%
-                <br/>
-                Loading the model...
+                Loading the model... ({props.progress}%)
             </div>
         )
     }
@@ -66,11 +65,9 @@ class FileViewer extends React.Component {
     LoadingFileMessage(props) {
         return (
             <div className='loading'>
-                <CircularProgress variant="determinate" value={props.progress}></CircularProgress>
+                <LinearProgress variant="determinate" value={props.progress} style={{width: "90%", margin: "auto"}}></LinearProgress>
                 <br/>
-                {props.progress}%
-                <br/>
-                Loading the data file...
+                Loading the data file... ({props.progress}%)
             </div>
         )
     }
@@ -81,9 +78,16 @@ class FileViewer extends React.Component {
 
     // TODO: Split this up into multiple files or use some other method to (1) separate the outer and inner choice and (2) prevent
     // importing 'library'
+    /**
+     * @param props {Object}
+     * @param props.visualizer {BasicVisualizerObject}
+     * 
+     */
     FileDisplay(props) {
-        if (!props.fileSelected) {
+        if (!props.fileSelected && !props.dev) {
             return <div style={{marginLeft: props.menuIsOpen ? "6px" : "48px" }}><Alert severity="info">Please select a file to view from the 'Choose File' section of the menu on the left. You can also click "Choose a file" above.</Alert></div>;
+        } else if (props.dev) {
+            return props.visualizer.component(props.windowDimensions);
         }
         switch (props.status) {
             case 'Contacting server':
@@ -97,9 +101,10 @@ class FileViewer extends React.Component {
             case 'Error':
                 return <props.library.ErrorMessage errorMessage={props.errorMessage} />
             case 'Complete':
-                return <Visualizer sceneInfo={props.sceneInfo} />
+                return props.visualizer.component(props.windowDimensions);
+            default:
+                return <div style={{marginLeft: props.menuIsOpen ? "6px" : "48px" }}><Alert severity="error">Unable to determine the state "{props.status}" of this file. Try re-uploading.</Alert></div>;
         }
-        return <div style={{marginLeft: props.menuIsOpen ? "6px" : "48px" }}><Alert severity="error">Unable to determine the state "{props.status}" of this file. Try re-uploading.</Alert></div>;
     }
 
     // Why do we need the double arrow? Because using a function in JSX for onClick will evaluate whatever you pass in.
@@ -132,11 +137,11 @@ class FileViewer extends React.Component {
     getFilePart = (type) => {
         return new Promise((resolve, reject) => {
             if (type !== 'data' && type !== 'metadata') {
-                console.log("Inappropriate data type: Should either be data or metadata.");
+                if (this.props.verbose) console.log("Inappropriate data type: Should either be data or metadata.");
             }
             let dataReq = new XMLHttpRequest();
             dataReq.onload = (event => {
-                console.log(dataReq);
+                if (this.props.verbose) console.log(dataReq);
                 switch (dataReq.status) {
                     case (200):
                         resolve(dataReq.responseText);
@@ -157,21 +162,21 @@ class FileViewer extends React.Component {
             params.set('file', this.fileName);
             params.set('type', type);
             params.set('accessCode', 'password_wrong');
-            console.log(params.toString());
+            if (this.props.verbose) console.log(params.toString());
             const target = targetURL + params.toString();
             dataReq.open("GET", target);
             // TODO: Right now the response is in the default 'text' format, but it might
             // be more appropriate to use another format.
             dataReq.send();
-            console.log("GET request has been sent: ");
+            if (this.props.verbose) console.log("GET request has been sent: ");
         })
     }
 
 
     render() {
-        console.log("Selected file: " + this.props.selectedFile.fileName);
+        if (this.props.verbose) console.log("Selected file: " + this.props.selectedFile.fileName);
         return (
-            <div style={{ marginLeft: this.props.menuIsOpen ? "40vw" : "0px"}}>
+            <div style={{ marginLeft: this.props.menuIsOpen ? "40vw" : "0px", width: this.props.menuIsOpen ? "calc(100% - 40vw)": "100%"}}>
                 <this.FileDisplay 
                     fileSelected={this.props.selectedFile.fileName !== ''} 
                     status={this.props.fileStatus.status} 
@@ -181,6 +186,9 @@ class FileViewer extends React.Component {
                     sceneInfo={this.props.sceneInfo}
                     library={this}
                     menuIsOpen={this.props.menuIsOpen}
+                    visualizer={this.props.visualizer}
+                    windowDimensions={this.props.windowDimensions}
+                    dev={this.props.dev}
                 />
             </div>
         )

@@ -2119,9 +2119,9 @@ export default function GeneratedData(props) {
 
     
     React.useEffect(() => {
-        props.useGlobalQs.current = USE_GLOBAL;
         if (props.timeSliderValue !== props.lastIndex.current) { // We need to update the model, because the timeSlider has moved
             let boneNames = Object.getOwnPropertyNames(boneList);
+            const dataObj = { }
             for (let i = 0; i < boneNames.length; i++) {
                 let columnStart = boneList[boneNames[i]];
                 let q = new THREE.Quaternion(
@@ -2131,8 +2131,9 @@ export default function GeneratedData(props) {
                     linesArray[props.timeSliderValue][columnStart + 0] / 1000, // W
                 );
                 props.lastIndex.current = props.timeSliderValue;
-                props.batchUpdate(boneNames[i], [q.x, q.y, q.z, q.w]);
+                dataObj[boneNames[i]] = q
             }
+            props.visualizer.acceptData(dataObj)
         }
     });
 

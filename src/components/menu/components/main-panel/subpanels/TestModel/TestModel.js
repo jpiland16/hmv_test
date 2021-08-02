@@ -1,81 +1,16 @@
-import QuaternionEditor from './QuaternionEditor'
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Switch from '@material-ui/core/Switch';
-import Tooltip from '@material-ui/core/Tooltip';
-import HelpIcon from '../../../../HelpIcon';
-import Button from '@material-ui/core/Button'
+import { Typography } from '@material-ui/core'
+import React from 'react'
 
 export default function TestModel(props) {
+
+    const [ quaternionValues, setQuaternionValues ] = React.useState({ })
+
     return (
         <div style={{width: "calc(100% - 30px)", marginTop: "12px", marginLeft: "6px", display: props.display}}>
-            {
-            
-            props.modelLoaded && props.bones && props.sliderValues ?
-            
-            <div>
-                <Tooltip title={props.playTimerId.current !== 0 ? "Cannot reset model while viewing pre-recorded data. Pause playback first, then try again." : ""} >
-                    <div>
-                        <Button
-                            color="secondary"
-                            variant="contained"
-                            disabled={props.playTimerId.current !== 0}
-                            onClick={() => props.resetModel()}
-                        >
-                            Reset model
-                        </Button>
-                    </div>
-                </Tooltip>
-                <Tooltip title={props.playTimerId.current !== 0 ? "Cannot change this setting while viewing pre-recorded data. Pause playback first, then try again." : ""} >
-                    <FormControlLabel
-                        control={
-                        <Switch
-                            checked={props.useGlobalQs.current}
-                            onChange={(event) => {
-                                    props.useGlobalQs.current = event.target.checked;
-                                    props.refreshGlobalLocal(props.bones, event.target.checked);
-                                }
-                            }
-                            color="primary"
-                            disabled={props.playTimerId.current !== 0}
-                        />
-                        }
-                        label="Use global quaternions"
-                    />
-                </Tooltip>
-                <HelpIcon tooltip="About this setting" onClick={() => window.open("https://github.com/jpiland16/hmv_test#global-vs-local-quaternions")}/>
-                <Tooltip title={props.playTimerId.current !== 0 ? "Cannot change this setting while viewing pre-recorded data. Pause playback first, then try again." : ""} >
-                    <FormControlLabel
-                        control={
-                        <Switch
-                            checked={props.useRipple}
-                            onChange={(event) => props.setUseRipple(event.target.checked) }
-                            color="primary"
-                            disabled={props.playTimerId.current !== 0}
-                        />
-                        }
-                        label="Changes to parent auto-ripple to children"
-                    />
-                </Tooltip>
-                <HelpIcon tooltip="About this setting" onClick={() => window.open("https://github.com/jpiland16/hmv_test#auto-ripple")}/>
-
-                {
-
-                Object.keys(props.bones).map((boneId) => {
-                        return (<div key={boneId + "div"} >
-                                    <QuaternionEditor {...props} key={boneId + "editor"}   title={boneId} />
-                                </div>)
-                }) 
-
-                }
-
-            </div>
-
-            :
-
-            "Model not yet loaded. Please wait..."
-            
-            }
-
+            <Typography variant="h6">Global quaternions</Typography>
+            <Typography variant="caption">View and modify the global quaternions here.</Typography>
+            <br /><br />
+            {(props.visualizer.showSliders = true) && props.visualizer.getSliders(quaternionValues, setQuaternionValues)}
         </div>
     );
 }

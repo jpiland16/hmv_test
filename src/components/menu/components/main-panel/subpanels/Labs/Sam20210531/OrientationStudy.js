@@ -76,9 +76,9 @@ export default function GeneratedData(props) {
     }
 
     React.useEffect(() => {
-        props.useGlobalQs.current = USE_GLOBAL;
+        
         if (props.timeSliderValue !== props.lastIndex.current) { // We need to update the model, because the timeSlider has moved
-
+            const dataObj = { }
             let clockwise_down_quat = new THREE.Quaternion();
             clockwise_down_quat.setFromAxisAngle(new THREE.Vector3(0, 0, -1), Math.PI/2);
             let set_y_up_quat = new THREE.Quaternion();
@@ -95,8 +95,10 @@ export default function GeneratedData(props) {
             let final_q = new THREE.Quaternion().multiplyQuaternions(transformed_q, align_arm_quat); //FIRST align the arm, THEN apply the movement
 
             let q = final_q;
-            props.batchUpdate(TARGET_BONE, [q.x, q.y, q.z, q.w]);
+            dataObj[TARGET_BONE] = q
             props.lastIndex.current = props.timeSliderValue;
+
+            props.visualizer.acceptData(dataObj)
         }
     });
 

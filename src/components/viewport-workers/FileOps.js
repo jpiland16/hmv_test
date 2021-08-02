@@ -8,7 +8,7 @@ export function isFileNameValid(props, fname) {
 export function clickFile(props, id, name) {
     if(isFileNameValid(props, id)) {
         onSelectFileChange(props, id, name);
-        // window.history.replaceState(null, null, "?file=" + id);
+        window.history.replaceState(null, null, "?file=" + id);
     }
 }
 
@@ -37,10 +37,14 @@ export function onSelectFileChange(props, mySelectedFile, myDisplayName) {
     // (TODO: unsubscribe from current file)
     props.data.current = [];
     props.setTimeSliderValue(0);
-    props.lineNumberRef.current = 0;
-    console.log("Selected file has been changed to " + mySelectedFile + " (re-printed below)");
-    console.log(mySelectedFile);
-    console.log("Display name: " + myDisplayName);
+    props.lineNumberRef.current = 0;    
+    if (props.visualizer.modelLoaded) props.visualizer.reset()
+    if (props.verbose) console.log("Selected file has been changed to " + mySelectedFile + " (re-printed below)");
+    if (props.verbose) console.log(mySelectedFile);
+    if (props.verbose) console.log("Display name: " + myDisplayName);
     props.setSelectedFile({ fileName: mySelectedFile, displayName: myDisplayName }); // We may want some verification, but verification is also done by this method.
-    props.subscribeToFile(props, mySelectedFile);
+    if (mySelectedFile !== "") {
+        props.setOpenLab("") // Close any open labs
+        props.subscribeToFile(props, mySelectedFile);
+    }
 }

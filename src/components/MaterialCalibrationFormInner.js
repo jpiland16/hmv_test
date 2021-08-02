@@ -1,13 +1,15 @@
 import React from 'react';
-import { Button } from '@material-ui/core';
+import { Button, Container } from '@material-ui/core';
 import { TextField } from '@material-ui/core';
 import { MenuItem } from '@material-ui/core';
 import { Grid } from '@material-ui/core';
 import { Input } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
-import { withRouter } from "react-router-dom";
+import { withRouter } from 'react-router-dom';
+import QuaternionSelectionDialog from './QuaternionSelectionDialog'
 import Typography from '@material-ui/core/Typography';
-
+import * as THREE from 'three'
+import { MannequinVisualizer } from './shared_visualizer_object/Models';
 
 function listWithNewVal(list, index, key, newVal) {
   const newList = list.map((item, currIndex) => {
@@ -19,6 +21,10 @@ function listWithNewVal(list, index, key, newVal) {
   return newList;
 }
 
+const mannequinVisualizer = new MannequinVisualizer()
+mannequinVisualizer.initialize((progress) => {})
+mannequinVisualizer.showSliders = true
+
 // https://goshakkk.name/array-form-inputs/
 class MaterialCalibrationForm extends React.Component {
   
@@ -28,12 +34,31 @@ class MaterialCalibrationForm extends React.Component {
       name: "",
       boneOptions: ["RUA", "RLA", "LUA", "LLA", "BACK", "ROOT"],
       typeOptions: ["Quaternion", "Accel+Gyro+Magnet"],
-      sensors: [{ dataType: "Quaternion", bone: "RUA", startColumn: "" }],
+      sensors: [{ dataType: "Quaternion", bone: "RUA", startColumn: "", localTransformQuaternion: null }],
       timeColumn: 0,
       validity: {
         noSensors: false
-      }
+      },
+      modelQuaternions: { },
     };
+  }
+
+  setQuaternions = (newQObj) => {
+    this.setState({
+      modelQuaternions: newQObj
+    });
+  }
+
+  acceptNewQuaternion = (boneName, newQ) => {
+    this.state.sensors.forEach((sensor) => {
+      if (sensor.bone === boneName) {
+        sensor.localTransformQuaternion = new THREE.Quaternion().copy(newQ)
+      }
+    })
+
+    this.setState({
+      sensors: this.state.sensors
+    })
   }
 
   handleSubmit = (event) => {
@@ -73,7 +98,7 @@ class MaterialCalibrationForm extends React.Component {
   addSensor = () => {
     this.setState({
       displayName: "",
-      sensors: this.state.sensors.concat([{ dataType: "Quaternion", bone: "RUA", startColumn: "" }]),
+      sensors: this.state.sensors.concat([{ dataType: "Quaternion", bone: "RUA", startColumn: "", localTransformQuaternion: null }]),
       validity: {
         noSensors: (this.state.sensors.length+1 < 1)
       }
@@ -179,62 +204,76 @@ class MaterialCalibrationForm extends React.Component {
           <this.NoSensorsError noSensors={this.state.validity.noSensors}></this.NoSensorsError>
         </Grid>
         {this.state.sensors.map((sensor, index) => (
-          <Grid container item xs={12} spacing={3} justify="flex-start" alignItems="center">
-            <Grid item xs={2}>
-              <TextField
+            <Grid container item xs={12} spacing={3} justify="flex-start" alignItems="center">
+              <Grid item xs={2}>
+                <TextField
+                  fullWidth
+                  id="bone_select"
+                  select
+                  label="Bone"
+                  value={sensor.bone}
+                  onChange={this.handleBoneChange(index)}
+                >
+                  {this.state.boneOptions.map((boneName) => (
+                    <MenuItem key={boneName} value={boneName}>{boneName}</MenuItem>
+                  ))}
+                </TextField>
+              </Grid>
+              <Grid item xs={4}>
+                <TextField
+                  fullWidth
+                  id="datatype_select"
+                  select
+                  label="Data type"
+                  value={sensor.dataType}
+                  onChange={this.handleDataTypeChange(index)}
+                >
+                  {this.state.typeOptions.map((typeName) => (
+                    <MenuItem key={typeName} value={typeName}>{typeName}</MenuItem>
+                  ))}
+                </TextField>
+              </Grid>
+              <Grid item xs={3}>
+                <TextField 
                 fullWidth
-                id="bone_select"
-                select
-                label="Bone"
-                value={sensor.bone}
-                onChange={this.handleBoneChange(index)}
-              >
-                {this.state.boneOptions.map((boneName) => (
-                  <MenuItem key={boneName} value={boneName}>{boneName}</MenuItem>
-                ))}
-              </TextField>
+                  type="number"
+                  label="Start column"
+                  onChange={this.handleStartcolChange(index)}
+                  value={sensor.startColumn}
+                  InputProps={{
+                    inputProps: {
+                      id: "startColumn"+index,
+                      name: "startColumn",
+                      min: "0",
+                      placeholder: "Start column"
+                    }
+                  }}
+                  required>
+                </TextField>
+              </Grid>
+              <Grid item xs={3}>
+                <Button
+                  color='primary'
+                  onClick={this.deleteSensor(index)}
+                >
+                  Remove sensor
+                </Button>
+              </Grid>
+
+              {/* SECOND ROW */}
+              
+              <Grid item xs={6}>
+                <QuaternionSelectionDialog 
+                  localTransformQuaternion={sensor.localTransformQuaternion}
+                  visualizer={mannequinVisualizer}
+                  quaternions={this.state.modelQuaternions}
+                  setQuaternions={this.setQuaternions}
+                  onAccept={this.acceptNewQuaternion}
+                  boneName={sensor.bone}
+                />
+              </Grid>
+
             </Grid>
-            <Grid item xs={4}>
-              <TextField
-                fullWidth
-                id="datatype_select"
-                select
-                label="Data type"
-                value={sensor.dataType}
-                onChange={this.handleDataTypeChange(index)}
-              >
-                {this.state.typeOptions.map((typeName) => (
-                  <MenuItem key={typeName} value={typeName}>{typeName}</MenuItem>
-                ))}
-              </TextField>
-            </Grid>
-            <Grid item xs={3}>
-              <TextField 
-              fullWidth
-                type="number"
-                label="Start column"
-                onChange={this.handleStartcolChange(index)}
-                value={sensor.startColumn}
-                InputProps={{
-                  inputProps: {
-                    id: "startColumn"+index,
-                    name: "startColumn",
-                    min: "0",
-                    placeholder: "Start column"
-                  }
-                }}
-                required>
-              </TextField>
-            </Grid>
-            <Grid item xs={3}>
-              <Button
-                color='primary'
-                onClick={this.deleteSensor(index)}
-              >
-                Remove sensor
-              </Button>
-            </Grid>
-          </Grid>
       ))}
       <Grid container justify="center">
           <Grid item xs={3}>
