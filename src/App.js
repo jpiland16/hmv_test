@@ -2,7 +2,7 @@ import Viewport from "./components/Viewport"
 import Welcome from "./components/home-screen/WelcomeScreen"
 import Tutorial from "./components/tutorial/TutorialScreen";
 import './App.css';
-import MaterialCalibrationForm from "./components/UploadScreen";
+import NotFound from "./components/NotFound"
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import React from 'react';
 import UploadScreen from "./components/UploadScreen";
@@ -30,13 +30,7 @@ export default function App() {
                 <UploadScreen/>
             </Route>
             <Route>
-                <div>
-                    Page not found!
-                        <br />
-                        <button onClick={() => window.location.href = "/"}>
-                            Return to home page
-                        </button>
-                </div>
+                <NotFound />
             </Route>
         </Switch>
     </BrowserRouter>
