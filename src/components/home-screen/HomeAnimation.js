@@ -1,7 +1,7 @@
-import { Typography } from "@material-ui/core";
 import React from "react";
 import * as THREE from "three";
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
+import "./HomeAnimation.css"
 
 let model, scene, renderer, frameId, camera = null;
 
@@ -32,9 +32,7 @@ function createScene(){
 function addModels() {
 
     let loader = new GLTFLoader();
-    const modelPath = window.location.href.substring(0, 22) === "http://localhost:3000/" ? 
-        "https://raw.githubusercontent.com/jpiland16/hmv_test/master/files/figures/mannequin.glb" :
-        "/files/figures/mannequin.glb";
+    const modelPath = "/files/figures/mannequin.glb";
     
         loader.load(modelPath, gltf => {
             model = gltf.scene;

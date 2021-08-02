@@ -66,16 +66,14 @@ function getQuaternionFromLine(lineNum) {
 }
 
 export default function GeneratedOrientation(props) {
-    if (props.data.length === 0) {
-        props.setData(indicesArray);
-        props.setUseGlobalQs(USE_GLOBAL);
-        props.setUseRipple(AUTO_RIPPLE);
-        props.setRepeat(REPEAT);
-        props.setFPS(FPS);
-        props.setLastIndex(-1);
+    if (props.data.current.length === 0) {
+        props.data.current = indicesArray
+        props.repeat.current = REPEAT;
+        props.FPS.current = FPS;
+        props.lastIndex.current = -1;
     }
 
-    if (props.timeSliderValue !== props.lastIndex) {
+    if (props.timeSliderValue !== props.lastIndex.current) {
         //Rotate arm so that it points in the positive x direction:
         //rotate arm downward
         let q = new THREE.Quaternion(0.707, 0, 0, 0.707) //90 degree rotation CCW about the x-axis
@@ -107,8 +105,10 @@ export default function GeneratedOrientation(props) {
         q = q_data;
         q.multiply(new THREE.Quaternion(0.707, 0, 0, 0.707))
         q.multiply(new THREE.Quaternion(0, 0, 0.707, 0.707))
-        props.batchUpdate(TARGET_BONE, [q.x, q.y, q.z, q.w]);
-        props.setLastIndex(props.timeSliderValue)
+        const dataObj = { }
+        dataObj[TARGET_BONE] = q
+        props.visualizer.acceptData(dataObj)
+        props.lastIndex.current = props.timeSliderValue
     }
 
     return (

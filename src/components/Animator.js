@@ -1,6 +1,9 @@
 import React from 'react'
 import * as THREE from 'three'
 
+// For JSdoc
+import { BasicVisualizerObject } from './shared_visualizer_object/Visualizer';
+
 const USE_GLOBAL = true;
 const REPEAT = false;
 const FPS = 30;
@@ -15,9 +18,15 @@ export default function Animator(props) {
 
     }
 
+    /**
+     * @param {Object} props
+     * @param {BasicVisualizerObject} props.visualizer
+     */
     function applyDataQuaternions(props, timeValue) {
         let targets = props.fileMetadata.current.targets;
         let GTQ = props.fileMetadata.current.globalTransformQuaternion
+
+        let newQs = { }
 
         for (let i = 0; i < targets.length; i++) {
             let boneName = targets[i].bone
@@ -46,15 +55,16 @@ export default function Animator(props) {
             
             props.lastIndex.current = props.timeSliderValue;
 
-            console.log("Animator is ordering a batch update for time slider value " + props.timeSliderValue);
-            props.batchUpdate(boneName, [targetQ.x, targetQ.y, targetQ.z, targetQ.w]);
+            if (props.verbose) console.log("Animator is ordering a batch update for time slider value " + props.timeSliderValue);
+
+            newQs[boneName] = targetQ;
         }
+        
+        if (props.visualizer.modelLoaded) props.visualizer.acceptData(newQs);
     }
 
     React.useEffect(() => {
         if (props.selectedFile.fileName === "") { return; }
-
-        props.useGlobalQs.current = USE_GLOBAL;
 
         props.outputTypes.current = [{
             startCol: 243,
@@ -62,7 +72,8 @@ export default function Animator(props) {
         }];
 
         if (props.timeSliderValue !== props.lastIndex.current // We need to update the model, because the timeSlider has moved
-                && props.data.current.length > 0 && props.fileMetadata.current !== null) { // Make sure we have the data we need
+                && props.data.current.length > 0 && props.fileMetadata.current !== null // Make sure we have the data we need
+                && props.fileStatus.status !== "Loading file") { // Make sure we aren't in the process of loading data
             
             props.lastIndex.current = props.timeSliderValue;
             applyDataQuaternions(props, props.timeSliderValue);

@@ -22,7 +22,7 @@ export default function TopActionBar(props) {
                         props.setSelectedPanel(0);
                     }}>
                     {/* {props.selectedFile.fileName === "" ? "No file selected." : <span><b>Viewing: </b>{(props.selectedFile.displayName.length > 16 ? "..." : "") + props.selectedFile.displayName.substr(-16)}</span>} */}
-                    {props.selectedFile.fileName === "" ? "No file selected." : <span><b>Viewing: </b>{(props.selectedFile.displayName > 16 ? "..." : "") + props.selectedFile.displayName.substr(-16)}</span>}
+                    {(!(props.selectedFile.displayName) || props.selectedFile.fileName === "")? "No file selected." : <span><b>Viewing: </b>{(props.selectedFile.displayName.length > 16 ? "..." : "") + props.selectedFile.displayName.substr(-16)}</span>}
                 </Typography>
             </Tooltip>
             <Button className="topBtn" onClick={() => {
@@ -33,7 +33,7 @@ export default function TopActionBar(props) {
                             //if(window.confirm("Are you sure you want to close the file " + props.selectedFile + "?")) 
                                 window.history.replaceState(null, null, "?") || props.onSelectFileChange("", "None")
                         }
-            }} size="small">
+            }} size="small" variant="outlined">
                 { props.selectedFile.fileName === "" ?
                     <div style={{display: "flex", alignItems: "center"}}>
                         <FolderOpenIcon style={{marginRight: "6px"}}/>
@@ -45,6 +45,7 @@ export default function TopActionBar(props) {
                     </div>
                 }    
             </Button>
+            {props.selectedFile.fileName !== "" && props.visualizer.getTools()}
         </div>
     )
 }
