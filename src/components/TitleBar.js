@@ -11,8 +11,10 @@ return (<AppBar position="relative">
         Human Activity Visualizer
         </Typography>
         <Button color="inherit" onClick={()=>window.location.href = "/getting-started"}>Getting Started</Button>
+        <Button color="inherit" onClick={() => window.location.href = "/dataset-info"}>Dataset Info</Button>
         <Button color="inherit" onClick={() => window.location.href = "/jsdoc/index.html"}>Code Documentation</Button>
         <Button color="inherit" onClick={() => window.location.href = "/files/contact-form.html"}>Contact Us</Button>
+        
     </Toolbar>
 </AppBar>);
 }

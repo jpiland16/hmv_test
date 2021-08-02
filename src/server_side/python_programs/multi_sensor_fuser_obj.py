@@ -5,6 +5,7 @@ from micropython_fusion.fusion import Fusion
 from datatype_handlers.AccGyroMagnetHandler import AGMHandler
 from datatype_handlers.QuaternionHandler import QuaternionHandler
 from datatype_handlers.EulerAngleHandler import EulerAngleHandler
+from server_side.python_programs.datatype_handlers.AccGyroHandler import AGHandler
 
 """Uses a class-based system to deal differently with incoming data depending on the reported datatype."""
 
@@ -13,6 +14,8 @@ def get_handler(data_type):
         return QuaternionHandler()
     if data_type == 'Accel+Gyro+Magnet':
         return AGMHandler()
+    if data_type == 'Accel+Gyro':
+        return AGHandler()
     if data_type == 'Euler angles':
         return EulerAngleHandler()
     return None

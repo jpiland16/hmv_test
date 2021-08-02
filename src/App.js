@@ -6,6 +6,7 @@ import NotFound from "./components/NotFound"
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import React from 'react';
 import UploadScreen from "./components/UploadScreen";
+import DatasetInfoScreen from "./components/dataset-info-screen/DatasetInfoScreen";
 
 export default function App() {
 
@@ -16,6 +17,9 @@ export default function App() {
         <Switch>
             <Route exact path="/getting-started">
                 <Tutorial setFirstLoad={setFirstLoad}/>
+            </Route>
+            <Route exact path="/dataset-info">
+                <DatasetInfoScreen setFirstLoad={setFirstLoad}/>
             </Route>
             <Route exact path="/visualizer/dev">
                 <Viewport dev={true} firstLoad={firstLoad} setFirstLoad={setFirstLoad}/>
