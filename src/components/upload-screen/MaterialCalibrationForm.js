@@ -9,7 +9,7 @@ import { withRouter } from 'react-router-dom';
 import QuaternionSelectionDialog from './QuaternionSelectionDialog'
 import Typography from '@material-ui/core/Typography';
 import * as THREE from 'three'
-import { MannequinVisualizer } from './shared_visualizer_object/Models';
+import { MannequinVisualizer } from '../shared_visualizer_object/Models';
 
 function listWithNewVal(list, index, key, newVal) {
   const newList = list.map((item, currIndex) => {

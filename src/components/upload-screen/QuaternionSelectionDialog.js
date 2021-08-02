@@ -12,7 +12,7 @@ import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 
 // For JSdoc
-import { BasicVisualizerObject } from './shared_visualizer_object/Visualizer';
+import { BasicVisualizerObject } from '../shared_visualizer_object/Visualizer';
 
 const useStyles = makeStyles((theme) => ({
   container: {

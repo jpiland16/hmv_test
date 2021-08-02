@@ -1,7 +1,7 @@
 import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import MaterialCalibrationForm from './MaterialCalibrationForm';
-import TitleBar from "./TitleBar"
+import TitleBar from "../TitleBar"
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
