@@ -2,9 +2,10 @@ import Viewport from "./components/Viewport"
 import Welcome from "./components/home-screen/WelcomeScreen"
 import Tutorial from "./components/tutorial/TutorialScreen";
 import './App.css';
-import MaterialCalibrationForm from "./components/MaterialCalibrationForm";
+import MaterialCalibrationForm from "./components/calibration_form/MaterialCalibrationForm";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import React from 'react';
+import MetadataTinkerer from "./components/MetadataTinkererAlt";
 
 export default function App() {
 
@@ -27,6 +28,9 @@ export default function App() {
             </Route>
             <Route exact path="/upload">
                 <MaterialCalibrationForm/>
+            </Route>
+            <Route exact path="/tinker">
+                <MetadataTinkerer/>
             </Route>
             <Route>
                 <div>
