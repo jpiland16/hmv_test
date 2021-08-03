@@ -4,9 +4,6 @@
     - Index - Renders React App
         - App - Contains the browser router for the the main pages of the website most importantly:
             - [WelcomeScreen](https://github.com/jpiland16/hmv_test/edit/master/documentation/subpages/WelcomeScreen.md)
-                - [TitleBar](https://github.com/jpiland16/hmv_test/edit/master/documentation/subpages/TitleBar.md)
-                - [HomeAnimation](https://github.com/jpiland16/hmv_test/edit/master/documentation/subpages/HomeAnimation.md)
-                - [DialogSelect](https://github.com/jpiland16/hmv_test/edit/master/documentation/subpages/DialogSelect.md)
             - [Viewport](https://github.com/jpiland16/hmv_test/edit/master/documentation/subpages/Viewport.md)
                 - [HomeButton](https://github.com/jpiland16/hmv_test/edit/master/documentation/subpages/HomeButton.md)
                 - [Menu](https://github.com/jpiland16/hmv_test/edit/master/documentation/subpages/Menu.md)
