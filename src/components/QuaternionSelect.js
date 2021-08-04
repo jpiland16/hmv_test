@@ -2,6 +2,7 @@ import React from 'react'
 import { FormLabel, FormControl, RadioGroup, Radio, FormControlLabel, Slider } from "@material-ui/core"
 import { Typography } from '@material-ui/core';
 import { Button } from '@material-ui/core';
+import { findAllByDisplayValue } from '@testing-library/react';
 
 const axisMap = {
     "x" : { x: 1, y: 0, z: 0},
@@ -25,20 +26,28 @@ export default function QuaternionSelect({ onChange, onRemove, value }) {
     }
 
     function angleFromQuat(quat) {
-        return Math.acos(quat.w);
+        let guess = 2 * Math.acos(quat.w);
+        // if (guess > Math.PI / 2) {
+        //     console.log("Guess is greater than PI")
+        //     guess = guess - (2 * Math.PI);
+        // }
+        return guess;
     }
 
-    const [axis, setAxis] = React.useState(axisStringFromQuat(value));
-    const [angle, setAngle] = React.useState(angleFromQuat(value));
-
-    const handleAngleChange = (event, newValue) => {
-        setAngle(newValue);
+    const setAxis = (newAxisString) => {
+        let angle = angleFromQuat(value);
+        if (angle === 0) { angle = 0.01; }
+        onChange(quatFromAxisAngle(axisMap[newAxisString], angle));
     }
 
-    React.useEffect(() => {
-        if (!onChange) { return; }
-        onChange(quatFromAxisAngle(axisMap[axis], angle));
-    }, [axis, angle]);
+    const setAngle = (newAngle) => {
+        onChange(quatFromAxisAngle(axisMap[axisStringFromQuat(value)], newAngle));
+    }
+
+    // React.useEffect(() => {
+    //     if (!onChange) { return; }
+    //     onChange(quatFromAxisAngle(axisMap[axisFromQuat(value)], angle));
+    // }, []);
 
     function quatFromAxisAngle(axis, angle) {
         return {
@@ -50,7 +59,7 @@ export default function QuaternionSelect({ onChange, onRemove, value }) {
     }
 
     function currentQuatString() {
-        let currQuat = quatFromAxisAngle(axisMap[axis], angle);
+        let currQuat = quatFromAxisAngle(axisFromQuat(value), angleFromQuat(value));
         return `(wxyz) = ${Math.ceil(currQuat.w * 1000) / 1000}, ${Math.ceil(currQuat.x * 1000) / 1000}, ${Math.ceil(currQuat.y * 1000) / 1000}, ${Math.ceil(currQuat.z * 1000) / 1000}`;
     }
 
@@ -62,7 +71,7 @@ export default function QuaternionSelect({ onChange, onRemove, value }) {
             <div style={{margin: "10px"}}>
                 <FormControl>
                     <FormLabel>Axis</FormLabel>
-                    <RadioGroup value={axis} onChange={(event) => { setAxis(event.target.value); }}>
+                    <RadioGroup value={axisStringFromQuat(value)} onChange={(event) => { setAxis(event.target.value); }}>
                         <FormControlLabel value={"x"} label="x" control={<Radio />}/>
                         <FormControlLabel value={"y"} label="y" control={<Radio />}/>
                         <FormControlLabel value={"z"} label="z" control={<Radio />}/>
@@ -72,17 +81,16 @@ export default function QuaternionSelect({ onChange, onRemove, value }) {
             <div style={{margin: "10px"}}>
                 <Typography id="slider-label">Angle</Typography>
                 <Slider
-                    value={angle}
+                    value={angleFromQuat(value)}
                     onChange={(event, newValue) => { setAngle(newValue); }}
-                    min={0}
-                    max={2*Math.PI}
+                    min={0.01}
+                    max={2 * Math.PI}
                     step={0.01}
                     aria-labelledby="slider-label"
-                >
-                </Slider>
+                />
             </div>
             <div style={{margin: "10px"}}>  
-                <Typography>Angle: {currentQuatString()}</Typography>
+                <Typography>Quat: {currentQuatString()}</Typography>
             </div>
         </div>
     )
