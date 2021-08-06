@@ -9,6 +9,7 @@ import { Input } from '@material-ui/core'
 import QuatEditorGroup from './QuatEditorGroup';
 
 const boneNames = [
+    "HIPS",
     "BACK",
     "RUA",
     "RLA",
@@ -39,6 +40,7 @@ export default function MetadataTinkerer() {
         RLL: [],
         LUL: [],
         LLL: [],
+        HIPS: [],
     }); // map from limb name to an ordered list of transform quats
     const [columnNumbers, setColumnNumbers] = React.useState({
         BACK: 0,
@@ -50,6 +52,7 @@ export default function MetadataTinkerer() {
         RLL: 0,
         LUL: 0,
         LLL: 0,
+        HIPS: 0,
     }); // TODO: Do I want to merge this with the other map from bone name?
     const [fileData, setFileData] = React.useState([[1, 0, 0, 0]]); // Probably a bad idea because it involves storing a whole file in memory
 
@@ -77,6 +80,7 @@ export default function MetadataTinkerer() {
         }
         setDataQuaternion(newDataQuat);
         for (let boneName of boneNames) {
+            if (quaternionStacks[boneName].length === 0) { continue; }
             updateModel(boneName, quaternionStacks[boneName], newIndex, columnNumbers[boneName]);
         }
     }
@@ -97,6 +101,16 @@ export default function MetadataTinkerer() {
         updateModel(targetBone, quaternionStacks[targetBone], dataRow, newColIndex);
     }
 
+    function getTransformQuat(stackedQuats) {
+        let transformQuat = new THREE.Quaternion(0, 0, 0, 1);
+        for (let i = 0; i < stackedQuats.length; i ++) {
+            let currQ = stackedQuats[i];
+            let threeQuat = new THREE.Quaternion(currQ.x, currQ.y, currQ.z, currQ.w);
+            transformQuat.multiply(threeQuat);
+        }
+        return transformQuat;
+    }
+
     function updateModel(boneName, stackedQuats, rowIndex, columnIndex, currFileData=null) {
         if (currFileData === null) {
             currFileData = fileData;
@@ -107,12 +121,7 @@ export default function MetadataTinkerer() {
             y: currFileData[rowIndex][columnIndex + 2],
             z: currFileData[rowIndex][columnIndex + 3],
         }
-        let transformQuat = new THREE.Quaternion(0, 0, 0, 1);
-        for (let i = 0; i < stackedQuats.length; i ++) {
-            let currQ = stackedQuats[i];
-            let threeQuat = new THREE.Quaternion(currQ.x, currQ.y, currQ.z, currQ.w);
-            transformQuat.multiply(threeQuat);
-        }
+        let transformQuat = getTransformQuat(stackedQuats);
         let threeDataQuat = new THREE.Quaternion(dataQuat.x,dataQuat.y,dataQuat.z,dataQuat.w);
         threeDataQuat.multiply(transformQuat);
         visualizer.acceptData({ [boneName]: threeDataQuat });
@@ -125,7 +134,12 @@ export default function MetadataTinkerer() {
         reader.onload = () => {
             let newFileData = [];
             let lines = reader.result.split("\n");
-            for (let line of lines) {
+            for (let i = 0; i < lines.length; i ++) {
+                if (i > 2000) { 
+                    console.warn("The submitted data file has over 2000 lines of data. For ease of access, only the first 2000 lines will be used.");
+                    break;
+                }
+                let line = lines[i];
                 let lineData = line.split(" ");
                 if (lineData.length < 4 || lineData[0] === "#") { continue; }
                 let lineNums = [];
@@ -133,6 +147,7 @@ export default function MetadataTinkerer() {
                     lineNums.push(parseFloat(num));
                 }
                 newFileData.push(lineNums);
+                i ++;
             }
             setFileData(newFileData);
             console.log(reader.result.split("\n")[0]);
@@ -142,6 +157,38 @@ export default function MetadataTinkerer() {
         };
         reader.readAsText(file);
         event.target.value = null;
+    }
+
+    const downloadMetadata = () => {
+        const dataPrefix = "data:text/json;charset=utf-8,";
+        const metadata = {
+            name: "Opportunity dataset",
+            displayName: "Tinker dataset " + new Date().toISOString(),
+            globalTransformQuaternion: { w: 0, x: 0, y: 0, z: 0 },
+            targets: []
+        };
+        for (let boneName of boneNames) {
+            if (quaternionStacks[boneName].length === 0) { continue; }
+            const transformQuat = getTransformQuat(quaternionStacks[boneName]);
+            metadata.targets.push({
+                bone: boneName,
+                type: "Quaternion",
+                column: columnNumbers[boneName],
+                localTransformQuaternion: {
+                    w: transformQuat.w,
+                    x: transformQuat.x,
+                    y: transformQuat.y,
+                    z: transformQuat.z,
+                }
+            });
+        }
+        const dataString = dataPrefix + encodeURIComponent(JSON.stringify(metadata, null, "\t"));
+        let a = document.createElement("a");
+        document.body.appendChild(a);
+        a.href = dataString;
+        a.download = "metadata.json";
+        a.click();
+        document.body.removeChild(a);
     }
 
     return (
@@ -161,6 +208,7 @@ export default function MetadataTinkerer() {
                     defaultValue="BACK"
                     onChange={(event) => { setTargetBone(event.target.value); }}
                 >
+                    <MenuItem value="HIPS">Hips</MenuItem>
                     <MenuItem value="BACK">Back</MenuItem>
                     <MenuItem value="RUA">Right upper arm</MenuItem>
                     <MenuItem value="RLA">Right forearm</MenuItem>
@@ -183,9 +231,11 @@ export default function MetadataTinkerer() {
                     value={columnNumbers[targetBone]}
                     onChange={(event) => { handleColumnNumChange(parseInt(event.target.value)); }}
                 />
+                <Button onClick={downloadMetadata}>Download as JSON</Button>
                 <div style={{width: "80%", margin: "15px"}}>
                     <Typography id="slider-label">Data Quat Index</Typography>
                     <Slider
+                        value={dataRow}
                         onChange={(event, newValue) => { handleDataQuatChange(newValue); }}
                         min={0}
                         max={fileData.length - 1}

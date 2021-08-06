@@ -19,7 +19,6 @@ export default function QuatEditorGroup({ value, onChange }) {
     }
 
     const handleAddQuat = () => {
-        console.log("Adding quaternion!");
         let newValue = [...value];
         newValue.push({ w: 1, x: 0, y: 0, z: 0 });
         onChange(newValue);
@@ -42,14 +41,18 @@ export default function QuatEditorGroup({ value, onChange }) {
     return (
         <div style={{display: "flex", flexDirection: "column", width: "100%"}}>
             <div style={{display: "flex", flexDirection: "column"}}>
-                {value.map((quat, index) => (
-                    <QuaternionSelect
-                        key={index}
-                        value={quat}
-                        onChange={handleChangeQuat(index)}
-                        onRemove={handleRemoveQuat(index)}
-                    />
-                ))}
+                {
+                (value.length === 0)?
+                    <Typography>Add one or more transformations to include this bone in the output.</Typography> :
+                    value.map((quat, index) => (
+                        <QuaternionSelect
+                            key={index}
+                            value={quat}
+                            onChange={handleChangeQuat(index)}
+                            onRemove={handleRemoveQuat(index)}
+                        />
+                    ))
+                }
                 <Button onClick={handleAddQuat}>Add quaternion</Button>
                 <Typography>Final transform quaternion: {quatToString(getOutputQuat())}</Typography>
             </div>

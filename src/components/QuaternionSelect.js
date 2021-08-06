@@ -27,6 +27,8 @@ export default function QuaternionSelect({ onChange, onRemove, value }) {
 
     function angleFromQuat(quat) {
         let guess = 2 * Math.acos(quat.w);
+        // let magnitude = (quat.x ** 2) + (quat.y ** 2) + (quat.z ** 2);
+        // let sinGuess = 2 * Math.asin(magnitude);
         // if (guess > Math.PI / 2) {
         //     console.log("Guess is greater than PI")
         //     guess = guess - (2 * Math.PI);
