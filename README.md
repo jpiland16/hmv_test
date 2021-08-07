@@ -15,6 +15,9 @@ human model visualizer project, 2021
  - `npm install`
  - `node server` or `pm2 start server.js`
 
+### Other credits
+- Peter Hinch - [micropython-fusion](https://github.com/micropython-IMU/micropython-fusion/blob/master/LICENSE)
+
 ## Specific notes
 
 ### Global vs. local quaternions
