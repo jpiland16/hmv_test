@@ -5,7 +5,7 @@ from micropython_fusion.fusion import Fusion
 from datatype_handlers.AccGyroMagnetHandler import AGMHandler
 from datatype_handlers.QuaternionHandler import QuaternionHandler
 from datatype_handlers.EulerAngleHandler import EulerAngleHandler
-from server_side.python_programs.datatype_handlers.AccGyroHandler import AGHandler
+from datatype_handlers.AccGyroHandler import AGHandler
 
 """Uses a class-based system to deal differently with incoming data depending on the reported datatype."""
 
