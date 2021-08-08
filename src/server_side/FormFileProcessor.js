@@ -73,7 +73,7 @@ function handleUploadedFile(event, fields, callback, onError) {
         }
     );
     if (VERBOSE_OUTPUT) console.log("Python string params: " + pyStringParams);
-    var pyProcess = spawn('python', ['src/server_side/python_programs/multi_sensor_fuser_obj.py', pyStringParams]);
+    var pyProcess = spawn('python3', ['src/server_side/python_programs/multi_sensor_fuser_obj.py', pyStringParams]);
     if (VERBOSE_OUTPUT) console.log("Generated python process pid (greater than 0 on success): " + pyProcess.pid);
     if (VERBOSE_OUTPUT) console.log("Current path: " + process.cwd());
     var pyOutput = "";
