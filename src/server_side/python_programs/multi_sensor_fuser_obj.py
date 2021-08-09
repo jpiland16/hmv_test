@@ -24,7 +24,7 @@ def get_handler(data_type):
 def get_time_values(line_array, time_column):
     time_values = []
     for line in line_array:
-        datapts = line.split(' ')
+        datapts = line.split()
         if datapts[0] == '#' or datapts[0] == '':
             continue
         time_values.append(float(datapts[time_column]))
