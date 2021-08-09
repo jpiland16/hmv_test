@@ -73,7 +73,7 @@ function handleUploadedFile(event, fields, callback, onError) {
         }
     );
     if (VERBOSE_OUTPUT) console.log("Python string params: " + pyStringParams);
-    var pyProcess = spawn('python', ['src/server_side/python_programs/multi_sensor_fuser_obj.py', pyStringParams]);
+    var pyProcess = spawn('python3', ['src/server_side/python_programs/multi_sensor_fuser_obj.py', pyStringParams]);
     if (VERBOSE_OUTPUT) console.log("Generated python process pid (greater than 0 on success): " + pyProcess.pid);
     if (VERBOSE_OUTPUT) console.log("Current path: " + process.cwd());
     var pyOutput = "";
@@ -100,6 +100,26 @@ function handleUploadedFile(event, fields, callback, onError) {
     pyProcess.stdin.end();
 }
 
+/**
+ * Handles translating incoming an user `FormData` into data and metadata which
+ * can be stored for delivery to clients. 
+ * @param {Object} fields An Object containing the non-file data submitted by a user 
+ * through the upload form.
+ * @param {string} fields.sensorData Stringified JSON representing the parameters
+ * of the individual sensors used to collect the incoming data. The result should
+ * be a list of Objects with the following properties:
+ * @param {number} fields.sensorData[].startColumn The column index (starting at 0) of the sensor's data in the
+ * incoming file.
+ * @param {number} fields.sensorData[].dataType A String describing the way the file data will be interpreted
+ * for this sensor.
+ * @param {number} fields.timeColumn The column index of the column in the data file
+ * where the timestamp for the row's data is stored (in milliseconds).
+ * @param {Object} files The containing object for the incoming data file
+ * @param files.file The file object which can be read as text using a `FileReader`.
+ * @returns {Promise} A Promise which resolves with an Object containing the 
+ * file data and metadata in its `data` and `metadata` fields, or an error message
+ * upon rejection.
+ */
 const processDownloadedForm = (fields, files) => {
     return new Promise((resolve, reject) => {
         if (VERBOSE_OUTPUT) console.log("Processing a downloaded form in the Form processor.");

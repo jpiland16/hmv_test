@@ -2,7 +2,7 @@ import React from 'react'
 import * as THREE from 'three'
 
 // For JSdoc
-import { BasicVisualizerObject } from './shared_visualizer_object/Visualizer';
+import { BasicVisualizerObject } from '../shared_visualizer_object/Visualizer';
 
 const USE_GLOBAL = true;
 const REPEAT = false;

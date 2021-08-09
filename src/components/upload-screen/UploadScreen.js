@@ -1,6 +1,6 @@
 import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
-import MaterialCalibrationFormInner from './MaterialCalibrationFormInner';
+import MaterialCalibrationForm from './MaterialCalibrationForm';
 import TitleBar from "../TitleBar"
 
 const useStyles = makeStyles((theme) => ({
@@ -38,7 +38,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function Checkout() {
+export default function UploadScreen() {
   const classes = useStyles();
 
   return (
@@ -46,7 +46,7 @@ export default function Checkout() {
       <TitleBar />
       <main className={classes.layout}>
         <Paper className={classes.paper}>
-          <MaterialCalibrationFormInner />
+          <MaterialCalibrationForm />
         </Paper>
       </main>
     </div>

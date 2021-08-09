@@ -4,7 +4,7 @@ import React from 'react';
 import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
-import DialogSelect from '../DatasetDialog'
+import DialogSelect from './DatasetDialog'
 import HomeAnimation from './HomeAnimation'
 import Grid from '@material-ui/core/Grid';
 import TitleBar from '../TitleBar'

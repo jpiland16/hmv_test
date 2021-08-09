@@ -12,7 +12,7 @@ class MannequinVisualizer extends ThreeJSVisualizer {
         this.showSliders = false
         this.quaternionRoot = new QuaternionTarget( "ROOT", "_rootJoint", new THREE.Quaternion(0, 0, 0, 1))
 
-        const hips = this.quaternionRoot.addChild("HIPS", "mixamorig1Hips_01", new THREE.Quaternion(0, 0, 0, 1))
+        const hips = this.quaternionRoot.addChild("HIPS", "mixamorig1Hips_01", new THREE.Quaternion(0.7071, 0, 0, -0.7071))
         // this.quaternionRoot = hip;
 
         const back = hips.addChild("BACK", "spine_02", new THREE.Quaternion(-0.06, 0, 0, 0.998) )

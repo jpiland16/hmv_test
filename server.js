@@ -214,20 +214,28 @@ function handleFormUpload(req, res) {
         }
         if (VERBOSE_OUTPUT) console.log("Finished grabbing the files from the user upload.");
         res.json({ status: "File received", fileName: directoryName });
-        formProcessor.processDownloadedForm(fields, files).then(({ data: data, metadata: metadata}) => {
+        formProcessor.processDownloadedForm(fields, files)
+        .then(({ data: data, metadata: metadata}) => {
             if (VERBOSE_OUTPUT) console.log(`Completely done processing ${fullPath}. Now we just have to write the resulting data.`);
             writeUploadedFile(data, metadata, fullPath)
             .then(() => {
-                let mappedPath = fullPath.substr('./files'.length);
-                if (app.locals.fileListeners.has(mappedPath)) {
-                    app.locals.fileListeners.get(mappedPath).forEach((socket) => socket.emit('File ready'));
-                }
+                notifySocketListeners(fullPath, 'File ready');
             })
             .catch((err) => {
                 if (VERBOSE_OUTPUT) console.log("Some kind of error happened that we need to communicate to the client: " + err);
             });
-        });
+        })
+        .catch((errMessage) => {
+            notifySocketListeners(fullPath, 'File missing'); // TODO: Make another signal for when the file isn't "missing" but had an error
+        })
     });
+}
+
+function notifySocketListeners(fullPath, message) {
+    let mappedPath = fullPath.substr('./files'.length);
+    if (app.locals.fileListeners.has(mappedPath)) {
+        app.locals.fileListeners.get(mappedPath).forEach((socket) => socket.emit(message));
+    }
 }
 
 function writeUploadedFile(data, metadata, filepath) {

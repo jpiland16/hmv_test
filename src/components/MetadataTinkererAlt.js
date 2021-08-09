@@ -1,6 +1,6 @@
 import React from 'react';
 import { MannequinVisualizer } from './shared_visualizer_object/Models';
-import QuaternionSelectionDialog from './calibration_form/QuaternionSelectionDialogAlt'
+import QuaternionSelectionDialog from './upload-screen/QuaternionSelectionDialogAlt'
 import QuaternionSelect from './QuaternionSelect';
 import * as THREE from 'three'
 import { Button, Slider, TextField, Typography } from '@material-ui/core';

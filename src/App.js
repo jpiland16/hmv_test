@@ -1,13 +1,16 @@
-import Viewport from "./components/Viewport"
+import Viewport from "./components/visualizer-screen/Viewport"
 import Welcome from "./components/home-screen/WelcomeScreen"
-import Tutorial from "./components/tutorial/TutorialScreen";
+import Tutorial from "./components/getting-started-screen/TutorialScreen";
 import './App.css';
-import MaterialCalibrationForm from "./components/calibration_form/MaterialCalibrationForm";
+import NotFound from "./components/NotFoundScreen"
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import React from 'react';
-import MetadataTinkerer from "./components/MetadataTinkererAlt";
+import UploadScreen from "./components/upload-screen/UploadScreen";
+import DatasetInfoScreen from "./components/dataset-info-screen/DatasetInfoScreen";
+import MetadataTinkerer from "./components/MetadataTinkererAlt"
 
 export default function App() {
+
 
     const [firstLoad, setFirstLoad]=React.useState(true)
 
@@ -16,6 +19,9 @@ export default function App() {
         <Switch>
             <Route exact path="/getting-started">
                 <Tutorial setFirstLoad={setFirstLoad}/>
+            </Route>
+            <Route exact path="/dataset-info">
+                <DatasetInfoScreen setFirstLoad={setFirstLoad}/>
             </Route>
             <Route exact path="/visualizer/dev">
                 <Viewport dev={true} firstLoad={firstLoad} setFirstLoad={setFirstLoad}/>
@@ -27,19 +33,13 @@ export default function App() {
                 <Welcome setFirstLoad={setFirstLoad}/>
             </Route>
             <Route exact path="/upload">
-                <MaterialCalibrationForm/>
+                <UploadScreen/>
             </Route>
             <Route exact path="/tinker">
                 <MetadataTinkerer/>
             </Route>
             <Route>
-                <div>
-                    Page not found!
-                        <br />
-                        <button onClick={() => window.location.href = "/"}>
-                            Return to home page
-                        </button>
-                </div>
+                <NotFound />
             </Route>
         </Switch>
     </BrowserRouter>
