@@ -22,7 +22,7 @@ Displays if the file has been received by the client but the model is not ready.
 Displays if the target file cannot be displayed to the user. If an error is encountered, they should not expect the File Viewer's status to change unless they take an action to change it (such as picking a different file to look at). The FileViewer doesn't need to know how the error message was acquired.
 
 ## ("Confused" message)
-Displays if the component containing the File Viewer gives it an invalid status string. If you see this message in the File Viewer, the program has a bug.
+Displays if the File Viewer receives an invalid status string in its React props. If you see this message in the File Viewer, the program has a bug.
 
 ## Visualizer [(view code)](https://github.com/jpiland16/hmv_test/blob/master/src/components/shared_visualizer_object/Visualizer.js)
 This is not a sub-component, but it's one of the things the File Viewer can display. If file is ready for viewing--we have the model and the data file--then the user gets to see the interactive 3D scene that shows the quaternions on the model.

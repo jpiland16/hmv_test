@@ -102,7 +102,7 @@ function handleUploadedFile(event, fields, callback, onError) {
 
 /**
  * Handles translating incoming an user `FormData` into data and metadata which
- * can be stored for deliverty to clients. 
+ * can be stored for delivery to clients. 
  * @param {Object} fields An Object containing the non-file data submitted by a user 
  * through the upload form.
  * @param {string} fields.sensorData Stringified JSON representing the parameters

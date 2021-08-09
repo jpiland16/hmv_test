@@ -5,7 +5,7 @@ from micropython_fusion.fusion import Fusion
 from datatype_handlers.AccGyroMagnetHandler import AGMHandler
 from datatype_handlers.QuaternionHandler import QuaternionHandler
 from datatype_handlers.EulerAngleHandler import EulerAngleHandler
-from server_side.python_programs.datatype_handlers.AccGyroHandler import AGHandler
+from datatype_handlers.AccGyroHandler import AGHandler
 
 """Uses a class-based system to deal differently with incoming data depending on the reported datatype."""
 
@@ -34,7 +34,9 @@ def get_time_values(line_array, time_column):
 lines = sys.stdin.readlines()
 dataset = []
 for line in lines:
-    dataset.append(line.split(' '))
+    # Should split on whitespace, should NOT produce empty tokens when
+    # encountering double spaces, tabs, etc.
+    dataset.append(line.split())
 
 cl_params = json.loads(sys.argv[1])
 time_column = int(cl_params['time_column'])
