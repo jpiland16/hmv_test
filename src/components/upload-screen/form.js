@@ -5,20 +5,11 @@ import { MenuItem } from '@material-ui/core';
 import { Grid } from '@material-ui/core';
 import { Input } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
+import { withRouter } from 'react-router-dom';
 import QuaternionSelectionDialog from './QuaternionSelectionDialog'
 import Typography from '@material-ui/core/Typography';
 import * as THREE from 'three'
 import { MannequinVisualizer } from '../shared_visualizer_object/Models';
-import { LensOutlined } from '@material-ui/icons';
-import {CircularProgress} from '@material-ui/core';
-import {withRouter} from 'react-router-dom'
-
-
-const mannequinVisualizer = new MannequinVisualizer()
-mannequinVisualizer.initialize((progress) => {})
-mannequinVisualizer.showSliders = true
-
-const allBoneOptions=["RUA", "RLA", "LUA", "LLA", "BACK", "ROOT"]
 
 function listWithNewVal(list, index, key, newVal) {
   const newList = list.map((item, currIndex) => {
@@ -30,23 +21,25 @@ function listWithNewVal(list, index, key, newVal) {
   return newList;
 }
 
+const mannequinVisualizer = new MannequinVisualizer()
+mannequinVisualizer.initialize((progress) => {})
+mannequinVisualizer.showSliders = true
+
 // https://goshakkk.name/array-form-inputs/
 class MaterialCalibrationForm extends React.Component {
   
   constructor() {
     super();
     this.state = {
-      displayName: "",
+      name: "",
+      boneOptions: ["RUA", "RLA", "LUA", "LLA", "BACK", "ROOT"],
       typeOptions: ["Quaternion", "Accel+Gyro+Magnet", "Accel+Gyro", "Euler Angles"],
-      sensors: [{ dataType: "Quaternion", bone: allBoneOptions[0], startColumn: "", localTransformQuaternion: null }],
+      sensors: [{ dataType: "Quaternion", bone: "RUA", startColumn: "", localTransformQuaternion: null }],
       timeColumn: 0,
       validity: {
-        noSensors: false,
-        maxSensors: false
+        noSensors: false
       },
-      boneOptions: allBoneOptions.slice(1),
-      modelQuaternions: {},
-      next: false,
+      modelQuaternions: { },
     };
   }
 
@@ -69,7 +62,7 @@ class MaterialCalibrationForm extends React.Component {
   }
 
   handleSubmit = (event) => {
-    
+    event.preventDefault();
     if (this.props.verbose) console.log("Submitted the form.")
     if (this.props.verbose) console.log(this.state.sensors);
     if (this.props.verbose) console.log("About to send post request.");
@@ -101,66 +94,29 @@ class MaterialCalibrationForm extends React.Component {
     if (this.props.verbose) console.log(formPostReq);
   }
 
-  handleNext = (event) => {
-    event.preventDefault();
-    const formData = new FormData();
-    formData.append('displayName', this.state.displayName);
-    formData.append('timeColumn', this.state.timeColumn);
-    this.props.setFormData(formData)
-    this.props.setDisplayName(this.state.displayName)
-    this.props.setSensorList(this.state.sensors)
-    this.props.setActiveStep(1)
-    
-  }
-/**
- * @description Sets the options in the bone dropdown lists to an array of the unpicked bones (prevents user from selecting the same bone twice)
- */
-  updateBoneOptions = () => {
-    let boneOptions=[]
-    let selectedBones = this.state.sensors.map((sensor) => (sensor.bone))
-    allBoneOptions.forEach((boneOption) => { 
-      if(selectedBones.indexOf(boneOption)==-1) {
-        boneOptions.push(boneOption)
-      }
-    })
+
+  addSensor = () => {
     this.setState({
-      boneOptions: boneOptions
-    })
-  }
-
-
-  /**
-   * @description Adds sensor to form and updates the bone selection dropdown lists
-   */
-  addSensor = async() => {
-    await this.setState({
       displayName: "",
-      sensors: this.state.sensors.concat([{ dataType: "Quaternion", bone: this.state.boneOptions[0], startColumn: "", localTransformQuaternion: null }]),
+      sensors: this.state.sensors.concat([{ dataType: "Quaternion", bone: "RUA", startColumn: "", localTransformQuaternion: null }]),
       validity: {
-        noSensors: false,
-        maxSensors: (this.state.sensors.length+1 == allBoneOptions.length)
+        noSensors: (this.state.sensors.length+1 < 1)
       }
     });
-    this.updateBoneOptions()
   }
 
   printState = () => {
     if (this.props.verbose) console.log(this.state.sensors);
   }
 
-  /**
-   * @description Removes sensor from form and updates the bone selection dropdown lists
-   */
-  deleteSensor = (removedIndex) => async() => {
+  deleteSensor = (removedIndex) => () => {
     if (this.props.verbose) console.log(`Deleting sensor with index ${removedIndex}`);
-    await this.setState({
+    this.setState({
       sensors: this.state.sensors.filter((sensor, currIndex) => currIndex !== removedIndex),
       validity: {
-        noSensors: (this.state.sensors.length-1 < 1),
-        maxSensors: false
+        noSensors: (this.state.sensors.length-1 < 1)
       }
     })
-    this.updateBoneOptions()
   }
 
   handleTimecolChange = (event) => {
@@ -169,9 +125,11 @@ class MaterialCalibrationForm extends React.Component {
     });
   }
 
-  handleBoneChange = (index) => async(event) => {
-    await this.setState({ sensors: listWithNewVal(this.state.sensors, index, "bone", event.target.value) });
-    this.updateBoneOptions()
+  handleBoneChange = (index) => (event) => {
+    this.setState({ sensors: listWithNewVal(this.state.sensors, index, "bone", event.target.value) });
+    // this.setState({
+    //   boneOptions: this.state.boneOptions.filter((sensor, currIndex) => currIndex !== index)
+    // })
   }
 
   handleStartcolChange = (index) => (event) => {
@@ -200,6 +158,9 @@ class MaterialCalibrationForm extends React.Component {
 
   render() {
     return (<div>
+          <Grid item xs={4} justify="center">
+              <Input type="file" id="myFile" required></Input>
+            </Grid>
     <React.Fragment>
       <Typography variant="h6" gutterBottom style={{marginTop:20}}>
         File Info
@@ -250,7 +211,6 @@ class MaterialCalibrationForm extends React.Component {
                   value={sensor.bone}
                   onChange={this.handleBoneChange(index)}
                 >
-                  <MenuItem key={sensor.bone} value={sensor.bone}>{sensor.bone}</MenuItem>
                   {this.state.boneOptions.map((boneName) => (
                     <MenuItem key={boneName} value={boneName}>{boneName}</MenuItem>
                   ))}
@@ -291,10 +251,16 @@ class MaterialCalibrationForm extends React.Component {
               <Grid item xs={3}>
                 <Button
                   color='primary'
-                  onClick={this.deleteSensor(index)}>
+                  onClick={this.deleteSensor(index)}
+                >
                   Remove sensor
                 </Button>
               </Grid>
+
+              {/* SECOND ROW */}
+              
+              
+
             </Grid>
       ))}
       <Grid container justify="center">
@@ -302,20 +268,32 @@ class MaterialCalibrationForm extends React.Component {
             <Button
               onClick={this.addSensor}
               color='primary'
-              disabled={this.state.validity.maxSensors}>
+            >
               Add sensor
             </Button>
           </Grid>
       </Grid>
+      <Grid item xs={6}>
+                <QuaternionSelectionDialog 
+                  localTransformQuaternions={this.state.sensors.map((sensor) => (sensor.localTransformQuaternion))}
+                  visualizer={mannequinVisualizer}
+                  quaternions={this.state.modelQuaternions}
+                  setQuaternions={this.setQuaternions}
+                  onAccept={this.acceptNewQuaternion}
+                  boneNames={this.state.sensors.map((sensor) => (sensor.bone))}
+                />
+              </Grid>
       </Grid>
       
     </React.Fragment>
-    <div style={{display:"flex", justifyContent: "flex-end"}}>
-      <Button type="submit" color="primary" variant="contained" className="button-submit" onClick={this.handleNext} disabled={this.state.validity.noSensors}>Next</Button>
+    <div>
+      <Button type="submit" color="primary" variant="contained" className="button-submit" onClick={this.boneTest} disabled={this.state.validity.noSensors}>Submit</Button>
     </div>
     </div>
+     
   );
   }
+
 }
 
 export default withRouter(MaterialCalibrationForm);
