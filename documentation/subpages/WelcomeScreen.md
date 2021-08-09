@@ -12,7 +12,7 @@ The title bar provides quick links to the following pages:
 The Home Animation welcomes the user with a looping animation of a spinning model. This is done by creating a THREE.js scene, loading the mannequin model, and calling an animation loop which rotates the model about the y-axis. Before the true model has loaded, a static image of the model is shown to prevent the screen from appearing to be blank.
 ## Buttons
 The buttons on the Welcome Screen include:
-- Launch Visualizer Button - takes the user to the [Viewport Screen](https://github.com/jpiland16/hmv_test/edit/master/documentation/subpages/Viewport.md)
+- Launch Visualizer Button - takes the user to the [Viewport Screen](https://github.com/jpiland16/hmv_test/blob/master/documentation/subpages/Viewport.md)
 - Use OPPORTUNITY Dataset Button - pops up the DatasetDialog [(view code)](https://github.com/jpiland16/hmv_test/blob/master/src/components/home-screen/DatasetDialog.js)
 which allows the user to select an OPPORTUNITY dataset trial to view and launches the Visualizer Screen with the file preloaded by passing the file name in as a parameter in the web address
 - Upload File Button - takes the user to the [Upload Screen](https://github.com/jpiland16/hmv_test/edit/master/documentation/subpages/UploadScreen.md)
