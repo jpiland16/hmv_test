@@ -25,7 +25,6 @@ class FileInfoForm extends React.Component {
     super();
     this.state = {
       name: "",
-      boneOptions: ["RUA", "RLA", "LUA", "LLA", "BACK", "HIPS", "RUL", "RLL", "LUL", "LLL"],
       typeOptions: ["Quaternion", "Accel+Gyro+Magnet", "Accel+Gyro", "Euler Angles"],
       sensors: [{ dataType: "Quaternion", bone: allBoneOptions[0], startColumn: "", localTransformQuaternion: null }],
       timeColumn: 0,
