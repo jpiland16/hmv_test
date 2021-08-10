@@ -1,24 +1,24 @@
 import React from 'react';
-import { Grid } from '@material-ui/core';
+import { CircularProgress, Grid } from '@material-ui/core';
 import {Button } from '@material-ui/core';
 import { MannequinVisualizer } from '../shared_visualizer_object/Models';
 import * as THREE from 'three'
 
 const mannequinVisualizer = new MannequinVisualizer()
-mannequinVisualizer.initialize((progress) => {})
+
+mannequinVisualizer.initialize(() => {})
 mannequinVisualizer.showSliders = true
+
 
 export default function QuaternionCalibrationForm(props) {
 
+const elementRef = React.useRef(null)
+const [ windowDimensions, setWindowDimensions ] = React.useState(getWindowDimensions());
+
 const [modelQuaternions, setModelQuaternions] = React.useState({})
-
 const boneList=props.sensorList.map((sensor) => (sensor.bone))
-
 const newSensorList=[...props.sensorList]
-
-const setQuaternions = (newQObj) => {
-  setModelQuaternions(newQObj)
-} 
+const sliders = () => mannequinVisualizer.getSliders(modelQuaternions, setModelQuaternions).filter((element) => boneList.indexOf(element.props.quaternionTarget.shortName) > -1)
       
 function handleSubmit() {
   let newQuaternions=sliders().map((slide)=>slide.props.quaternionTarget.current)
@@ -29,10 +29,6 @@ function handleSubmit() {
   console.log(props.sensorList)
   props.setSubmit(true)
 }
-
-const [ windowDimensions, setWindowDimensions ] = React.useState(getWindowDimensions());
-
-const elementRef = React.useRef(null)
   
 function getWindowDimensions() {
   const { innerWidth: width, innerHeight: height } = window;
@@ -41,11 +37,10 @@ function getWindowDimensions() {
       height
   ];
 }  
-    
-const sliders = () => boneList.map((boneName)=>(mannequinVisualizer.getSliders(modelQuaternions, setQuaternions).filter((element) => element.props.quaternionTarget.shortName === boneName))[0])
-
+  
 React.useEffect(() => {
   
+
   function handleResize() {
       setWindowDimensions(getWindowDimensions());
   }
@@ -61,7 +56,7 @@ return <div>
     <Grid item xs='12'>
             <div style={{width: "100%"}}>
                 <div style={{height: "50vh", width: "50%", float: "left", overflowY: "auto", overflowX: "hidden"}} ref={elementRef}>
-                        {mannequinVisualizer.modelLoaded && sliders().map((slider)=>(slider))}   
+                        {mannequinVisualizer.modelLoaded ? sliders().map((slider)=>(slider)) : <CircularProgress/>}   
                 </div>
                 <div style={{height: "50vh", width: "50%", float: "left", position: "relative"}} ref={elementRef}>
                     {mannequinVisualizer.component(windowDimensions)}

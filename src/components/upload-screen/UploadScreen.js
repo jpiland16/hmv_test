@@ -10,8 +10,7 @@ import Button from '@material-ui/core/Button';
 import React from 'react';
 import Typography from '@material-ui/core/Typography';
 import {useHistory} from 'react-router-dom'
-import { Grid } from '@material-ui/core';
-import { Input } from '@material-ui/core';
+
 
 export default function UploadScreen(props) {
 
@@ -72,8 +71,6 @@ export default function UploadScreen(props) {
         return <FileInfoForm setSensorList={setSensorList} setActiveStep={setActiveStep} formData={formData} setFormData={setFormData} setDisplayName={setDisplayName}/>;
       case 1:
         return <QuaternionCalibrationForm sensorList={sensorList} setSensorList={setSensorList} setSubmit={setSubmit}/>;
-      default:
-        throw new Error('Unknown step');
     }
   }
 
@@ -82,11 +79,10 @@ export default function UploadScreen(props) {
       if (props.verbose) console.log("Submitted the form.")
       if (props.verbose) console.log(sensorList);
       if (props.verbose) console.log("About to send post request.");
-      formData.append('file', document.getElementById('myFile').files[0]);
       formData.append('sensorData', JSON.stringify(sensorList));
     
       let formPostReq = new XMLHttpRequest();
-      formPostReq.onload = (event => {
+      formPostReq.onload = (() => {
         if (props.verbose) console.log("POST request complete!");
         let responseJSON = JSON.parse(formPostReq.response);
         if (props.verbose) console.log(responseJSON);
@@ -124,9 +120,6 @@ export default function UploadScreen(props) {
               </Step>
             ))}
           </Stepper>
-          <Grid item xs={4} justify="center" marginBottom="2%">
-              <Input type="file" id="myFile" required></Input>
-        </Grid>
           <React.Fragment >
                 {getStepContent(activeStep)}
               </React.Fragment>

@@ -5,6 +5,7 @@ import { MenuItem } from '@material-ui/core';
 import { Grid } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
 import Typography from '@material-ui/core/Typography';
+import { Input } from '@material-ui/core';
 
 const allBoneOptions=["BACK", "RUA", "RLA", "LUA", "LLA", "RUL", "RLL","LUL","LLL"]
 
@@ -31,20 +32,21 @@ class FileInfoForm extends React.Component {
       validity: {
         noDisplayName: true,
         noSensors: false,
-        maxSensors: false
+        noTimeColumn: false,
+        maxSensors: false,
       },
       boneOptions: allBoneOptions.slice(1),
-      modelQuaternions: {},
       next: false,
     };
   }
 
   handleNext = () => {
     const formData = new FormData();
-    formData.append('displayName', this.state.displayName);
+    formData.append('file', document.getElementById('myFile').files[0]);
+    formData.append('displayName', this.state.name);
     formData.append('timeColumn', this.state.timeColumn);
     this.props.setFormData(formData)
-    this.props.setDisplayName(this.state.displayName)
+    this.props.setDisplayName(this.state.name)
     this.props.setSensorList(this.state.sensors)
     this.props.setActiveStep(1)
   }
@@ -71,7 +73,6 @@ class FileInfoForm extends React.Component {
    */
   addSensor = () => {
     this.setState({
-      displayName: "",
       sensors: this.state.sensors.concat([{ dataType: "Quaternion", bone: this.state.boneOptions[0], startColumn: "", localTransformQuaternion: null }]),
       validity: {
         noSensors: false,
@@ -102,6 +103,12 @@ class FileInfoForm extends React.Component {
   handleTimecolChange = (event) => {
     this.setState({
       timeColumn: event.target.value
+    }, ()=> {
+      if(this.state.timeColumn != '') {
+        this.setState({validity: {noTimeColumn: false}})
+      } else {
+        this.setState({validity: {noTimeColumn: true}})
+      }
     });
   }
 
@@ -123,8 +130,8 @@ class FileInfoForm extends React.Component {
   }
 
   handleNameChange = (event) => {
-    this.setState({ displayName: event.target.value }, ()=>{
-      if(this.state.displayName != '') {
+    this.setState({ name: event.target.value }, ()=>{
+      if(this.state.name != '') {
         this.setState({validity: {noDisplayName: false}})
       } else {
         this.setState({validity: {noDisplayName: true}})
@@ -142,6 +149,9 @@ class FileInfoForm extends React.Component {
   render() {
     return (<div>
     <React.Fragment>
+    <Grid item xs={4} justify="center" marginBottom="2%">
+              <Input type="file" id="myFile" required></Input>
+      </Grid>
       <Typography variant="h6" gutterBottom style={{marginTop:20}}>
         File Info
       </Typography>
@@ -252,7 +262,7 @@ class FileInfoForm extends React.Component {
       
     </React.Fragment>
     <div style={{display:"flex", justifyContent: "flex-end"}}>
-      <Button type="submit" color="primary" variant="contained" className="button-submit" onClick={this.handleNext} disabled={this.state.validity.noSensors || this.state.validity.noDisplayName}>Next</Button>
+      <Button type="submit" color="primary" variant="contained" className="button-submit" onClick={this.handleNext} disabled={this.state.validity.noSensors || this.state.validity.noDisplayName || this.state.validity.noTimeColumn}>Next</Button>
     </div>
     </div>
   );
