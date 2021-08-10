@@ -6,7 +6,7 @@ import { Grid } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
 import Typography from '@material-ui/core/Typography';
 
-const allBoneOptions=["HIPS","BACK", "RUA", "RLA", "LUA", "LLA", "RUL", "RLL","LUL","LLL"]
+const allBoneOptions=["BACK", "RUA", "RLA", "LUA", "LLA", "RUL", "RLL","LUL","LLL"]
 
 function listWithNewVal(list, index, key, newVal) {
   const newList = list.map((item, currIndex) => {
