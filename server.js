@@ -10,7 +10,7 @@ const { Server } = require('socket.io');
 var onContactUs = null;
 let contactModulePath = __dirname+'/sendEmail.js';
 if (fs.existsSync(contactModulePath)) {
-    const { contactUsFunction } = require('./sendEmail')
+    const { onContactUs: contactUsFunction } = require('./sendEmail')
     onContactUs = contactUsFunction;
 }
 
