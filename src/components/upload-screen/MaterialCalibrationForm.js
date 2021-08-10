@@ -32,7 +32,7 @@ class MaterialCalibrationForm extends React.Component {
     super();
     this.state = {
       name: "",
-      boneOptions: ["RUA", "RLA", "LUA", "LLA", "BACK", "ROOT"],
+      boneOptions: ["RUA", "RLA", "LUA", "LLA", "BACK", "HIPS", "RUL", "RLL", "LUL", "LLL"],
       typeOptions: ["Quaternion", "Accel+Gyro+Magnet", "Accel+Gyro", "Euler Angles"],
       sensors: [{ dataType: "Quaternion", bone: "RUA", startColumn: "", localTransformQuaternion: null }],
       timeColumn: 0,
