@@ -7,7 +7,7 @@ import { BrowserRouter, Route, Switch } from "react-router-dom";
 import React from 'react';
 import UploadScreen from "./components/upload-screen/UploadScreen";
 import DatasetInfoScreen from "./components/dataset-info-screen/DatasetInfoScreen";
-import MetadataTinkerer from "./components/MetadataTinkererAlt"
+import MetadataTinkerer from "./components/MetadataTinkerer"
 
 export default function App() {
 
