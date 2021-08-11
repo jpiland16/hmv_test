@@ -116,7 +116,7 @@ class ThreeJSVisualizer extends BasicVisualizerObject {
         this.quaternionTargets = { }
     }
 
-    initialize(onProgress) {
+    initialize(onProgress = (progress) => { }) {
 
         const MIN_CAMERA_DISTANCE = 1.25;
         const MAX_CAMERA_DISTANCE = 7.5;

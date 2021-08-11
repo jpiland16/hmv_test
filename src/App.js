@@ -7,6 +7,7 @@ import { BrowserRouter, Route, Switch } from "react-router-dom";
 import React from 'react';
 import UploadScreen from "./components/upload-screen/UploadScreen";
 import DatasetInfoScreen from "./components/dataset-info-screen/DatasetInfoScreen";
+import MetadataTinkerer from "./components/MetadataTinkerer"
 
 export default function App() {
 
@@ -33,6 +34,9 @@ export default function App() {
             </Route>
             <Route exact path="/upload">
                 <UploadScreen/>
+            </Route>
+            <Route exact path="/tinker">
+                <MetadataTinkerer/>
             </Route>
             <Route>
                 <NotFound />
