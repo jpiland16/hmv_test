@@ -13,7 +13,7 @@
                 - [CardSet](https://github.com/jpiland16/hmv_test/edit/master/documentation/subpages/CardSet.md)
                 - [PlayBar](https://github.com/jpiland16/hmv_test/edit/master/documentation/subpages/PlayBar.md)
                 - [Animator](https://github.com/jpiland16/hmv_test/edit/master/documentation/subpages/Animator.md)
-                    - [BasicVisualizerObject](https://github.com/jpiland16/hmv_test/edit/master/documentation/subpages/VisualizerObject.md)
+                    - [BasicVisualizerObject](https://github.com/jpiland16/hmv_test/blob/master/documentation/subpages/VisualizerObject.md)
             - [UploadScreen](https://github.com/jpiland16/hmv_test/edit/master/documentation/subpages/UploadScreen.md)
                 - [MaterialCalibrationForm](https://github.com/jpiland16/hmv_test/edit/master/documentation/subpages/MaterialCalibrationForm.md)
                     - [QuaternionSelectionDialog](https://github.com/jpiland16/hmv_test/edit/master/documentation/subpages/QuaternionSelectionDialog.md)
