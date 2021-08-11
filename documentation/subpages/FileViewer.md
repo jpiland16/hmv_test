@@ -1,3 +1,4 @@
+[(Back to To TOC)](https://github.com/jpiland16/hmv_test/blob/master/documentation/TOC.md)
 # FileViewer [(view code)](https://github.com/jpiland16/hmv_test/blob/master/src/components/visualizer-screen/FileViewer.js)
 The FileViewer is responsible for showing the status of a target file, and for providing a Visualizer when the target file is ready for viewing.
 Since the server can take as long as it wants to translate an uploaded file to the desired format, and the server can encounter errors that prevent it from processing a submission, the FileViewer lets the user know whether they should expect a file or just try re-uploading. 
