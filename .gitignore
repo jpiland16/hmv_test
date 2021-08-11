@@ -23,6 +23,8 @@ yarn-debug.log*
 yarn-error.log*
 
 # other
+token.json
+credentials.json
 sslcert/
 /files/**
 !/files/demo

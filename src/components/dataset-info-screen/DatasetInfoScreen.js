@@ -15,8 +15,6 @@ export default function DatasetInfoScreen() {
   }));
 
   const classes = useStyles();
-
-  const history = useHistory()
  
   return (
     

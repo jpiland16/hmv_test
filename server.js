@@ -10,7 +10,7 @@ const { Server } = require('socket.io');
 var onContactUs = null;
 let contactModulePath = __dirname+'/sendEmail.js';
 if (fs.existsSync(contactModulePath)) {
-    const { contactUsFunction } = require('./sendEmail')
+    const { onContactUs: contactUsFunction } = require('./sendEmail')
     onContactUs = contactUsFunction;
 }
 
@@ -279,8 +279,18 @@ app.post('/api/send-message', (req, res) => {
         } else {
             message = fields.message
             email = fields.email
-            onContactUs(email, message)
-            res.status(200).send('message received')
+            onContactUs(email, message).then(
+                (response) => {
+                    if (response.status == 200) {
+                        res.status(200).send('message sent')
+                    } else {
+                        res.status(500).send('sending unsuccessful')
+                    }
+                },
+                (error) => {
+                    res.status(500).send(error.message)
+                }
+            )
         }
     })
 });
