@@ -19,7 +19,22 @@ export default function Animator(props) {
     }
 
     /**
-     * @param {Object} props
+     * @param {Object[]} props.fileMetadata.current.targets A list of Objects,
+     * each containing the data associated with the movement of one bone on the model.
+     * @param {Object} props.fileMetadata.current.globalTransformQuaternion An Object
+     * whose (w,x,y,z) properties map to the global transform quaternion's fields.
+     * @param {Object} props.fileMetadata.current.floatsMultiplied Defined as true
+     * if the file data is multiplied by a factor of 1000 (in order to avoid putting 
+     * a decimal point).
+     * @param {number} props.data.current The array of file data, where each
+     * row represents data at a uniform timestamp.
+     * @param {number} props.lastIndex.current The last recorded index of viewed quaternions.
+     * The currently displayed data (before this operation) should be at this index in
+     * the file data.
+     * @param {boolean} props.visualizer.modelLoaded True if the visualizer is
+     * accepting incoming quaternion transformations.
+     * @param {String} props.fileMetadata.current.targets[].bone The name of the bone associated
+     * with a target sensor of the current dataset.
      * @param {BasicVisualizerObject} props.visualizer
      */
     function applyDataQuaternions(props, timeValue) {
