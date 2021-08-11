@@ -1,4 +1,4 @@
-# Server[(view code)](https://github.com/jpiland16/hmv_test/blob/master/server.js)
+# Server [(view code)](https://github.com/jpiland16/hmv_test/blob/master/server.js)
 Server.js is a Node Express server that controls all server side functionaltiy. It has the following roles:
 - Serve the production build of the React app to clients, automatically updating whenever the production build changes.
 - Keep track of files stored on the server machine's file system and tell clients what files are available for viewing.
@@ -9,7 +9,7 @@ At present the server also holds the list of all API calls, since they are
 hard-coded as parameters to HTTP request handlers.
 
 ## Server maintenance
-Use any SSH terminal (For example, MobaXTerm) to connect to the VM using
+Use any SSH terminal (For example, MobaXTerm) to connect to the VM using:
 ```
 ssh <your-netid>@<vm-name>.vm.duke.edu
 ```
@@ -31,7 +31,7 @@ should do this sparingly--ideally only when the website isn't in use.
 If you want to modify the server's code for debugging an urgent issue, there are a few options. 
 Using an FTP program like FileZilla, a user won't have permission to transfer files directly to the
 `webs/` folder, but you can use `sudo cp <file-to-copy> <destination-file>` to copy modified files
-from my directory on the VM to the `webs/` dir. Any changes on the master branch in Git will automatically
+from your user directory on the VM to the `webs/` dir. Any changes on the master branch in Git will automatically
 go to the server files, and you could use `git checkout <branch-name>` to switch the server's Git branch, but
 it is not best practice to use Git as a file transfer manager.
 
