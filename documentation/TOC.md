@@ -20,6 +20,7 @@
                 - [Form File Processor](https://github.com/jpiland16/hmv_test/blob/master/documentation/subpages/FormFileProcessor.md)
                 - [multi_sensor_fuser_obj.py](https://github.com/jpiland16/hmv_test/blob/master/documentation/subpages/MultiSensorFusionObj.md)
             - [NotFoundScreen](https://github.com/jpiland16/hmv_test/blob/master/documentation/subpages/NotFoundScreen.md)
+            - [TitleBar](https://github.com/jpiland16/hmv_test/blob/master/documentation/subpages/TitleBar.md)
     - [Server](https://github.com/jpiland16/hmv_test/blob/master/documentation/subpages/Server.md)
         - [HTTPS](https://github.com/jpiland16/hmv_test/blob/master/documentation/subpages/HTTPS.md)
 - [Side Branches](https://github.com/jpiland16/hmv_test/blob/master/documentation/subpages/Branches.md)
