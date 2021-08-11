@@ -66,9 +66,9 @@
                         x.onload = () => {
                             if (x.status == 200) {
                                 // The message was received
-                                document.getElementById("form").innerHTML = "Your message was received. You can now <a href='/'>return to the home page</a>."
+                                document.getElementById("form").innerHTML = "Your message was sent. You can now <a href='/'>return to the home page</a>."
                             } else {
-                                window.alert("The message was not received. Please try again.")
+                                window.alert("Unfortunately, your message was not sent. Please try again.\n(specific error is given below)\n" + "Error code " + x.status + ": " + x.statusText + "\n" + x.responseText)
                             }
                         }
 
