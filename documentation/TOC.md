@@ -18,7 +18,7 @@
                 - [MaterialCalibrationForm](https://github.com/jpiland16/hmv_test/blob/master/documentation/subpages/MaterialCalibrationForm.md)
                     - [QuaternionSelectionDialog](https://github.com/jpiland16/hmv_test/blob/master/documentation/subpages/QuaternionSelectionDialog.md)
                 - [Form File Processor](https://github.com/jpiland16/hmv_test/blob/master/documentation/subpages/FormFileProcessor.md)
-                - [multi_sensor_fuser_obj.py](https://github.com/jpiland16/hmv_test/blob/master/documentation/subpages/MultiSensorFusionObj.md)
+                - [multi_sensor_fuser_obj.py](https://github.com/jpiland16/hmv_test/blob/master/documentation/subpages/MultiSensorFuserObj.md)
             - [NotFoundScreen](https://github.com/jpiland16/hmv_test/blob/master/documentation/subpages/NotFoundScreen.md)
             - [TitleBar](https://github.com/jpiland16/hmv_test/blob/master/documentation/subpages/TitleBar.md)
     - [Server](https://github.com/jpiland16/hmv_test/blob/master/documentation/subpages/Server.md)
