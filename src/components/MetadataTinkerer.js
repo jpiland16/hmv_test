@@ -212,6 +212,8 @@ export default function MetadataTinkerer() {
                     <MenuItem value="BACK">Back</MenuItem>
                     <MenuItem value="RUA">Right upper arm</MenuItem>
                     <MenuItem value="RLA">Right forearm</MenuItem>
+                    <MenuItem value="LUA">Left upper arm</MenuItem>
+                    <MenuItem value="LLA">Left forearm</MenuItem>
                     <MenuItem value="RUL">Right upper leg</MenuItem>
                     <MenuItem value="RLL">Right lower leg</MenuItem>
                     <MenuItem value="LUL">Left upper leg</MenuItem>
