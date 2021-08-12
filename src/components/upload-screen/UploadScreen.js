@@ -95,7 +95,7 @@ export default function UploadScreen(props) {
         params.set('name', displayName);
         if (props.verbose) console.log(params.toString());
         const target = targetURL + params.toString();
-        history.push(target); //DO SOMETHING ABOUT THIS
+        history.push(target); 
       });
       formPostReq.open("POST", "/api/postform");
       formPostReq.send(formData);
