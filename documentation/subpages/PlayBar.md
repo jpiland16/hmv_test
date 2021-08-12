@@ -1,3 +1,4 @@
+[(Back to To TOC)](https://github.com/jpiland16/hmv_test/blob/master/documentation/TOC.md)
 # PlayBar [(view code)](https://github.com/jpiland16/hmv_test/blob/master/src/components/visualizer-screen/PlayBar.js)
 
 The PlayBar as a UI element is a slider with an autoplay / pause button. The React component also actively modifies the `lineNumberRef` value that the Viewport gives to the Animator to determine what line of data should be shown on the model.
