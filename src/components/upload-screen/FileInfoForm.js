@@ -29,12 +29,12 @@ class FileInfoForm extends React.Component {
       typeOptions: ["Quaternion", "Accel+Gyro+Magnet", "Accel+Gyro", "Euler Angles"],
       sensors: [{ dataType: "Quaternion", bone: allBoneOptions[0], startColumn: "", localTransformQuaternion: null }],
       timeColumn: 0,
-      validity: {
+     
         noDisplayName: true,
         noSensors: false,
         noTimeColumn: false,
         maxSensors: false,
-      },
+      
       boneOptions: allBoneOptions.slice(1),
       next: false,
     };
@@ -72,14 +72,16 @@ class FileInfoForm extends React.Component {
    * @description Adds sensor to form and updates the bone selection dropdown lists
    */
   addSensor = () => {
+    console.log(this.state.noDisplayName)
+    console.log(this.state.name)
     this.setState({
       sensors: this.state.sensors.concat([{ dataType: "Quaternion", bone: this.state.boneOptions[0], startColumn: "", localTransformQuaternion: null }]),
-      validity: {
-        noSensors: false,
-        maxSensors: (this.state.sensors.length+1 == allBoneOptions.length)
-      }
+      noSensors: false,
+      maxSensors: (this.state.sensors.length+1 == allBoneOptions.length)
+      
     }, ()=>{this.updateBoneOptions()});
-    
+    console.log(this.state.noDisplayName)
+    console.log(this.state.name)
   }
 
   printState = () => {
@@ -93,10 +95,10 @@ class FileInfoForm extends React.Component {
     if (this.props.verbose) console.log(`Deleting sensor with index ${removedIndex}`);
     this.setState({
       sensors: this.state.sensors.filter((sensor, currIndex) => currIndex !== removedIndex),
-      validity: {
+      
         noSensors: (this.state.sensors.length-1 < 1),
         maxSensors: false
-      }
+      
     }, ()=>{this.updateBoneOptions()})
   }
 
@@ -105,9 +107,9 @@ class FileInfoForm extends React.Component {
       timeColumn: event.target.value
     }, ()=> {
       if(this.state.timeColumn != '') {
-        this.setState({validity: {noTimeColumn: false}})
+        this.setState({noTimeColumn: false})
       } else {
-        this.setState({validity: {noTimeColumn: true}})
+        this.setState({noTimeColumn: true})
       }
     });
   }
@@ -131,10 +133,10 @@ class FileInfoForm extends React.Component {
 
   handleNameChange = (event) => {
     this.setState({ name: event.target.value }, ()=>{
-      if(this.state.name != '') {
-        this.setState({validity: {noDisplayName: false}})
+      if(this.state.name == '' || this.state.name == undefined) {
+        this.setState({noDisplayName: true})
       } else {
-        this.setState({validity: {noDisplayName: true}})
+        this.setState({noDisplayName: false})
       }
     })
   }
@@ -188,7 +190,7 @@ class FileInfoForm extends React.Component {
       </Typography>
         <Grid container spacing={3}>
         <Grid item xs={12}>
-          <this.NoSensorsError noSensors={this.state.validity.noSensors}></this.NoSensorsError>
+          <this.NoSensorsError noSensors={this.state.noSensors}></this.NoSensorsError>
         </Grid>
         {this.state.sensors.map((sensor, index) => (
             <Grid container item xs={12} spacing={3} justify="flex-start" alignItems="center">
@@ -253,7 +255,7 @@ class FileInfoForm extends React.Component {
             <Button
               onClick={this.addSensor}
               color='primary'
-              disabled={this.state.validity.maxSensors}>
+              disabled={this.state.maxSensors}>
               Add sensor
             </Button>
           </Grid>
@@ -262,7 +264,7 @@ class FileInfoForm extends React.Component {
       
     </React.Fragment>
     <div style={{display:"flex", justifyContent: "flex-end"}}>
-      <Button type="submit" color="primary" variant="contained" className="button-submit" onClick={this.handleNext} disabled={this.state.validity.noSensors || this.state.validity.noDisplayName || this.state.validity.noTimeColumn}>Next</Button>
+      <Button type="submit" color="primary" variant="contained" className="button-submit" onClick={this.handleNext} disabled={(this.state.noDisplayName || this.state.noSensors || this.state.noTimeColumn)}>Next</Button>
     </div>
     </div>
   );

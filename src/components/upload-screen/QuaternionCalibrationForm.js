@@ -6,14 +6,12 @@ import * as THREE from 'three'
 
 const mannequinVisualizer = new MannequinVisualizer()
 
-mannequinVisualizer.initialize(() => {})
-mannequinVisualizer.showSliders = true
-
-
 export default function QuaternionCalibrationForm(props) {
 
 const elementRef = React.useRef(null)
 const [ windowDimensions, setWindowDimensions ] = React.useState(getWindowDimensions());
+
+const[modelLoaded, setModelLoaded]= React.useState(false)
 
 const [modelQuaternions, setModelQuaternions] = React.useState({})
 const boneList=props.sensorList.map((sensor) => (sensor.bone))
@@ -38,8 +36,11 @@ function getWindowDimensions() {
   ];
 }  
   
-React.useEffect(() => {
-  
+React.useEffect(async() => {
+
+  await mannequinVisualizer.initialize(() => {})
+  mannequinVisualizer.showSliders = true
+  setModelLoaded(true)
 
   function handleResize() {
       setWindowDimensions(getWindowDimensions());
@@ -55,12 +56,16 @@ return <div>
 <Grid container justify="center">
     <Grid item xs='12'>
             <div style={{width: "100%"}}>
-                <div style={{height: "50vh", width: "50%", float: "left", overflowY: "auto", overflowX: "hidden"}} ref={elementRef}>
-                        {mannequinVisualizer.modelLoaded ? sliders().map((slider)=>(slider)) : <CircularProgress/>}   
+                {modelLoaded ? <div style={{height: "50vh", width: "50%", float: "left", overflowY: "auto", overflowX: "hidden", }} ref={elementRef}>
+                        {sliders().map((slider)=>(slider))}
+                </div> :
+                <div style={{height: "100%", display: "flex", justifyContent: "center", alignItems: "center"}} ref={elementRef}>
+                <CircularProgress />
                 </div>
+                }
                 <div style={{height: "50vh", width: "50%", float: "left", position: "relative"}} ref={elementRef}>
-                    {mannequinVisualizer.component(windowDimensions)}
-                    {mannequinVisualizer.getTools()}
+                    {modelLoaded && mannequinVisualizer.component(windowDimensions)}
+                    {modelLoaded && mannequinVisualizer.getTools()}
                 </div>
             </div>
     </Grid>
