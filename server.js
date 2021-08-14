@@ -105,13 +105,22 @@ function isValidDir(dir) {
  */
  function getDirStructure(dir, displayDirname) {
     return new Promise((myResolve, myReject) => {
-        let childDirectories = [];
+        let thisDirElements = [];
         fs.readdir(dir, {withFileTypes: true}, (err, fileList) => {
             if (err) {
                 myReject(err);
                 return; 
             }
             let promises = [];
+
+            // First check if there is a metadata file
+            let containsMetadata = false;
+            fileList.forEach((file) => {
+                if (!file.isDirectory() && file.name == "metadata.json")
+                    containsMetadata = true;
+            })
+            
+            // Then actually go through the folder's items
             fileList.forEach((file) => {
                 if (file.isDirectory()) {
                     let dirObj = {
@@ -120,22 +129,32 @@ function isValidDir(dir) {
                         children: null,
                     }
                     let dirStructPromise = getDirStructure(dir+'/'+file.name, displayDirname+'/'+file.name);
-                    dirStructPromise.then((subDir) => {
-                        dirObj.children = subDir;
+                    dirStructPromise.then((subDirElements) => {
+                        if (subDirElements.length > 0) {
+                            dirObj.children = subDirElements;
+                            thisDirElements.push(dirObj)
+                        }
                     });
                     let displayNamePromise = getFileDisplayName(dir+'/'+file.name);
                     displayNamePromise.then((displayName) => {
                         dirObj.name = (displayName === null) ? file.name : displayName;
                     });
-                    let validDirPromise = isValidDir(dir+'/'+file.name);
-                    validDirPromise.then((valid) => {
-                        if (valid) { childDirectories.push(dirObj); }
-                    })
-                    promises.push(dirStructPromise, displayNamePromise, validDirPromise);
+                    promises.push(dirStructPromise, displayNamePromise);
+                } else {
+                    // Not a directory
+                    if (containsMetadata) {
+                        if (file.name !== "metadata.json") {
+                            thisDirElements.push({
+                                name: file.name,
+                                id: displayDirname + '/' + file.name,
+                                children: null,
+                            })
+                        }
+                    }
                 }
             });
             Promise.all(promises).then(() => {
-                myResolve(childDirectories.length > 0 ? childDirectories : null);
+                myResolve(thisDirElements);
             });
         });
     });
@@ -242,7 +261,7 @@ function writeUploadedFile(data, metadata, filepath) {
     return new Promise((myResolve, myReject) => {
         fs.mkdir(filepath, {recursive: true}, (err) => {
             if (err) {
-                if (VERBOSE_OUTPUT) console.log("Error occured when trying to make new directory!")
+                if (VERBOSE_OUTPUT) console.log("Error occurred when trying to make new directory!")
                 myReject(err); // If I handle this somehow, then this can just return Promise.all below instead
                 return;
             }
@@ -305,12 +324,18 @@ function cleanFilename(targetFile) {
     return targetFile;
 }
 
+
+// Remove the file name and replace it with `metadata.json`
+function getMetadataPath(originalPath) {
+    return originalPath.substr(0, originalPath.lastIndexOf("/") + 1) + "metadata.json"
+}
+
 function fileAvailable(targetFile) {
     targetFile = cleanFilename(targetFile);
     let fileRoot = `${__dirname}/files`;
     if (VERBOSE_OUTPUT) console.log("File root: " + fileRoot);
-    let dataFilePath = `${fileRoot}/${targetFile}/quaternion_data.dat`;
-    let metadataPath = `${fileRoot}/${targetFile}/metadata.json`;
+    let dataFilePath = `${fileRoot}/${targetFile}`;
+    let metadataPath = `${fileRoot}/${getMetadataPath(targetFile)}`
     if (VERBOSE_OUTPUT) console.log(`Checking for available files: ${dataFilePath}, ${metadataPath}`);
     return (fs.existsSync(dataFilePath) && fs.existsSync(metadataPath));
 }
@@ -333,10 +358,10 @@ app.get("/api/uploadedfiles", (req, res) => {
     let filePath;
     switch (req.query.type) {
         case ('data'):
-            filePath = `${fileRoot}/${targetFile}/quaternion_data.dat`
+            filePath = `${fileRoot}/${targetFile}`
             break;
         case ('metadata'):
-            filePath = `${fileRoot}/${targetFile}/metadata.json`
+            filePath = `${fileRoot}/${getMetadataPath(targetFile)}`
             break;
         default:
             res.sendStatus(400);
