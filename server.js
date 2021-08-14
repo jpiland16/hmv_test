@@ -84,20 +84,40 @@ function isValidDir(dir) {
 
 /**
  * Asynchronously creates a nested JS object matching the file structure of the given directory,
- * where folders have children iff they have subdirectories.
- * Does not include the parameter directory. Does not include any leaf directory that is missing
- * a metadata.json or quaternion_data.dat file.
+ * subdirectories are only added to the file tree if (1) they contain a `metadata.json` file or 
+ * (2) one of their children has already been added to the file tree.
+ * Does not include the parameter directory. 
  * @example 
- * // Returns [{name: child1, id: child1}, {name: child2, id: child2, children: [{name: foo, id: child2/grandchild}]}]
- * // for the following file structure:
- * // parent
- * // |-- child1
- * // |    `-- metadata.json (contains no "displayName:" field)
- * // |    `-- quaternion_data.dat
- * // `-- child2
- * //      `-- grandchild
- * //          |-- metadata.json (contains "displayName": "foo")
- * //          `-- quaternion_data.dat
+ * 
+ *    Returns [{
+ *      name: child1, 
+ *      id: child1,
+ *      children: [{
+ *          name: original-filename.dat, 
+ *          id: child1/original-filename.dat}
+ *    ]}, {
+ *      name: child2, 
+ *      id: child2, 
+ *      children: [{
+ *          name: foo, 
+ *          id: child2/grandchild
+ *          children: [{
+ *              name: bar.dat,
+ *              id: child2/grandchild/bar.dat
+ *          }]
+ *      }]
+ *    }]
+ * 
+ *    for the following file structure:
+ * 
+ *    parent
+ *    |-- child1
+ *    |    `-- metadata.json (contains no "displayName:" field)
+ *    |    `-- original-filename.dat
+ *    `-- child2
+ *         `-- grandchild
+ *             |-- metadata.json (contains "displayName": "foo")
+ *             `-- bar.dat
  * getDirStructure("parent", false)
  * @param {String} dir The name of the directory to encode.
  * @param {String} displayDirname The prefix to the filename in the ID field for each subdirectory.
