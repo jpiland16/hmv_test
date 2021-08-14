@@ -9,6 +9,11 @@ function handleForm(err, fields, files, callback, onError) {
         if (VERBOSE_OUTPUT) console.log(err);
     }
     if (VERBOSE_OUTPUT) console.log(fields);
+    if (!files.file) {
+        if (VERBOSE_OUTPUT) console.log("No file was received!");
+        onError("No file was received.");
+        return;
+    }
     const reader = new FileReader();
     reader.addEventListener('load', (event) => {
         try {
@@ -123,7 +128,9 @@ function handleUploadedFile(event, fields, callback, onError) {
 const processDownloadedForm = (fields, files) => {
     return new Promise((resolve, reject) => {
         if (VERBOSE_OUTPUT) console.log("Processing a downloaded form in the Form processor.");
-        handleForm(null, fields, files, (data, metadata) => resolve({ data: data, metadata: metadata }), (errMessage) => reject(errMessage));
+        handleForm(null, fields, files, 
+            (data, metadata) => { resolve({ data: data, metadata: metadata })}, 
+            (errMessage) => { reject(errMessage)});
     });
 };
 

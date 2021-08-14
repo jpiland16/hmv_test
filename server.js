@@ -27,7 +27,7 @@ const io = new Server(httpsServer);
 
 const formProcessor = require('./src/server_side/FormFileProcessor');
 
-const VERBOSE_OUTPUT = false
+const VERBOSE_OUTPUT = process.argv[2] && process.argv[2] === 'verbose';
 
 /**
  * Asynchronously and returns the display name from the metadata file at the given filepath.
@@ -223,9 +223,14 @@ function handleFormUpload(req, res) {
             })
             .catch((err) => {
                 if (VERBOSE_OUTPUT) console.log("Some kind of error happened that we need to communicate to the client: " + err);
+                app.locals.currentFiles.delete(fullPath.substr('./files'.length));
+                notifySocketListeners(fullPath, 'File missing'); // TODO: Make another signal for when the file isn't "missing" but had an error
             });
         })
         .catch((errMessage) => {
+            if (VERBOSE_OUTPUT) console.log("Received error from form processor: ")
+            if (VERBOSE_OUTPUT) console.log(errMessage);
+            app.locals.currentFiles.delete(fullPath.substr('./files'.length));
             notifySocketListeners(fullPath, 'File missing'); // TODO: Make another signal for when the file isn't "missing" but had an error
         })
     });
