@@ -7,7 +7,7 @@ import { Alert } from '@material-ui/lab';
 import Typography from '@material-ui/core/Typography';
 import { Input } from '@material-ui/core';
 
-const allBoneOptions=["BACK", "RUA", "RLA", "LUA", "LLA", "RUL", "RLL","LUL","LLL"]
+const allBoneOptions=["ROOT","BACK", "RUA", "RLA", "LUA", "LLA", "RUL", "RLL","LUL","LLL"]
 
 function listWithNewVal(list, index, key, newVal) {
   const newList = list.map((item, currIndex) => {
