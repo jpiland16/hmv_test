@@ -198,7 +198,7 @@ export function subscribeToFile(props, mySelectedFile) {
 
             socket.disconnect();
             props.setFileStatus({ status: "Loading models" });
-            // Note that this awaitScene dependence means that subscribeToFile will not work if we haven't yet rendered the viewport!
+            // Note that this awaitScene dependence means that subscribeToFile will not work if we haven't yet initialized the scene loading
             try {
                     props.awaitScene.current.then( () => {
                         if (props.selectedFile.displayName === "Loading...") {
