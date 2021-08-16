@@ -29,12 +29,7 @@ Below are some of the most important notes for developing the app, in a loosely 
 
 > By the way, here's the logo--it helps make the project seem professional.
 > 
->![logus](https://vcm-20389.vm.duke.edu/hmv-favicon-512.png)
-> <style type="text/css">
->     img {
->         width: 10%;
->     }
-> </style>
+> <img src="https://vcm-20389.vm.duke.edu/hmv-favicon-512.png" alt="" data-canonical-src="https://vcm-20389.vm.duke.edu/hmv-favicon-512.png" width="128" height="128" />
 ## Prior knowledge
 It will be helpful to be familiar with the following programming languages, data formats, libraries, etc.
 - Javascript - this app is primarily Javascript.
