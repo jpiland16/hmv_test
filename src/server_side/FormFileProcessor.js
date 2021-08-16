@@ -3,6 +3,18 @@ const { spawn } = require('child_process');
 
 const VERBOSE_OUTPUT = true
 
+/**
+ * The third method which is called when a user uploads a file to the server.
+ * Is responsible for reading the file(s) as text, then calling another method to parse these file(s).
+ * 
+ * @param err - I think this needs to be removed; it is hard-coded as null below
+ * @param fields - the form fields
+ * @param files - the form files
+ * @param callback - function to be called when the FileReader is done reading the files
+ * @param onError - function to be called if the file reading fails
+ * 
+ * @category Server-side functions: Uploading files
+ */
 function handleForm(err, fields, files, callback, onError) {
     if (VERBOSE_OUTPUT) console.log("Proceeded to handleForm function...");
     if (err) {
@@ -38,10 +50,10 @@ function parseFormFields(fields) {
         name: "Opportunity Dataset",
         displayName: fields.displayName,
         globalTransformQuaternion: {
-            x: 0.7071,
-            y: 0,
-            z: 0,
-            w: -0.7071
+            x: 0.5,
+            y: 0.5,
+            z: 0.5,
+            w: -0.5
         },
         targets: []
     }
@@ -54,16 +66,29 @@ function parseFormFields(fields) {
             type: sensor.dataType,
             column: (i * 4) + 1,
             localTransformQuaternion: {
-                x: 0.7071,
-                y: 0.7071,
-                z: 0,
-                w: 0
+                x: sensor.localTransformQuaternion._x,
+                y: sensor.localTransformQuaternion._y,
+                z: sensor.localTransformQuaternion._z,
+                w: sensor.localTransformQuaternion._w
             }
         });
     }
     return metadata;
 }
 
+/**
+ * The fourth method that is called after the user uploads a file.
+ * Is responsible for parsing the result of a file reading operation
+ * and then returning the output of a Python process by calling the `callback`
+ * function whenever the process terminates.
+ * 
+ * @param {object} event - file reading event
+ * @param {object} fields - the form fields
+ * @param {function} callback - function to be called when data processing is complete
+ * 
+ * 
+ * @category Server-side functions: Uploading files
+ */
 function handleUploadedFile(event, fields, callback, onError) {
     let sensors = JSON.parse(fields.sensorData);
     if (VERBOSE_OUTPUT) console.log(sensors);
@@ -108,6 +133,9 @@ function handleUploadedFile(event, fields, callback, onError) {
 /**
  * Handles translating incoming an user `FormData` into data and metadata which
  * can be stored for delivery to clients. 
+ * 
+ * This is the second method that is called after the user uploads a file.
+ * 
  * @param {Object} fields An Object containing the non-file data submitted by a user 
  * through the upload form.
  * @param {string} fields.sensorData Stringified JSON representing the parameters
@@ -121,9 +149,12 @@ function handleUploadedFile(event, fields, callback, onError) {
  * where the timestamp for the row's data is stored (in milliseconds).
  * @param {Object} files The containing object for the incoming data file
  * @param files.file The file object which can be read as text using a `FileReader`.
+ * 
  * @returns {Promise} A Promise which resolves with an Object containing the 
  * file data and metadata in its `data` and `metadata` fields, or an error message
  * upon rejection.
+ * 
+ * @category Server-side functions: Uploading files
  */
 const processDownloadedForm = (fields, files) => {
     return new Promise((resolve, reject) => {
