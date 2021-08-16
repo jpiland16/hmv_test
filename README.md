@@ -76,7 +76,7 @@ It will be helpful to be familiar with the following programming languages, data
 
 
 
-## The Viewport component is the 'Human activity visualizer'
+## The [Viewport](src/components/visualizer-screen/Viewport.js) component is the 'Human activity visualizer'
 - The viewport's responsibility is to:
     1. Display the 3D scene containing the model
     2. Manipulate the model based on the target data
@@ -115,16 +115,16 @@ The metadata file carries the following info:
         - ROOT (rotates the entire model about a point on the ground)
             - HIPS
                 - BACK
-                    - RUL (right upper leg)
-                        - RLL (right lower leg/shin)
-                            - RSHOE (right shoe)
-                    - LUL (left upper leg)
-                    - LLL (left lower leg/shin)
-                        - LSHOE (left shoe)
                     - RUA (right upper arm)
                         - RLA (right lower arm/forearm)
                     - LUA (left upper arm)
                         - LLA (left lower arm/forearm)
+                 - LUL (left upper leg)
+                     - LLL (left lower leg/shin)
+                         - LSHOE (left shoe)
+                 - RUL (right upper leg)
+                     - RLL (right lower leg/shin)
+                         - RSHOE (right shoe)
     - `type`: The type of orientation transformation to apply to the bone. As of 7/22/2021, this is always "Quaternion".
     - `column`: The first column in `quaternion_data.dat` that contains the actual transformation values. Column indices begin at 0 for the first column.
     - `localTransformationQuaternion`: A quaternion that is applied to the sensor's bone after the global transformation and before the data.
@@ -143,7 +143,7 @@ There is a server-side and client-side aspect to our data processing. The server
 The processing is not more client-centric because we want freedom to use any sort of code for processing incoming data, including python or C libraries. It's not more server-centric because (1) unnecessary server-side activity allows users to more easily slow down the website, and (2) we want the metadata to be easily swappable, since it often changes many times before we have something we like.
 
 ## How processed data is applied to the model
-`Animator.js` and `ModelOps.js` handle manipulating the model to show data.
+`Animator.js` and the Visualizer object (`Visualizer.js` and `Model.js`) handle manipulating the model to show data.
 
 `Animator.js` is a renderless component which checks on each re-render whether the selected time slice `timeSliderValue` has changed. When a file is loaded and the time slider changes, it parses the floats from the active file data and passes them as a JS Object to `Visualizer.acceptData`, which then applies them to the model using THREE.js Quaternion objects. 
 
