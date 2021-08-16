@@ -216,6 +216,9 @@ function writeFilePromise(filePath, data) {
 /**
  * The first helper method that is called after an uploaded file is received.
  * 
+ * @param req - POST request
+ * @param res - Server response
+ * 
  * @category Server-side functions: Uploading files
  */
 function handleFormUpload(req, res) {
