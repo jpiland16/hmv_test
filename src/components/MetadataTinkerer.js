@@ -1,7 +1,6 @@
 import React from 'react';
 import { MannequinVisualizer } from './shared_visualizer_object/Models';
-import QuaternionSelectionDialog from './upload-screen/QuaternionSelectionDialogAlt'
-import QuaternionSelect from './QuaternionSelect';
+import SimpleSceneVis from './upload-screen/SimpleSceneVis'
 import * as THREE from 'three'
 import { Button, Slider, TextField, Typography } from '@material-ui/core';
 import { Select, MenuItem } from '@material-ui/core'
@@ -24,7 +23,7 @@ const boneNames = [
 console.log("Declaring visualizer...");
 const scriptVis = new MannequinVisualizer();
 
-export default function MetadataTinkerer() {
+export default function MetadataTinkerer({ verbose=false }={}) {
     const [targetBone, setTargetBone] = React.useState("BACK");
     const [visualizer, setVisualizer] = React.useState(scriptVis);
     const [quaternions, setQuaternions] = React.useState({ });
@@ -55,19 +54,17 @@ export default function MetadataTinkerer() {
         HIPS: 0,
     }); // TODO: Do I want to merge this with the other map from bone name?
     const [fileData, setFileData] = React.useState([[1, 0, 0, 0]]); // Probably a bad idea because it involves storing a whole file in memory
+    const [globalTransformStack, setGlobalTransfStack] = React.useState([{w: 1, x: 0, y: 0, z: 0}]);
 
     React.useEffect(() => {
-        // const newVis = new MannequinVisualizer();
-        console.log("initializing visualizer...");
         setVisualizer(scriptVis);
+        let defaultOrientation = new THREE.Quaternion(0, 0, 0, 1);
         scriptVis.initialize().then(() => {
-            console.log("Visualizer has finished initializing!");
             for (let boneName of boneNames) {
                 visualizer.acceptData({ [boneName]: defaultOrientation });
             }
         });
         scriptVis.showSliders = true;
-        let defaultOrientation = new THREE.Quaternion(0, 0, 0, 1);
     }, []);
 
     const handleDataQuatChange = (newIndex) => {
@@ -93,7 +90,17 @@ export default function MetadataTinkerer() {
         let newQuatStacks = {...quaternionStacks};
         newQuatStacks[targetBone] = stackedQuaternions;
         setQuaternionStacks(newQuatStacks);
-        updateModel(targetBone, stackedQuaternions, dataRow, columnNumbers[targetBone]);
+        // updateModel(targetBone, stackedQuaternions, dataRow, columnNumbers[targetBone]);
+        for (let boneName of boneNames) {
+            updateModel(boneName, quaternionStacks[boneName], dataRow, columnNumbers[boneName]);
+        }
+    }
+
+    const handleGlobalStackChange = (stackedQuaternions) => {
+        setGlobalTransfStack([...stackedQuaternions]);
+        for (let boneName of boneNames) {
+            updateModel(boneName, quaternionStacks[boneName], dataRow, columnNumbers[boneName], { globalTransf: stackedQuaternions });
+        }
     }
 
     const handleColumnNumChange = (newColIndex) => {
@@ -111,10 +118,9 @@ export default function MetadataTinkerer() {
         return transformQuat;
     }
 
-    function updateModel(boneName, stackedQuats, rowIndex, columnIndex, currFileData=null) {
-        if (currFileData === null) {
-            currFileData = fileData;
-        }
+    function updateModel(boneName, stackedQuats, rowIndex, columnIndex, 
+        { currFileData=fileData, globalTransf=globalTransformStack } = {}) {
+        if (stackedQuats.length === 0) { return; }
         let dataQuat = {
             w: currFileData[rowIndex][columnIndex + 0],
             x: currFileData[rowIndex][columnIndex + 1],
@@ -122,9 +128,20 @@ export default function MetadataTinkerer() {
             z: currFileData[rowIndex][columnIndex + 3],
         }
         let transformQuat = getTransformQuat(stackedQuats);
+        let globalTransfQuat = getTransformQuat(globalTransf);
         let threeDataQuat = new THREE.Quaternion(dataQuat.x,dataQuat.y,dataQuat.z,dataQuat.w);
-        threeDataQuat.multiply(transformQuat);
-        visualizer.acceptData({ [boneName]: threeDataQuat });
+
+        let finalQuat = new THREE.Quaternion().copy(threeDataQuat);
+        finalQuat.multiply(transformQuat);
+        finalQuat.premultiply(globalTransfQuat);
+
+        if (verbose) console.log(`Bone name: ${boneName}
+            Global transform: (${globalTransfQuat.w},${globalTransfQuat.x},${globalTransfQuat.y},${globalTransfQuat.z})
+            Data quat: (${dataQuat.w},${dataQuat.x},${dataQuat.y},${dataQuat.z})\n
+            Local transform: (${transformQuat.w},${transformQuat.x},${transformQuat.y},${transformQuat.z})\n
+            Final quat: (${finalQuat.w},${finalQuat.x},${finalQuat.y},${finalQuat.z})`);
+
+        visualizer.acceptData({ [boneName]: finalQuat });
     }
 
     const handleFileUpload = (event) => {
@@ -150,9 +167,9 @@ export default function MetadataTinkerer() {
                 i ++;
             }
             setFileData(newFileData);
-            console.log(reader.result.split("\n")[0]);
+            if (verbose) console.log(reader.result.split("\n")[0]);
             for (let boneName of boneNames) {
-                updateModel(boneName, quaternionStacks[boneName], dataRow, columnNumbers[boneName], newFileData);
+                updateModel(boneName, quaternionStacks[boneName], dataRow, columnNumbers[boneName], { currFileData: newFileData });
             }
         };
         reader.readAsText(file);
@@ -161,10 +178,16 @@ export default function MetadataTinkerer() {
 
     const downloadMetadata = () => {
         const dataPrefix = "data:text/json;charset=utf-8,";
+        const globalQuat = getTransformQuat(globalTransformStack);
         const metadata = {
             name: "Opportunity dataset",
             displayName: "Tinker dataset " + new Date().toISOString(),
-            globalTransformQuaternion: { w: 1, x: 0, y: 0, z: 0 },
+            globalTransformQuaternion: {
+                w: globalQuat.w,
+                x: globalQuat.x,
+                y: globalQuat.y,
+                z: globalQuat.z 
+            },
             targets: []
         };
         for (let boneName of boneNames) {
@@ -194,7 +217,7 @@ export default function MetadataTinkerer() {
     return (
         <div style={{display: "flex", flexDirection: "row", width: "80vw"}}>
             <div style={{width: "60%"}}>
-                <QuaternionSelectionDialog 
+                <SimpleSceneVis 
                     localTransformQuaternion={{ w: 1, x: 0, y: 0, z: 0 }}
                     visualizer={visualizer}
                     quaternions={quaternions}
@@ -204,6 +227,14 @@ export default function MetadataTinkerer() {
                 />
             </div>
             <div style={{display: "flex", flexDirection: "column", width: "40%", height: "60vh", overflow: "scroll"}}>
+                <div>
+                    <Typography>Global transform quaternion</Typography>
+                    <QuatEditorGroup
+                        value={globalTransformStack}
+                        onChange={handleGlobalStackChange}
+                    />
+                </div>
+
                 <Select
                     defaultValue="BACK"
                     onChange={(event) => { setTargetBone(event.target.value); }}

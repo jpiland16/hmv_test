@@ -38,7 +38,7 @@ const axisMap = {
  * @param {Object} props
  * @param {BasicVisualizerObject} props.visualizer
  */
-export default function DialogSelect(props) {
+export default function SimpleSceneVis(props) {
 
   const classes = useStyles();
 
@@ -96,7 +96,6 @@ export default function DialogSelect(props) {
   React.useEffect(() => {
     let newQ = quatFromAxisAngle(axisMap[axis], angle);
     let threeQuat = new THREE.Quaternion(newQ.x, newQ.y, newQ.z, newQ.w);
-    // props.visualizer.acceptData({ RUA: threeQuat });
   }, [axis, angle])
 
   const handleChangeAngle = (event, newValue) => {

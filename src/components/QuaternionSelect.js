@@ -46,11 +46,6 @@ export default function QuaternionSelect({ onChange, onRemove, value }) {
         onChange(quatFromAxisAngle(axisMap[axisStringFromQuat(value)], newAngle));
     }
 
-    // React.useEffect(() => {
-    //     if (!onChange) { return; }
-    //     onChange(quatFromAxisAngle(axisMap[axisFromQuat(value)], angle));
-    // }, []);
-
     function quatFromAxisAngle(axis, angle) {
         return {
           w: Math.cos(angle / 2),
