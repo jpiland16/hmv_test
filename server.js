@@ -34,6 +34,8 @@ const VERBOSE_OUTPUT = process.argv[2] && process.argv[2] === 'verbose';
  * @param {String} filepath The directory containing the metadata file which has the desired display name.
  * @returns A Promise that resolves to the display name for the data file. Resolves to 'null' for directories and
  * rejects if the associated metadata.json file can't be parsed.
+ * 
+ * @category Server-side functions
  */
 function getFileDisplayName(filepath) {
     return new Promise((myResolve, myReject) => {
@@ -60,6 +62,8 @@ function getFileDisplayName(filepath) {
  * @param {String} dir The filepath from the project root of the target directory.
  * @returns A Promise that resolves to true if the filepath leads to a directory that should
  * be shown to the client, and resolves to false otherwise.
+ * 
+ * @category Server-side functions
  */
 function isValidDir(dir) {
     return new Promise((myResolve, myReject) => {
@@ -102,6 +106,8 @@ function isValidDir(dir) {
  * @param {String} dir The name of the directory to encode.
  * @param {String} displayDirname The prefix to the filename in the ID field for each subdirectory.
  * @returns Returns JS object matching the directory structure of dir.
+ * 
+ * @category Server-side functions
  */
  function getDirStructure(dir, displayDirname) {
     return new Promise((myResolve, myReject) => {
@@ -145,6 +151,8 @@ function isValidDir(dir) {
  * Writes a nested list of all current directories in ./files/ to ./fileList.json. Writes relevant info
  * for displaying possible dataset selections and their display names.
  * @returns A Promise that resolves when the file is written and rejects in the case of a file writing error.
+ * 
+ * @category Server-side functions
  */
 async function scanAllFiles() {
     return new Promise(async function (myResolve, myReject) {
@@ -166,6 +174,11 @@ async function scanAllFiles() {
     });
 }
 
+/**
+ * Recursively counts the number of items in a file tree.
+ * 
+ * @category Server-side functions
+ */
 function countItems(root) {
     if (!root.children) return [1, 1]; // [ Total items, files ]
     let allItemCount = 1; // Including self
@@ -178,6 +191,11 @@ function countItems(root) {
     return [allItemCount, leafCount]
 }
 
+/**
+ * Runs `git pull` and `npm run build`.
+ * 
+ * @category Server-side functions
+ */
 function onProjectUpdate() {
     if (VERBOSE_OUTPUT) console.log("Pull operation requested at " + new Date().toUTCString());
     exec("git pull > git.log && npm run build > build.log")
@@ -195,6 +213,14 @@ function writeFilePromise(filePath, data) {
     });
 }
 
+/**
+ * The first helper method that is called after an uploaded file is received.
+ * 
+ * @param req - POST request
+ * @param res - Server response
+ * 
+ * @category Server-side functions: Uploading files
+ */
 function handleFormUpload(req, res) {
     const storagePath = './files/user-uploads/';
 
@@ -236,6 +262,14 @@ function handleFormUpload(req, res) {
     });
 }
 
+/**
+ * Sends a message to socket listeners that the status of a file has changed.
+ * 
+ * @param {string} fullPath - the path to the given file
+ * @param {message} message - the message to send the listeners
+ * 
+ * @category Server-side functions
+ */
 function notifySocketListeners(fullPath, message) {
     let mappedPath = fullPath.substr('./files'.length);
     if (app.locals.fileListeners.has(mappedPath)) {
@@ -243,6 +277,16 @@ function notifySocketListeners(fullPath, message) {
     }
 }
 
+
+/**
+ * Saves a converted file to disk.
+ * 
+ * @param {string} data - quaternion data
+ * @param {Object} metadata - the metadata such as local transformation quaternions
+ * @param {string} filepath - where to place the files
+ * 
+ * @category Server-side functions
+ */
 function writeUploadedFile(data, metadata, filepath) {
     return new Promise((myResolve, myReject) => {
         fs.mkdir(filepath, {recursive: true}, (err) => {
@@ -252,7 +296,7 @@ function writeUploadedFile(data, metadata, filepath) {
                 return;
             }
             let dataPromise = writeFilePromise(filepath + "/quaternion_data.dat", data);
-            let metaPromise = writeFilePromise(filepath + "/metadata.json", JSON.stringify(metadata));
+            let metaPromise = writeFilePromise(filepath + "/metadata.json", JSON.stringify(metadata, null, 2));
             if (VERBOSE_OUTPUT) console.log("About to print fileListeners:");
             if (VERBOSE_OUTPUT) console.log(app.locals.fileListeners);
             Promise.all([dataPromise, metaPromise]).then(() => {
@@ -300,9 +344,16 @@ app.post('/api/send-message', (req, res) => {
     })
 });
 
-// Deals with the strange arrangement Sam needs to fix with the way
-// file IDs are assigned by the getDirStructure function, where every
-// file ID starts with "./files/". Should be removed soon.
+/** 
+ * 
+ * Deals with the strange arrangement Sam needs to fix with the way
+ * file IDs are assigned by the getDirStructure function, where every
+ * file ID starts with "./files/". Should be removed soon.
+ * 
+ * @param {string} targetFile - the uncleaned file ID
+ * 
+ * @category Server-side functions
+ */ 
 function cleanFilename(targetFile) {
     if (targetFile.substr(0,8) === './files/') {
         return targetFile.substr(8);
@@ -310,6 +361,13 @@ function cleanFilename(targetFile) {
     return targetFile;
 }
 
+/**
+ * Checks if `targetFile` is available on disk.
+ * 
+ * @param {string} targetFile
+ * 
+ * @category Server-side functions
+ */
 function fileAvailable(targetFile) {
     targetFile = cleanFilename(targetFile);
     let fileRoot = `${__dirname}/files`;
