@@ -5,7 +5,7 @@ import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/core/styles';
 import example1 from './example1.PNG'
 import example2 from './example2.PNG'
-import coordsystem from './coordsystem.PNG'
+import example3 from './example3.PNG'
 import {useHistory} from 'react-router-dom'
 
 
@@ -82,11 +82,6 @@ export default function Tutorial() {
           </tbody>
         </table>
         </center>
-        <p>In additon, confirm that the orientations of the sensors match those depicted in the diagram below, It is very important that the sensors are aligned correctly or else the model's movements will be distorted.</p>
-        <center>    
-             <img src={coordsystem} width='30%'/>
-        </center>
- 
        
         <h2>File and Data Requirements</h2>
         <p>The Human Activity Visualizer requires a specific file format and only interprets certain types of sensor data. Before uploading your file, ensure that it meets the following format and data specifications. </p>
@@ -99,7 +94,7 @@ export default function Tutorial() {
         <p>The data in your file must:</p>
         <ul>
           <li>include time values in milliseconds</li>
-          <li>include global quaternions and/or acc+mag+gyro values taken over time<ul>
+          <li>include global quaternions, euler angles, or acc+mag+gyro values taken over time<ul>
               <li>Note: other measurement types can be included in the uploaded file but will be ignored</li>
             </ul>
           </li>
@@ -156,8 +151,17 @@ export default function Tutorial() {
         <p>For Example 2, you would input the following:</p>
         <img src={example2} width='50%'/> 
         </center>
-        <p>Check that all of the information has been entered correctly, and click the 'Submit" button at the bottom of the form. A landing screen will appear when the file has been successfully submitted. Select the file you want to view first and continue to the visualizer page. Once the file has downloaded, press the play button the in bottom left corner of your screen to begin the animation.</p>
-        <p>To view a different upload file, click on the hamburger icon in the top left corner and you will see the file directory. In the user-uploads folder, you will be able to access any additional files you uploaded. These files are only accessible by you but will be deleted from the server after two days.</p>
+        <p>Check that all of the information has been entered correctly, and click the 'Next' button at the bottom of the form and you will be taken the Quaternion Calibration screen. Here there will be a slider for each bone 
+          you selected in the last screen. </p>
+          <center>
+        <img src={example3} width='50%'/> 
+        </center>
+          <p>Use these sliders to set the identity or 'no rotation' position of the model. In terms of sensors, the 'no rotation' 
+          position is where the local coordinate system of each sensor is aligned with the global coordinate system. For example, if the
+          x-axis of the sensor points down a person's arm, the model must be transformed so its arm is pointing down the global x-axis. In this program, the positive x-axis points right, the y-axis points up, and the z-axis points out of the screen.
+        </p>
+        <p> When the 'identity' position of the model is set, click the 'Submit' button and your file will begin to process. This may take a few minutes. You will then be taken to the Visualizer Screen where you can view your dataset.</p>
+        <p>To view a different upload file, click on the hamburger icon in the top left corner and you will see the file directory. In the user-uploads folder, you will be able to access any additional files that you uploaded.</p>
         <Button color='primary' variant= 'contained' id = "submitButton" onClick={()=>returnHome()}>Return Home to Get Started</Button>
 
       
