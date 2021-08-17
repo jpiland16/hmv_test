@@ -1188,11 +1188,23 @@ export default function CardItem(props) {
 
     return (
       <div className="cardItem" style={{ float: props.floatLeft ? "left" : "none"}}>
-            { props.options.startCol < LABEL_COL_BEGIN 
-                && props.options.columnCount + props.options.startCol <= LABEL_COL_BEGIN  ? getGraphCard(props.options, props.data.current, props.lineNumber) :
-            props.options.startCol >= LABEL_COL_BEGIN 
-                && props.options.startCol + props.options.columnCount < oppColumns.length ? getLabelCard(props.options, props.data.current, props.lineNumber) :
-            "Invalid columns specified."}
+            { 
+            props.filePath.indexOf("smartphone-dataset") === -1 ?
+                props.options.startCol < LABEL_COL_BEGIN 
+                    && props.options.columnCount + props.options.startCol <= LABEL_COL_BEGIN  ? getGraphCard(props.options, props.data.current, props.lineNumber) :
+                props.options.startCol >= LABEL_COL_BEGIN 
+                    && props.options.startCol + props.options.columnCount < oppColumns.length ? getLabelCard(props.options, props.data.current, props.lineNumber) :
+                "Invalid columns specified."
+            :
+            <div>{
+                Array(props.options.columnCount).fill(0).map((v, index) => (
+                    <div key={index}>
+                        {props.data.current[props.lineNumber][props.options.startCol + index]}
+                        <br />
+                    </div>
+                ))
+                }</div>
+            }
       </div>  
     );
 }

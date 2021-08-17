@@ -7,7 +7,7 @@ import PlayBar from './PlayBar'
 import TopActionBar from './TopActionBar'
 import CardSet from './cards/CardSet'
 import Animator from './Animator'
-import { MannequinVisualizer } from '../shared_visualizer_object/Models'
+import { MannequinVisualizer, PhoneVisualizer } from '../shared_visualizer_object/Models'
 
 import { getFileList, downloadFile, subscribeToFile } from './viewport-workers/NetOps'
 import { onSelectFileChange, isFileNameValid, clickFile} from './viewport-workers/FileOps'
@@ -22,8 +22,26 @@ const SKIP_SOCKET = false
 const useProxy = !(isReactDevServer && SKIP_SOCKET)
 
 const mannequinVisualizer = new MannequinVisualizer()
+const phoneVisualizer = new PhoneVisualizer()
+phoneVisualizer.initialize()
 
-export default function Viewport(props) {
+/**
+ * 
+ * Contains all the elements visible to the user when viewing the Visualizer
+ * screen. In the future, elements such as the PlayBar and TopActionBar
+ * should be moved into their own object, such as what was done with the
+ * split-screen branch.
+ * 
+ * @component
+ * 
+ * @param {Object} props - Component props
+ * @param {boolean} props.dev - whether we are in the /dev mode (additional
+ * options)
+ * @param {boolean} props.firstLoad - whether the site has been loaded already
+ * @param {function} props.setFirstLoad - function to set whether the site has 
+ * been loaded already 
+ */
+function Viewport(props) {
 
     if (VERBOSE_OUTPUT) console.log("Re-rendering viewport.")
     
@@ -71,6 +89,7 @@ export default function Viewport(props) {
     const [ fileStatus, setFileStatus ] = React.useState(initialFileStatus);
     const [ modelDownloadProgress, setModelProgress ] = React.useState(0);
     const [ windowDimensions, setWindowDimensions ] = React.useState(getWindowDimensions());
+    const [ visualizer, setVisualizer ] = React.useState(mannequinVisualizer)
     
     /*   ---------------------
      *   REFS (React.useRef())
@@ -90,7 +109,10 @@ export default function Viewport(props) {
     const propertySet = {
 
         // -- VISUALIZER --
-            visualizer: mannequinVisualizer,
+            visualizer: visualizer,
+            setVisualizer: setVisualizer,
+            mannequinVisualizer: mannequinVisualizer,
+            phoneVisualizer: phoneVisualizer,
             awaitScene: scenePromise,
 
         // -- MENU OPTIONS --
@@ -252,3 +274,5 @@ export default function Viewport(props) {
         </div>
     )
 }
+
+export default Viewport;

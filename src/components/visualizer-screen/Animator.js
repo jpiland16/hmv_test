@@ -81,10 +81,22 @@ export default function Animator(props) {
     React.useEffect(() => {
         if (props.selectedFile.fileName === "") { return; }
 
-        props.outputTypes.current = [{
-            startCol: 243,
-            columnCount: 6
-        }];
+        if (props.selectedFile.fileName.indexOf("opportunity-dataset") !== -1) {
+            props.outputTypes.current = [{
+                startCol: 243,
+                columnCount: 6
+            }];
+            props.FPS.current = 30
+        } else if (props.selectedFile.fileName.indexOf("smartphone-dataset") !== -1) {
+            props.outputTypes.current = [{
+                startCol: 6,
+                columnCount: 1
+            }];
+            props.FPS.current = 20
+        } else {
+            props.outputTypes.current = []
+            props.FPS.current = 30
+        }
 
         if (props.timeSliderValue !== props.lastIndex.current // We need to update the model, because the timeSlider has moved
                 && props.data.current.length > 0 && props.fileMetadata.current !== null // Make sure we have the data we need
