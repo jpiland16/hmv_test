@@ -3,6 +3,7 @@
 
 The upload screen is where users can upload datasets to the virtual machine. It consists of the following components:
 ### [Title Bar](https://github.com/jpiland16/hmv_test/blob/master/documentation/subpages/TitleBar.md) [(view code)](https://github.com/jpiland16/hmv_test/blob/master/src/components/TitleBar.js)
+Contains links to the different pages of the website.
 ### Upload Screen Component [(view code)](https://github.com/jpiland16/hmv_test/blob/master/src/components/upload-screen/UploadScreen.js)
 The Upload Screen component acts a bridge connecting the two forms (File Info Form and Quaternion Calibration Form) that are needed to collect the necessary meta data for the file. It carries out the following roles:
 - Provides the styling of the form container
