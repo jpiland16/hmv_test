@@ -31,6 +31,10 @@ export default function About(props) {
             The mannequin shown is modified from <a href="https://skfb.ly/onNqw" target="_blank" rel="noreferrer">Mannequin</a> by <a href="https://sketchfab.com/xaratoni7" target="_blank" rel="noreferrer">3d</a> which is licensed under <a href="http://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noreferrer">Creative Commons Attribution</a>.
 
             <br/><br/>
+            
+            The smartphone shown is modified from <a href="https://skfb.ly/YYsO" target="_blank" rel="noreferrer">Prototype of unnamed smartphone</a> by <a href="https://sketchfab.com/plzok" target="_blank" rel="noreferrer">plzok</a> which is licensed under <a href="http://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noreferrer">Creative Commons Attribution</a>.
+
+            <br/><br/>
 
             This project uses the <a href="https://github.com/recharts/recharts" target="_blank" rel="noreferrer">Recharts</a> library which is released by Recharts Group under the <a href="https://opensource.org/licenses/MIT" target="_blank" rel="noreferrer">MIT</a> license.
 

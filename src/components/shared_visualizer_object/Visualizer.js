@@ -52,6 +52,9 @@ function Visualizer(props) {
     return <div style={{width: "100%", height: "100%", position: "absolute", top: "0px", left: "0px" }} ref={thisElementRef}></div>
 }
 
+/**
+ * The most basic visualizer; consists of a series of empty methods.
+ */
 class BasicVisualizerObject {
 
     constructor(onChangeWindowDimensions = (element) => {}, childElement = null) {
@@ -59,6 +62,9 @@ class BasicVisualizerObject {
         this.modelLoaded = false;
     }
 
+    /**
+     * Load some other elements of the visualizer.
+     */
     initialize(onProgress) {
         this.modelLoaded = true;
         return Promise.resolve()
@@ -76,20 +82,33 @@ class BasicVisualizerObject {
 
     }
 
+    /**
+     * Reset the visualizer to some default state.
+     */
     reset() {
 
     }
 
+    /**
+     * Return some set of tools.
+     */
     getTools() {
         return null;
     }
 
+    /**
+     * Return some set of sliders.
+     */
     getSliders() {
         return null;
     }
 
 }
 
+/**
+ * A simple extension of BasicVisualizerObject which provides functionality
+ * to prepare the ThreeJS scene.
+ */
 class ThreeJSVisualizer extends BasicVisualizerObject {
 
     constructor() {
@@ -116,6 +135,9 @@ class ThreeJSVisualizer extends BasicVisualizerObject {
         this.quaternionTargets = { }
     }
 
+    /**
+     * Load the scene, camera, controls, etc.
+     */
     initialize(onProgress = (progress) => { }) {
 
         const MIN_CAMERA_DISTANCE = 1.25;
@@ -202,6 +224,9 @@ class ThreeJSVisualizer extends BasicVisualizerObject {
         });
     }
 
+    /**
+     * Resize the renderer so it fills the screen.
+     */
     refreshRendererSize(parentElement) {
         this.renderer.setSize( parentElement.offsetWidth, parentElement.offsetHeight );
         this.camera.aspect = parentElement.offsetWidth / parentElement.offsetHeight;

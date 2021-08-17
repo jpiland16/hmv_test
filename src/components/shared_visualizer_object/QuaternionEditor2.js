@@ -43,11 +43,16 @@ function quaternionToString(q) {
 }
 
 /**
+ * A component used to modify quaternions, under the constraint that 
+ * the magnitude must be equal to 1.
+ * 
  * @param {Object} props
  * @param {QuaternionTarget} props.quaternionTarget
  * @param {THREE.Quaternion} props.oldQ
+ * 
+ * @component
  */
-export default function QuaternionEditor(props) {
+function QuaternionEditor(props) {
 
     const oldQ = props.quaternionTarget.current
     const oldQuaternion = [oldQ.x, oldQ.y, oldQ.z, oldQ.w]
@@ -129,3 +134,5 @@ export default function QuaternionEditor(props) {
         </div>
     );
 }
+
+export default QuaternionEditor;

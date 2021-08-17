@@ -4,45 +4,26 @@ import { ThreeJSVisualizer, QuaternionTarget } from "./Visualizer";
 import Button from '@material-ui/core/Button'
 import QuaternionEditor2 from './QuaternionEditor2';
 
-class MannequinVisualizer extends ThreeJSVisualizer {
+/**
+ * Loads a model with the assumption that it has a tree-like parenting structure.
+ */
+class ModelWithBones extends ThreeJSVisualizer {
 
     constructor() {
         super()
-
         this.showSliders = false
-        this.quaternionRoot = new QuaternionTarget( "ROOT", "_rootJoint", new THREE.Quaternion(0, 0, 0, 1))
-
-        const hips = this.quaternionRoot.addChild("HIPS", "mixamorig1Hips_01", new THREE.Quaternion(0.7071, 0, 0, -0.7071))
-        // this.quaternionRoot = hip;
-
-        const back = hips.addChild("BACK", "spine_02", new THREE.Quaternion(-0.06, 0, 0, 0.998) )
-
-        const lua = back.addChild("LUA", "upperarm_l", new THREE.Quaternion(-0.472, -0.468, 0.561, -0.494) )
-        lua.addChild("LLA", "lowerarm_l", new THREE.Quaternion(-0.471, -0.466, 0.51, -0.549) )
-
-        const rua = back.addChild("RUA", "upperarm_r", new THREE.Quaternion(0.471, -0.471, 0.561, 0.492) )
-        rua.addChild("RLA", "lowerarm_r", new THREE.Quaternion(0.471, -0.468, 0.509, 0.547) )
-        
-        const lul = hips.addChild("LUL", "left_upper_leg", new THREE.Quaternion(-0.001, -0.032, 0.999, -0.044) )
-        const lll = lul.addChild("LLL", "left_lower_leg", new THREE.Quaternion(-0.001, -0.034, 0.999, -0.04) )
-        lll.addChild("LSHOE", "foot_l", new THREE.Quaternion(-0.006, 0.465, 0.884, -0.043) )
-
-        const rul = hips.addChild("RUL", "right_upper_leg", new THREE.Quaternion(0.001, -0.029, 0.999, 0.044) )
-        const rll = rul.addChild("RLL", "right_lower_leg", new THREE.Quaternion(0.001, -0.035, 0.999, 0.04) )
-        rll.addChild("RSHOE", "foot_r", new THREE.Quaternion(0.006, 0.467, 0.883, 0.043) ) 
-
+        this.initializeSkeleton()
     }
 
-    setParentOf(childName, parentName) {
-        this.quaternionTargets[childName].parent = this.quaternionTargets[parentName]
-        this.bones[parentName].attach(this.bones[childName])
+    initializeSkeleton() {
+
     }
 
     /**
-     * Loads a mannequin into the scene, in addition to the cartesian grid.
+     * Loads a model into the scene, in addition to the cartesian grid.
      * @override
      */
-    loadModel(onProgress) {
+    loadModelFromPath(onProgress, modelPath) {
 
         
         return new Promise((myResolve, myReject) => {
@@ -50,8 +31,6 @@ class MannequinVisualizer extends ThreeJSVisualizer {
             this.loadGrid(() => { }).then(() => {
 
                 var loader = new GLTFLoader();
-
-                const modelPath = "/files/figures/mannequin.glb";
 
                 loader.load(modelPath, gltf => {
 
@@ -93,7 +72,7 @@ class MannequinVisualizer extends ThreeJSVisualizer {
      * 
      * @param {QuaternionTarget} target
      */
-    attachBones(target) {
+     attachBones(target) {
         for (let i = 0; i < target.children.length; i++) {
             const childTarget = target.children[i]
             this.bones[target.shortName].attach(this.bones[childTarget.shortName])
@@ -253,6 +232,66 @@ class MannequinVisualizer extends ThreeJSVisualizer {
 
         return sliders
     }
+
 }
 
-export { MannequinVisualizer }
+/**
+ * Provides the skeletal structure of our mannequin.
+ */
+class MannequinVisualizer extends ModelWithBones {
+
+
+    /**
+     * @override
+     */
+    initializeSkeleton() {
+        this.quaternionRoot = new QuaternionTarget( "ROOT", "_rootJoint", new THREE.Quaternion(0, 0, 0, 1))
+
+        const hips = this.quaternionRoot.addChild("HIPS", "mixamorig1Hips_01", new THREE.Quaternion(0.7071, 0, 0, -0.7071))
+        // this.quaternionRoot = hip;
+
+        const back = hips.addChild("BACK", "spine_02", new THREE.Quaternion(-0.06, 0, 0, 0.998) )
+
+        const lua = back.addChild("LUA", "upperarm_l", new THREE.Quaternion(-0.472, -0.468, 0.561, -0.494) )
+        lua.addChild("LLA", "lowerarm_l", new THREE.Quaternion(-0.471, -0.466, 0.51, -0.549) )
+
+        const rua = back.addChild("RUA", "upperarm_r", new THREE.Quaternion(0.471, -0.471, 0.561, 0.492) )
+        rua.addChild("RLA", "lowerarm_r", new THREE.Quaternion(0.471, -0.468, 0.509, 0.547) )
+        
+        const lul = hips.addChild("LUL", "left_upper_leg", new THREE.Quaternion(-0.001, -0.032, 0.999, -0.044) )
+        const lll = lul.addChild("LLL", "left_lower_leg", new THREE.Quaternion(-0.001, -0.034, 0.999, -0.04) )
+        lll.addChild("LSHOE", "foot_l", new THREE.Quaternion(-0.006, 0.465, 0.884, -0.043) )
+
+        const rul = hips.addChild("RUL", "right_upper_leg", new THREE.Quaternion(0.001, -0.029, 0.999, 0.044) )
+        const rll = rul.addChild("RLL", "right_lower_leg", new THREE.Quaternion(0.001, -0.035, 0.999, 0.04) )
+        rll.addChild("RSHOE", "foot_r", new THREE.Quaternion(0.006, 0.467, 0.883, 0.043) ) 
+
+    }
+
+    /**
+     * @override
+     */
+    loadModel(onProgress) {
+        return this.loadModelFromPath(onProgress, "/files/figures/mannequin.glb")
+    }
+
+}
+
+/**
+ * Provides the single-bone skeletal structure of our phone
+ */
+class PhoneVisualizer extends ModelWithBones {
+
+    initializeSkeleton() {
+        this.quaternionRoot = new QuaternionTarget("ROOT", "Cube001", new THREE.Quaternion())
+    }
+
+    /**
+     * @override
+     */
+    loadModel(onProgress) {        
+        return this.loadModelFromPath(onProgress, "/files/figures/phone.glb");
+    }
+}
+
+export { MannequinVisualizer, PhoneVisualizer }

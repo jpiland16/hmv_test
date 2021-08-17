@@ -29,6 +29,7 @@ export default function CardSet(props) {
                     floatLeft={props.cardsPos === 'bottom'} 
                     data={props.data}
                     lineNumber={props.timeSliderValue}
+                    filePath={props.selectedFile.fileName}
                 />)}
             </div>
         </div>

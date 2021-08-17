@@ -1,0 +1,414 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title> src/components/upload-screen/FileInfoForm.js</title>
+
+  <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="./build/entry.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+  <link href="https://fonts.googleapis.com/css?family=Roboto:100,400,700|Inconsolata,700" rel="stylesheet">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+  <link type="text/css" rel="stylesheet" href="https://jmblog.github.io/color-themes-for-google-code-prettify/themes/tomorrow-night.min.css">
+  <link type="text/css" rel="stylesheet" href="styles/app.min.css">
+  <link type="text/css" rel="stylesheet" href="styles/iframe.css">
+  <link type="text/css" rel="stylesheet" href="">
+  <script async defer src="https://buttons.github.io/buttons.js"></script>
+
+  
+</head>
+
+
+
+<body class="layout small-header">
+    <div id="stickyNavbarOverlay"></div>
+    
+
+<div class="top-nav">
+    <div class="inner">
+        <a id="hamburger" role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+        </a>
+        <div class="logo">
+            
+             
+                <a href="index.html">
+                    <h1 class="navbar-item">hmv_test - documentation</h1>
+                </a>
+            
+        </div>
+        <div class="menu">
+            
+            <div class="navigation">
+                <a
+                    href="index.html"
+                    class="link"
+                >
+                    API Documentation
+                </a>
+                
+                <div class="dropdown is-hoverable is-right">
+                    <a class="dropdown-trigger link">
+                        Tutorials
+                        <i class="fas fa-chevron-down fa-xs"></i>
+                    </a>
+                    <div class="dropdown-menu">
+                        <div class="dropdown-content">
+                        
+                            <a class="dropdown-item" href="tutorial-https-guide.html">
+                                https-guide
+                            </a>
+                        
+                            <a class="dropdown-item" href="tutorial-local-server-https-guide.html">
+                                local-server-https-guide
+                            </a>
+                        
+                        </div>
+                    </div>
+                </div>
+                
+                
+                
+            </div>
+        </div>
+    </div>
+</div>
+    <div id="main">
+        <div
+            class="sidebar "
+            id="sidebarNav"
+        >
+            
+            <nav>
+                
+                    <h2><a href="index.html">Documentation</a></h2><div class="category"><h3>Classes</h3><ul><li><a href="BasicVisualizerObject.html">BasicVisualizerObject</a></li><li><a href="MannequinVisualizer.html">MannequinVisualizer</a></li><li><a href="ModelWithBones.html">ModelWithBones</a></li><li><a href="PhoneVisualizer.html">PhoneVisualizer</a></li><li><a href="QuaternionTarget.html">QuaternionTarget</a></li><li><a href="ThreeJSVisualizer.html">ThreeJSVisualizer</a></li></ul><h3>Components</h3><ul><li><a href="Animator.html">Animator</a></li><li><a href="App.html">App</a></li><li><a href="ChooseFiles.html">ChooseFiles</a></li><li><a href="FileViewer.html">FileViewer</a></li><li><a href="FileViewer_FileDisplay.html">FileDisplay</a></li><li><a href="MenuButton.html">MenuButton</a></li><li><a href="PlayBar.html">PlayBar</a></li><li><a href="QSlider2.html">QSlider2</a></li><li><a href="QuaternionEditor.html">QuaternionEditor</a></li><li><a href="TitleBar.html">TitleBar</a></li><li><a href="TopActionBar.html">TopActionBar</a></li><li><a href="Viewport.html">Viewport</a></li></ul></div><div class="category"><h2>Client-side functions</h2><h3>Global</h3><ul><li><a href="global.html#clickFile">clickFile</a></li><li><a href="global.html#downloadFile">downloadFile</a></li><li><a href="global.html#doXHR">doXHR</a></li><li><a href="global.html#getFile">getFile</a></li><li><a href="global.html#getFileList">getFileList</a></li><li><a href="global.html#getTimeStringFromMillis">getTimeStringFromMillis</a></li><li><a href="global.html#isFileNameValid">isFileNameValid</a></li><li><a href="global.html#onSelectFileChange">onSelectFileChange</a></li><li><a href="global.html#subscribeToFile">subscribeToFile</a></li></ul></div><div class="category"><h2>Server-side functions</h2><h3>Global</h3><ul><li><a href="global.html#cleanFilename">cleanFilename</a></li><li><a href="global.html#countItems">countItems</a></li><li><a href="global.html#fileAvailable">fileAvailable</a></li><li><a href="global.html#getDirStructure">getDirStructure</a></li><li><a href="global.html#getFileDisplayName">getFileDisplayName</a></li><li><a href="global.html#isValidDir">isValidDir</a></li><li><a href="global.html#notifySocketListeners">notifySocketListeners</a></li><li><a href="global.html#onProjectUpdate">onProjectUpdate</a></li><li><a href="global.html#scanAllFiles">scanAllFiles</a></li><li><a href="global.html#writeUploadedFile">writeUploadedFile</a></li></ul></div><div class="category"><h2>Server-side functions: Uploading files</h2><h3>Global</h3><ul><li><a href="global.html#handleForm">handleForm</a></li><li><a href="global.html#handleFormUpload">handleFormUpload</a></li><li><a href="global.html#handleUploadedFile">handleUploadedFile</a></li><li><a href="global.html#parseFormFields">parseFormFields</a></li><li><a href="global.html#processDownloadedForm">processDownloadedForm</a></li></ul></div>
+                
+            </nav>
+        </div>
+        <div class="core" id="main-content-wrapper">
+            <div class="content">
+                <header class="page-title">
+                    <p>Source</p>
+                    <h1>src/components/upload-screen/FileInfoForm.js</h1>
+                </header>
+                
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React from 'react';
+import { Button } from '@material-ui/core';
+import { TextField } from '@material-ui/core';
+import { MenuItem } from '@material-ui/core';
+import { Grid } from '@material-ui/core';
+import { Alert } from '@material-ui/lab';
+import Typography from '@material-ui/core/Typography';
+import { Input } from '@material-ui/core';
+
+const allBoneOptions=["ROOT","BACK", "RUA", "RLA", "LUA", "LLA", "RUL", "RLL","LUL","LLL"]
+
+function listWithNewVal(list, index, key, newVal) {
+  const newList = list.map((item, currIndex) => {
+    if (currIndex !== index) {
+      return item;
+    }
+    return { ...item, [key]: newVal };
+  });
+  return newList;
+}
+
+// https://goshakkk.name/array-form-inputs/
+class FileInfoForm extends React.Component {
+  
+  constructor() {
+    super();
+    this.state = {
+      name: "",
+      typeOptions: ["Quaternion", "Accel+Gyro+Magnet", "Accel+Gyro", "Euler Angles"],
+      sensors: [{ dataType: "Quaternion", bone: allBoneOptions[0], startColumn: "", localTransformQuaternion: null }],
+      timeColumn: 0,
+     
+        noDisplayName: true,
+        noSensors: false,
+        noTimeColumn: false,
+        maxSensors: false,
+      
+      boneOptions: allBoneOptions.slice(1),
+      next: false,
+    };
+  }
+
+  handleNext = () => {
+    const formData = new FormData();
+    formData.append('file', document.getElementById('myFile').files[0]);
+    formData.append('displayName', this.state.name);
+    formData.append('timeColumn', this.state.timeColumn);
+    this.props.setFormData(formData)
+    this.props.setDisplayName(this.state.name)
+    this.props.setSensorList(this.state.sensors)
+    this.props.setActiveStep(1)
+  }
+
+/**
+ * @description Sets the options in the bone dropdown lists to an array of the unpicked bones (prevents user from selecting the same bone twice)
+ */
+  updateBoneOptions = () => {
+    let boneOptions=[]
+    let selectedBones = this.state.sensors.map((sensor) => (sensor.bone))
+    allBoneOptions.forEach((boneOption) => { 
+      if(selectedBones.indexOf(boneOption)==-1) {
+        boneOptions.push(boneOption)
+      }
+    })
+    this.setState({
+      boneOptions: boneOptions
+    })
+  }
+
+
+  /**
+   * @description Adds sensor to form and updates the bone selection dropdown lists
+   */
+  addSensor = () => {
+    console.log(this.state.noDisplayName)
+    console.log(this.state.name)
+    this.setState({
+      sensors: this.state.sensors.concat([{ dataType: "Quaternion", bone: this.state.boneOptions[0], startColumn: "", localTransformQuaternion: null }]),
+      noSensors: false,
+      maxSensors: (this.state.sensors.length+1 == allBoneOptions.length)
+      
+    }, ()=>{this.updateBoneOptions()});
+    console.log(this.state.noDisplayName)
+    console.log(this.state.name)
+  }
+
+  printState = () => {
+    if (this.props.verbose) console.log(this.state.sensors);
+  }
+
+  /**
+   * @description Removes sensor from form and updates the bone selection dropdown lists
+   */
+  deleteSensor = (removedIndex) => () => {
+    if (this.props.verbose) console.log(`Deleting sensor with index ${removedIndex}`);
+    this.setState({
+      sensors: this.state.sensors.filter((sensor, currIndex) => currIndex !== removedIndex),
+      
+        noSensors: (this.state.sensors.length-1 &lt; 1),
+        maxSensors: false
+      
+    }, ()=>{this.updateBoneOptions()})
+  }
+
+  handleTimecolChange = (event) => {
+    this.setState({
+      timeColumn: event.target.value
+    }, ()=> {
+      if(this.state.timeColumn != '') {
+        this.setState({noTimeColumn: false})
+      } else {
+        this.setState({noTimeColumn: true})
+      }
+    });
+  }
+
+  handleBoneChange = (index) => (event) => {
+    this.setState({ sensors: listWithNewVal(this.state.sensors, index, "bone", event.target.value) }, () => {this.updateBoneOptions()});
+  }
+
+  handleStartcolChange = (index) => (event) => {
+    this.setState({ sensors: listWithNewVal(this.state.sensors, index, "startColumn", event.target.value) });
+  }
+
+  handleDataTypeChange = (index) => (event) => {
+    this.setState({ sensors: listWithNewVal(this.state.sensors, index, "dataType", event.target.value) });
+  }
+
+  customValidityFunction = (event) => {
+    event.preventDefault();
+    if (this.props.verbose) console.log("Invalid thingy detected!!!");
+  }
+
+  handleNameChange = (event) => {
+    this.setState({ name: event.target.value }, ()=>{
+      if(this.state.name == '' || this.state.name == undefined) {
+        this.setState({noDisplayName: true})
+      } else {
+        this.setState({noDisplayName: false})
+      }
+    })
+  }
+
+  NoSensorsError(props) {
+    if (props.noSensors) {
+      return &lt;Alert severity="warning" hidden={true}>Please add specifications for one or more sensors.&lt;/Alert>;
+    }
+    return null;
+  }
+
+  render() {
+    return (&lt;div>
+    &lt;React.Fragment>
+    &lt;Grid item xs={4} justify="center" marginBottom="2%">
+              &lt;Input type="file" id="myFile" required>&lt;/Input>
+      &lt;/Grid>
+      &lt;Typography variant="h6" gutterBottom style={{marginTop:20}}>
+        File Info
+      &lt;/Typography>
+      &lt;Grid container spacing={3}>
+        &lt;Grid item xs={12} sm={6}>
+          &lt;TextField
+            required
+            label="Display name"
+            fullWidth
+            onChange={this.handleNameChange}
+          />
+        &lt;/Grid>
+        &lt;Grid item xs={12} sm={6}>
+          &lt;TextField
+            fullWidth
+            type="number"
+            label="Time column"
+            onChange={this.handleTimecolChange}
+              InputProps={{
+                inputProps: {
+                  id: "timeColumn",
+                  name: "timeColumn",
+                  defaultValue: "0",
+                  min: "0",
+                  placeholder: "Column number"
+                }
+              }}
+           required
+          />
+        &lt;/Grid>
+        &lt;/Grid>
+        &lt;Typography variant="h6" gutterBottom style={{marginTop:20}}>
+         Sensor Info
+      &lt;/Typography>
+        &lt;Grid container spacing={3}>
+        &lt;Grid item xs={12}>
+          &lt;this.NoSensorsError noSensors={this.state.noSensors}>&lt;/this.NoSensorsError>
+        &lt;/Grid>
+        {this.state.sensors.map((sensor, index) => (
+            &lt;Grid container item xs={12} spacing={3} justify="flex-start" alignItems="center">
+              &lt;Grid item xs={2}>
+                &lt;TextField
+                  fullWidth
+                  id="bone_select"
+                  select
+                  label="Bone"
+                  value={sensor.bone}
+                  onChange={this.handleBoneChange(index)}
+                >
+                  &lt;MenuItem key={sensor.bone} value={sensor.bone}>{sensor.bone}&lt;/MenuItem>
+                  {this.state.boneOptions.map((boneName) => (
+                    &lt;MenuItem key={boneName} value={boneName}>{boneName}&lt;/MenuItem>
+                  ))}
+                &lt;/TextField>
+              &lt;/Grid>
+              &lt;Grid item xs={4}>
+                &lt;TextField
+                  fullWidth
+                  id="datatype_select"
+                  select
+                  label="Data type"
+                  value={sensor.dataType}
+                  onChange={this.handleDataTypeChange(index)}
+                >
+                  {this.state.typeOptions.map((typeName) => (
+                    &lt;MenuItem key={typeName} value={typeName}>{typeName}&lt;/MenuItem>
+                  ))}
+                &lt;/TextField>
+              &lt;/Grid>
+              &lt;Grid item xs={3}>
+                &lt;TextField 
+                fullWidth
+                  type="number"
+                  label="Start column"
+                  onChange={this.handleStartcolChange(index)}
+                  value={sensor.startColumn}
+                  InputProps={{
+                    inputProps: {
+                      id: "startColumn"+index,
+                      name: "startColumn",
+                      min: "0",
+                      placeholder: "Start column"
+                    }
+                  }}
+                  required>
+                &lt;/TextField>
+              &lt;/Grid>
+              &lt;Grid item xs={3}>
+                &lt;Button
+                  color='primary'
+                  onClick={this.deleteSensor(index)}>
+                  Remove sensor
+                &lt;/Button>
+              &lt;/Grid>
+            &lt;/Grid>
+      ))}
+      &lt;Grid container justify="center">
+          &lt;Grid item xs={3}>
+            &lt;Button
+              onClick={this.addSensor}
+              color='primary'
+              disabled={this.state.maxSensors}>
+              Add sensor
+            &lt;/Button>
+          &lt;/Grid>
+      &lt;/Grid>
+      &lt;/Grid>
+      
+    &lt;/React.Fragment>
+    &lt;div style={{display:"flex", justifyContent: "flex-end"}}>
+      &lt;Button type="submit" color="primary" variant="contained" className="button-submit" onClick={this.handleNext} disabled={(this.state.noDisplayName || this.state.noSensors || this.state.noTimeColumn)}>Next&lt;/Button>
+    &lt;/div>
+    &lt;/div>
+  );
+  }
+}
+
+export default FileInfoForm;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+            </div>
+            
+            <footer class="footer">
+                <div class="content has-text-centered">
+                    <p>Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.7</a></p>
+                    <p class="sidebar-created-by">
+                        <a href="https://github.com/SoftwareBrothers/better-docs" target="_blank">BetterDocs theme</a> provided with <i class="fas fa-heart"></i> by 
+                        <a href="http://softwarebrothers.co" target="_blank">SoftwareBrothers - JavaScript Development Agency</a>
+                    </p>
+                </div>
+            </footer>
+            
+        </div>
+        <div id="side-nav" class="side-nav">
+        </div>
+    </div>
+<script src="scripts/app.min.js"></script>
+<script>PR.prettyPrint();</script>
+<script src="scripts/linenumber.js"> </script>
+
+</body>
+</html>

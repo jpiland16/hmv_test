@@ -1,0 +1,294 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title> src/components/visualizer-screen/PlayBar.js</title>
+
+  <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="./build/entry.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+  <link href="https://fonts.googleapis.com/css?family=Roboto:100,400,700|Inconsolata,700" rel="stylesheet">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+  <link type="text/css" rel="stylesheet" href="https://jmblog.github.io/color-themes-for-google-code-prettify/themes/tomorrow-night.min.css">
+  <link type="text/css" rel="stylesheet" href="styles/app.min.css">
+  <link type="text/css" rel="stylesheet" href="styles/iframe.css">
+  <link type="text/css" rel="stylesheet" href="">
+  <script async defer src="https://buttons.github.io/buttons.js"></script>
+
+  
+</head>
+
+
+
+<body class="layout small-header">
+    <div id="stickyNavbarOverlay"></div>
+    
+
+<div class="top-nav">
+    <div class="inner">
+        <a id="hamburger" role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+        </a>
+        <div class="logo">
+            
+             
+                <a href="index.html">
+                    <h1 class="navbar-item">hmv_test - documentation</h1>
+                </a>
+            
+        </div>
+        <div class="menu">
+            
+            <div class="navigation">
+                <a
+                    href="index.html"
+                    class="link"
+                >
+                    API Documentation
+                </a>
+                
+                <div class="dropdown is-hoverable is-right">
+                    <a class="dropdown-trigger link">
+                        Tutorials
+                        <i class="fas fa-chevron-down fa-xs"></i>
+                    </a>
+                    <div class="dropdown-menu">
+                        <div class="dropdown-content">
+                        
+                            <a class="dropdown-item" href="tutorial-https-guide.html">
+                                https-guide
+                            </a>
+                        
+                            <a class="dropdown-item" href="tutorial-local-server-https-guide.html">
+                                local-server-https-guide
+                            </a>
+                        
+                        </div>
+                    </div>
+                </div>
+                
+                
+                
+            </div>
+        </div>
+    </div>
+</div>
+    <div id="main">
+        <div
+            class="sidebar "
+            id="sidebarNav"
+        >
+            
+            <nav>
+                
+                    <h2><a href="index.html">Documentation</a></h2><div class="category"><h3>Classes</h3><ul><li><a href="BasicVisualizerObject.html">BasicVisualizerObject</a></li><li><a href="MannequinVisualizer.html">MannequinVisualizer</a></li><li><a href="ModelWithBones.html">ModelWithBones</a></li><li><a href="PhoneVisualizer.html">PhoneVisualizer</a></li><li><a href="QuaternionTarget.html">QuaternionTarget</a></li><li><a href="ThreeJSVisualizer.html">ThreeJSVisualizer</a></li></ul><h3>Components</h3><ul><li><a href="Animator.html">Animator</a></li><li><a href="App.html">App</a></li><li><a href="ChooseFiles.html">ChooseFiles</a></li><li><a href="FileViewer.html">FileViewer</a></li><li><a href="FileViewer_FileDisplay.html">FileDisplay</a></li><li><a href="MenuButton.html">MenuButton</a></li><li><a href="PlayBar.html">PlayBar</a></li><li><a href="QSlider2.html">QSlider2</a></li><li><a href="QuaternionEditor.html">QuaternionEditor</a></li><li><a href="TitleBar.html">TitleBar</a></li><li><a href="TopActionBar.html">TopActionBar</a></li><li><a href="Viewport.html">Viewport</a></li></ul></div><div class="category"><h2>Client-side functions</h2><h3>Global</h3><ul><li><a href="global.html#clickFile">clickFile</a></li><li><a href="global.html#downloadFile">downloadFile</a></li><li><a href="global.html#doXHR">doXHR</a></li><li><a href="global.html#getFile">getFile</a></li><li><a href="global.html#getFileList">getFileList</a></li><li><a href="global.html#getTimeStringFromMillis">getTimeStringFromMillis</a></li><li><a href="global.html#isFileNameValid">isFileNameValid</a></li><li><a href="global.html#onSelectFileChange">onSelectFileChange</a></li><li><a href="global.html#subscribeToFile">subscribeToFile</a></li></ul></div><div class="category"><h2>Server-side functions</h2><h3>Global</h3><ul><li><a href="global.html#cleanFilename">cleanFilename</a></li><li><a href="global.html#countItems">countItems</a></li><li><a href="global.html#fileAvailable">fileAvailable</a></li><li><a href="global.html#getDirStructure">getDirStructure</a></li><li><a href="global.html#getFileDisplayName">getFileDisplayName</a></li><li><a href="global.html#isValidDir">isValidDir</a></li><li><a href="global.html#notifySocketListeners">notifySocketListeners</a></li><li><a href="global.html#onProjectUpdate">onProjectUpdate</a></li><li><a href="global.html#scanAllFiles">scanAllFiles</a></li><li><a href="global.html#writeUploadedFile">writeUploadedFile</a></li></ul></div><div class="category"><h2>Server-side functions: Uploading files</h2><h3>Global</h3><ul><li><a href="global.html#handleForm">handleForm</a></li><li><a href="global.html#handleFormUpload">handleFormUpload</a></li><li><a href="global.html#handleUploadedFile">handleUploadedFile</a></li><li><a href="global.html#parseFormFields">parseFormFields</a></li><li><a href="global.html#processDownloadedForm">processDownloadedForm</a></li></ul></div>
+                
+            </nav>
+        </div>
+        <div class="core" id="main-content-wrapper">
+            <div class="content">
+                <header class="page-title">
+                    <p>Source</p>
+                    <h1>src/components/visualizer-screen/PlayBar.js</h1>
+                </header>
+                
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React from 'react';
+import PlayArrowIcon from '@material-ui/icons/PlayArrow'
+import PauseIcon from '@material-ui/icons/Pause'
+import Slider from '@material-ui/core/Slider'
+import IconButton from '@material-ui/core/IconButton';
+import { Tooltip } from '@material-ui/core';
+import './PlayBar.css'
+
+/**
+ * Convert milliseconds into a string of minutes, seconds, and milliseconds.
+ * The output is of the format MM:SS.mmm.
+ * 
+ * @param {Number} time - time in milliseconds
+ * 
+ * @category Client-side functions
+ */
+function getTimeStringFromMillis(time) {
+    let millis = time % 1000;
+    let allSeconds = (time - millis) / 1000;
+    let displaySeconds = allSeconds % 60;
+    let displayMinutes = (allSeconds - displaySeconds) / 60;
+    return `${displayMinutes}:${displaySeconds &lt; 10 ? "0" : ""}${displaySeconds}.${millis &lt; 100 ? "0" : ""}${millis &lt; 10 ? "0" : ""}${millis}`;
+}
+
+/**
+ * 
+ * The slider at the bottom of the screen.
+ * 
+ * @component
+ * 
+ * @param {object} props
+ * @param {object} props.lineNumberRef - the lineNumber stored as a mutable
+ *  React ref
+ * @param {Number} props.lineNumberRef.current - the current line number
+ * @param {Number} props.timeSliderValue - the line number as stored in state
+ * @param {function} props.setTimeSliderValue - method to change the state of the line number
+ * 
+ * @param {string} props.timeSliderValue - either "millis" or "msm"
+ * @param {function} props.setTimeSliderValue - a method to change the time display state
+ * 
+ * @param {Object} props.repeat - Whether to repeat once reaching the end of the file (React ref)
+ * @param {boolean} props.repeat.current
+ * 
+ * @param {Object} props.playTimerId - React ref containing current ID of a window interval, or -1
+ * @param {Number} props.playTimerId.current
+ * @param {boolean} props.playing - whether the PlayBar is moving, stored in state
+ * @param {function} props.setPlaying - function to set whether the PlayBar is moving or not
+ * 
+ * @param {Object} props.data - mutable React ref containing current data
+ * @param {Array} props.data.current - the downloaded data from the server 
+ * (used here only to know number of lines)
+ * 
+ * @param {boolean} props.disabled - whether the PlayBar should be disabled
+ * @param {boolean} props.toolTipOpen - whether the "Select a file" tooltip is showing
+ * @param {function} props.setTipOpen - a function to set whether the tooltip is showing 
+ * 
+ */
+function PlayBar(props) {
+
+    /**
+     * Whenever the user's mouse leaves the PlayBar.
+     */
+    const handleToolTipClose = () => {
+      props.setTipOpen(false);
+    };
+    
+    /**
+     * Whenever the user's mouse comes over the PlayBar.
+     */
+    const handleToolTipOpen = () => {
+        if (props.disabled){
+            props.setTipOpen(true);
+       };
+      
+    };
+
+    /**
+     * Function that is called repeatedly using setInterval.
+     */
+    const playAdvance = () => {
+
+        let lineNumber = props.lineNumberRef.current;
+
+        if (lineNumber &lt; props.data.current.length - 1) {
+            setLineNum(++lineNumber);
+        } else {
+            if (!props.repeat.current) {
+                window.clearInterval(props.playTimerId.current);
+                props.playTimerId.current = 0;
+                setLineNum(props.lineNumberRef.current);
+                props.setPlaying(false);
+            } else {
+                setLineNum(0);
+            }
+        }
+        
+    }
+
+    /**
+     * Helper method to set line numbers, both as refs and in state.
+     */
+    const setLineNum = (n) => {
+        if (props.verbose) console.log("Setting time slider value to " + n);
+        props.setTimeSliderValue(n);
+        props.lineNumberRef.current = n;
+    }
+
+    return (
+        &lt;div className="playBar" style={{ 
+            left: props.menuIsOpen &amp;&amp; props.getWindowDimensions()[0] > 768 ? "40vw" : "0px",
+            width: props.menuIsOpen &amp;&amp; props.getWindowDimensions()[0] > 768 ? "60%" : "100%" }}>
+            &lt;Tooltip title="Select a file to play" open={props.toolTipOpen} onClose={handleToolTipClose} onOpen={handleToolTipOpen}> 
+                &lt;span>
+                    &lt;IconButton disabled={props.disabled} style={{ marginRight: "12px", marginTop: "2px" }} onClick={ () => {
+                        if(props.playTimerId.current !== 0) { 
+                            // IF PLAYING
+                            // playTimerId is nonzero whenever the PlayBar is moving (whenever there is an active window.setInterval)
+                            setLineNum(props.lineNumberRef.current);
+                            window.clearInterval(props.playTimerId.current);
+                            props.playTimerId.current = 0;
+                            props.setPlaying(false);
+                        } else {
+                            // IF PAUSED
+                            if (props.lineNumberRef.current === props.data.current.length - 1) {
+                                // If paused at the end of the file, restart from the beginning when the user clicks the play button
+                                setLineNum(0);
+                            } else setLineNum(props.lineNumberRef.current);
+                            props.playTimerId.current = (
+                                window.setInterval(playAdvance, 1000 / props.FPS.current));
+                            props.setPlaying(true)
+                        }
+                    } }>
+                        { props.playing ? &lt;PauseIcon /> : &lt;PlayArrowIcon /> }
+                    &lt;/IconButton>
+                &lt;/span>
+            &lt;/Tooltip>
+            &lt;Slider disabled={props.disabled} min={0} max={props.data.current.length - 1} value={props.timeSliderValue} 
+                onChange={(event, newValue) => setLineNum(newValue)} 
+                style={{width: "calc(100% - 84px - 72px)"}}/>
+            &lt;div title="click to change format" className="timeStamp" style={{cursor: "pointer"}} onClick={() => {
+                    let newTimeDisplay = props.timeDisplay === 'millis' ? 'msm' : "millis";
+                    props.setTimeDisplay(newTimeDisplay);
+                    window.localStorage.setItem("timeDisplay", newTimeDisplay);
+                }
+            }>
+                { props.timeDisplay === 'millis' ?
+                    props.data.current.length > 0 ? props.data.current[props.timeSliderValue][0] : "#######"
+                    : props.data.current.length > 0 ? getTimeStringFromMillis(props.data.current[props.timeSliderValue][0]) : "##:##.###"
+                } 
+            &lt;/div>
+        &lt;/div>
+    )
+}
+
+export default PlayBar</code></pre>
+        </article>
+    </section>
+
+
+
+
+            </div>
+            
+            <footer class="footer">
+                <div class="content has-text-centered">
+                    <p>Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.7</a></p>
+                    <p class="sidebar-created-by">
+                        <a href="https://github.com/SoftwareBrothers/better-docs" target="_blank">BetterDocs theme</a> provided with <i class="fas fa-heart"></i> by 
+                        <a href="http://softwarebrothers.co" target="_blank">SoftwareBrothers - JavaScript Development Agency</a>
+                    </p>
+                </div>
+            </footer>
+            
+        </div>
+        <div id="side-nav" class="side-nav">
+        </div>
+    </div>
+<script src="scripts/app.min.js"></script>
+<script>PR.prettyPrint();</script>
+<script src="scripts/linenumber.js"> </script>
+
+</body>
+</html>

@@ -3,7 +3,12 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 
-export default function TitleBar(props) {
+/**
+ * The bar at the top of the screen, consisting of links to the home page and other relevant parts of the site.
+ * 
+ * @component
+ */
+function TitleBar(props) {
 return (<AppBar position="relative">
     <Toolbar>
         <img src="/hmv-outline-512.png" style={{ height: "40px", padding: "4px", marginRight: "6px", marginLeft: "-16px", cursor: "pointer"}} onClick={() => window.location.href = "/"}/>
@@ -18,3 +23,5 @@ return (<AppBar position="relative">
     </Toolbar>
 </AppBar>);
 }
+
+export default TitleBar

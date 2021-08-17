@@ -1,6 +1,14 @@
 import io from 'socket.io-client'
 // PARENT XHR METHOD
 
+/**
+ * Conducts an XMLHttpRequest and returns the output through a promise.
+ * 
+ * @param {string} method - XHR method
+ * @param {string} url - target URL
+ * 
+ * @category Client-side functions
+ */
 async function doXHR(method, url) {
     return new Promise(function(myResolve, myReject) {
         let x = new XMLHttpRequest();
@@ -18,8 +26,16 @@ async function doXHR(method, url) {
 /**
  * Retrieves the file tree from the server as a nested JSON file containing display names
  * and IDs for each file. The IDs can be used for GET requests to "/api/uploadedfiles".
+ * 
  * @param {Object} props An Object with mutable entries props.files.current and lastFiles
  * to store the JSON from the server.
+ * @param {Object} props.files - React ref containing the file tree
+ * @param {Object} props.files.current
+ * 
+ * @param {Array} props.lastFiles - mutable single-element array used to cache the file tree
+ * and prevent unnecessary GET requests.
+ * 
+ * @category Client-side functions
  */
 export async function getFileList(props) {
     doXHR("GET", "/api/get-file-list").then(
@@ -54,6 +70,11 @@ export async function getFileList(props) {
 
 // NETWORK METHODS THAT MAY BE CALLED MULTIPLE TIMES
 
+/**
+ * This function is not being used anymore. Should be deleted.
+ * 
+ * @category Client-side functions
+ */
 export function downloadFile(props, fname) {
     props.outgoingRequest = true;
     props.setDownloading(true);
@@ -89,6 +110,15 @@ export function downloadFile(props, fname) {
 
 
 //TODO: Should merge with existing concept for file downloads
+
+/**
+ * Retrieves quaternion data and metadata from the server.
+ * 
+ * @param {string} fileName - the ID/full path to the file
+ * @param {function} onProgress - function to be called as file is downloading
+ * 
+ * @category Client-side functions
+ */
 function getFile(fileName, onProgress) {
     let dataPromise = getFilePart(fileName, 'data', onProgress);
     let metadataPromise = getFilePart(fileName, 'metadata');
@@ -141,20 +171,29 @@ function getFilePart(fileName, type, onProgress=null, verbose = false) {
 /**
  * Notifies the server that this client has subscribed to the target dataset file. Unsubscribes from any
  * other file that the component with properties `props` is subscribed to.
- * @param {Object} props An Object containing the following:
- *  - props.setFileStatus(): Sets a String to one of the following values describing the visualizer's readiness:
+ * 
+ * @param {Object} props 
+ * 
+ * @param {function} props.setFileStatus - Sets a String to one of the following values describing the visualizer's readiness:
  *      ( `"Processing data"`
  *      `"Loading file"`
  *      `"File ready"`
  *      `"Loading models"`).
- *  - props.getFileList(): Retreives the list of currently available files for viewing.
- *  - props.awaitScene: A Promise that resolves with a sceneInfo Object (see below) when the scene has been loaded.
- *  - props.setSceneInfo(): Stores an Object containg entries for the scene, the mannequin model, and the renderer.
- *  - props.onLoadBones(): Sets the state of the client so that it applies data transformations to the model's bones.
+ * 
+ * @param {function} props.getFileList - Retreives the list of currently available files for viewing.
+ * 
+ * @param {Promise} props.awaitScene - A Promise that resolves with a sceneInfo Object (see below) when the scene has been loaded.
+ * 
+ * @param {function} props.setSceneInfo - Stores an Object containg entries for the scene, the mannequin model, and the renderer.
+ * @param {function} props.onLoadBones - Sets the state of the client so that it applies data transformations to the model's bones.
  *  Runs any other relevant initialization code.
- *  - props.setTimeSliderValue(): Stores an int representing the data point to show to the user.
- * @param {String} mySelectedFile The full filepath of the file to subscribe to, as enumerated by
+ * 
+ * @param {function} props.setTimeSliderValue - Stores an int representing the data point to show to the user.
+ * 
+ * @param {String} mySelectedFile - The full filepath of the file to subscribe to, as enumerated by
  * the response to a GET request to 'api/get-file-list'.
+ * 
+ * @category Client-side functions
  */
 export function subscribeToFile(props, mySelectedFile) {
     if (props.fileStatus.socket) {
@@ -185,8 +224,12 @@ export function subscribeToFile(props, mySelectedFile) {
             //When we get the files, we should use the original code to assign them as quaternions (after decoding from metadata)
             let inputArray = responses[0].split("\n");
             let linesArray = [];
-    
-            for (let i = 2; i < inputArray.length - 1; i++) {
+
+            const COMMENT_DELIMITER = '#';
+            const MIN_ITEMS_PER_LINE = 4;
+            for (let i = 0; i < inputArray.length - 1; i++) {
+                const lineItems = inputArray[i].split(" ").filter(item => item !== '\r');
+                if (lineItems.length < MIN_ITEMS_PER_LINE || lineItems[0] === COMMENT_DELIMITER) { continue; }
                 linesArray.push(inputArray[i].split(" ").filter(item => item !== '\r'));
             }
     

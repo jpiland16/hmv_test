@@ -2,7 +2,8 @@
 # Upload Screen 
 
 The upload screen is where users can upload datasets to the virtual machine. It consists of the following components:
-### [Title Bar](https://github.com/jpiland16/hmv_test/blob/master/documentation/TitleBar.md) [(view code)](https://github.com/jpiland16/hmv_test/blob/master/src/components/TitleBar.js)
+### [Title Bar](https://github.com/jpiland16/hmv_test/blob/master/documentation/subpages/TitleBar.md) [(view code)](https://github.com/jpiland16/hmv_test/blob/master/src/components/TitleBar.js)
+Contains links to the different pages of the website.
 ### Upload Screen Component [(view code)](https://github.com/jpiland16/hmv_test/blob/master/src/components/upload-screen/UploadScreen.js)
 The Upload Screen component acts a bridge connecting the two forms (File Info Form and Quaternion Calibration Form) that are needed to collect the necessary meta data for the file. It carries out the following roles:
 - Provides the styling of the form container
@@ -10,7 +11,7 @@ The Upload Screen component acts a bridge connecting the two forms (File Info Fo
 - Handles the submission of the form
 - Returns a Stepper component that switches between the two forms
 
-### File Info Form [(view code)](https://github.com/jpiland16/hmv_test/blob/master/src/components/upload-screen/FileInfoForm.js)
+### [File Info Form](https://github.com/jpiland16/hmv_test/blob/master/documentation/subpages/FileInfoForm.md) [(view code)](https://github.com/jpiland16/hmv_test/blob/master/src/components/upload-screen/FileInfoForm.js)
 This is the first step of uploading process and allows the user to input the file, display name, time column, and sensor information for a dataset. When the 'Next' button is pressed, this meta data is appended to a FormData object 
 and passed through props.formData back to the Upload Screen component.
 

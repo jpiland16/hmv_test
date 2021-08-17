@@ -1,25 +1,106 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="utf-8">
-    <title>JSDoc: Home</title>
 
-    <script src="scripts/prettify/prettify.js"> </script>
-    <script src="scripts/prettify/lang-css.js"> </script>
-    <!--[if lt IE 9]>
-      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
-    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+<head>
+  
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title> Home</title>
+
+  <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="./build/entry.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+  <link href="https://fonts.googleapis.com/css?family=Roboto:100,400,700|Inconsolata,700" rel="stylesheet">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+  <link type="text/css" rel="stylesheet" href="https://jmblog.github.io/color-themes-for-google-code-prettify/themes/tomorrow-night.min.css">
+  <link type="text/css" rel="stylesheet" href="styles/app.min.css">
+  <link type="text/css" rel="stylesheet" href="styles/iframe.css">
+  <link type="text/css" rel="stylesheet" href="">
+  <script async defer src="https://buttons.github.io/buttons.js"></script>
+
+  
 </head>
 
-<body>
 
-<div id="main">
 
-    <h1 class="page-title">Home</h1>
-
+<body class="layout small-header">
+    <div id="stickyNavbarOverlay"></div>
     
+
+<div class="top-nav">
+    <div class="inner">
+        <a id="hamburger" role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+        </a>
+        <div class="logo">
+            
+             
+                <a href="index.html">
+                    <h1 class="navbar-item">hmv_test - documentation</h1>
+                </a>
+            
+        </div>
+        <div class="menu">
+            
+            <div class="navigation">
+                <a
+                    href="index.html"
+                    class="link"
+                >
+                    API Documentation
+                </a>
+                
+                <div class="dropdown is-hoverable is-right">
+                    <a class="dropdown-trigger link">
+                        Tutorials
+                        <i class="fas fa-chevron-down fa-xs"></i>
+                    </a>
+                    <div class="dropdown-menu">
+                        <div class="dropdown-content">
+                        
+                            <a class="dropdown-item" href="tutorial-https-guide.html">
+                                https-guide
+                            </a>
+                        
+                            <a class="dropdown-item" href="tutorial-local-server-https-guide.html">
+                                local-server-https-guide
+                            </a>
+                        
+                        </div>
+                    </div>
+                </div>
+                
+                
+                
+            </div>
+        </div>
+    </div>
+</div>
+    <div id="main">
+        <div
+            class="sidebar "
+            id="sidebarNav"
+        >
+            
+            <nav>
+                
+                    <h2><a href="index.html">Documentation</a></h2><div class="category"><h3>Classes</h3><ul><li><a href="BasicVisualizerObject.html">BasicVisualizerObject</a></li><li><a href="MannequinVisualizer.html">MannequinVisualizer</a></li><li><a href="ModelWithBones.html">ModelWithBones</a></li><li><a href="PhoneVisualizer.html">PhoneVisualizer</a></li><li><a href="QuaternionTarget.html">QuaternionTarget</a></li><li><a href="ThreeJSVisualizer.html">ThreeJSVisualizer</a></li></ul><h3>Components</h3><ul><li><a href="Animator.html">Animator</a></li><li><a href="App.html">App</a></li><li><a href="ChooseFiles.html">ChooseFiles</a></li><li><a href="FileViewer.html">FileViewer</a></li><li><a href="FileViewer_FileDisplay.html">FileDisplay</a></li><li><a href="MenuButton.html">MenuButton</a></li><li><a href="PlayBar.html">PlayBar</a></li><li><a href="QSlider2.html">QSlider2</a></li><li><a href="QuaternionEditor.html">QuaternionEditor</a></li><li><a href="TitleBar.html">TitleBar</a></li><li><a href="TopActionBar.html">TopActionBar</a></li><li><a href="Viewport.html">Viewport</a></li></ul></div><div class="category"><h2>Client-side functions</h2><h3>Global</h3><ul><li><a href="global.html#clickFile">clickFile</a></li><li><a href="global.html#downloadFile">downloadFile</a></li><li><a href="global.html#doXHR">doXHR</a></li><li><a href="global.html#getFile">getFile</a></li><li><a href="global.html#getFileList">getFileList</a></li><li><a href="global.html#getTimeStringFromMillis">getTimeStringFromMillis</a></li><li><a href="global.html#isFileNameValid">isFileNameValid</a></li><li><a href="global.html#onSelectFileChange">onSelectFileChange</a></li><li><a href="global.html#subscribeToFile">subscribeToFile</a></li></ul></div><div class="category"><h2>Server-side functions</h2><h3>Global</h3><ul><li><a href="global.html#cleanFilename">cleanFilename</a></li><li><a href="global.html#countItems">countItems</a></li><li><a href="global.html#fileAvailable">fileAvailable</a></li><li><a href="global.html#getDirStructure">getDirStructure</a></li><li><a href="global.html#getFileDisplayName">getFileDisplayName</a></li><li><a href="global.html#isValidDir">isValidDir</a></li><li><a href="global.html#notifySocketListeners">notifySocketListeners</a></li><li><a href="global.html#onProjectUpdate">onProjectUpdate</a></li><li><a href="global.html#scanAllFiles">scanAllFiles</a></li><li><a href="global.html#writeUploadedFile">writeUploadedFile</a></li></ul></div><div class="category"><h2>Server-side functions: Uploading files</h2><h3>Global</h3><ul><li><a href="global.html#handleForm">handleForm</a></li><li><a href="global.html#handleFormUpload">handleFormUpload</a></li><li><a href="global.html#handleUploadedFile">handleUploadedFile</a></li><li><a href="global.html#parseFormFields">parseFormFields</a></li><li><a href="global.html#processDownloadedForm">processDownloadedForm</a></li></ul></div>
+                
+            </nav>
+        </div>
+        <div class="core" id="main-content-wrapper">
+            <div class="content">
+                <header class="page-title">
+                    <p></p>
+                    <h1>Home</h1>
+                </header>
+                
 
 
 
@@ -42,24 +123,325 @@
 
 
 
+    <section>
+        <article><h1>hmv_test  | <a href="http://vcm-20389.vm.duke.edu/"><em>launch website</em></a></h1>
+<p>Human model visualizer project, 2021</p>
+<h3>Authors <em>(alphabetically)</em></h3>
+<ul>
+<li><a href="https://github.com/jpiland16">Jonathan Piland</a></li>
+<li><a href="https://github.com/samuel-thompsonn">Samuel Thompson</a></li>
+<li><a href="https://github.com/sosophiemw">Sophie Williams</a></li>
+</ul>
+<blockquote>
+<p>Note: some concepts were reused from <a href="https://github.com/karendeng00/HumanSkeletonVisualizer/">HumanSkeletonVisualizer</a> by <a href="https://github.com/karendeng00">karendeng00</a> and <a href="https://github.com/charlottemcc">charlottemcc</a>.</p>
+</blockquote>
+<h3>Getting started:</h3>
+<ul>
+<li><code>git clone</code></li>
+<li><code>npm install</code></li>
+<li><code>npm run build</code></li>
+<li><code>node server</code> or <code>pm2 start server.js</code></li>
+</ul>
+<h3>Other credits</h3>
+<ul>
+<li>Peter Hinch - <a href="https://github.com/micropython-IMU/micropython-fusion/blob/master/LICENSE">micropython-fusion</a></li>
+</ul>
+<h2>Read below this line if you plan to expand on this project.</h2>
+<hr>
+<h2>Hi.</h2>
+<p>You want to maintain or update this project. What do you need to know?</p>
+<p>Below are some of the most important notes for developing the app, in a loosely arranged set of guides.</p>
+<blockquote>
+<p>By the way, here's the logo--it helps make the project seem professional.</p>
+<img src="https://vcm-20389.vm.duke.edu/hmv-favicon-512.png" alt="" data-canonical-src="https://vcm-20389.vm.duke.edu/hmv-favicon-512.png" width="128" height="128" />
+</blockquote>
+<h2>Prior knowledge</h2>
+<p>It will be helpful to be familiar with the following programming languages, data formats, libraries, etc.</p>
+<ul>
+<li>Javascript - this app is primarily Javascript.</li>
+<li>Python - the app uses Python for some server-side calculations.</li>
+<li>JSON - important data is stored in JSON format.</li>
+<li>React - the client web app is built using React.</li>
+<li>Material-UI - most UI elements used in the website are from this library.</li>
+<li>CSS - a mixture of CSS files and Material-UI's 'styles' API control the look of components.</li>
+<li>Quaternions - quaternions are used to manipulate the model.</li>
+<li><a href="http://www.opportunity-project.eu/system/files/MTi_and_MTx_User_Manual_and_Technical_Documentation.pdf">Xsens IMU sensors</a> - multiple popular human activity recognition datasets, including OPPORTUNITY, use Xsens IMU sensors to collect data.</li>
+<li><a href="https://archive.ics.uci.edu/ml/datasets/OPPORTUNITY+Activity+Recognition">The OPPORTUNITY dataset</a> - the project was created with this dataset as the primary example.</li>
+<li>HTTP - the client gets files and some other data from the server using a (mostly) RESTful HTTP API.</li>
+<li>Web sockets - the file viewer page relies on web sockets for updates from the server.</li>
+<li>Node.js - the server uses the Node framework to handle incoming requests and to manage library dependencies.</li>
+<li>The layout of the <a href="https://vcm-20389.vm.duke.edu/">website</a> - 🤔 go figure.</li>
+<li>THREE.js - The visualizer uses THREE.js to display a 3D scene to the user.</li>
+<li>JSDoc - an API documentation generator for JavaScript.</li>
+</ul>
+<h2>Where to get information outside this document</h2>
+<ul>
+<li>Check out the <a href="documentation/">/documentation</a> folder for idea-based documentation of each subpart of the project.</li>
+<li>See <a href="https://jsdoc.app/">JSDoc</a> docstring for many of the most important and most portable methods in the code base.</li>
+<li>Watch the lengthy <a href="https://www.youtube.com/watch?v=ws-Vckk_YsM">video tutorials</a> which describe the website layout, how to install and run the development build, how to perform server maintenance, and how to investigate a freshly downloaded dataset. If you have the right browser plugin, you can even watch them at 3x speed.</li>
+</ul>
+<h2>How to run the app locally</h2>
+<ul>
+<li>
+<p>Option 1 (Recommended): Run the client in dev mode and server locally</p>
+<ol>
+<li>Open two instances of the command prompt in the root directory of the <code>hmv_test</code> repository.</li>
+<li>On the first terminal instance, use <code>npm start</code> to start the client. This should take several seconds, generate a list of complaints, and then open a browser window with the app's home page.</li>
+<li>On the second terminal instance, use <code>node server</code> to start the server. It should print <code>Directory rescan requested at &lt;date and time&gt; GMT</code> and hang as it waits for a client to ask for files.</li>
+<li>You can now test the server. Changes to the client will automatically be applied when you save them, but changes to the server (<code>server.js</code>) need a restart.</li>
+</ol>
+</li>
+<li>
+<p>Option 2: Run the client in production mode and serve it</p>
+<ol>
+<li>Open a terminal in the project root directory.</li>
+<li>Use the command <code>npm run build</code> to create the production build of the React application. This should around a minute.</li>
+<li>Use <code>node server</code> to run the server, and use <code>https://localhost:&lt;PORT&gt;</code> to connect to it, where PORT is the port number that the server says it is listening to upon startup. (As of 7/22/2021, this is port 443.)</li>
+<li>You can now test the server as it behaves in a production environment. Always try this before pushing a change to master. You will have to re-build the client (step 2) to see the result of any changes you make.</li>
+</ol>
+</li>
+<li>
+<p>Option 3: Run the client in dev mode with no server</p>
+<ol>
+<li>Go to the start of the <code>subscribeToFile</code> function in <code>NetOps.js</code> and set the constant <code>SKIP_SOCKET</code> to <code>true</code>.</li>
+<li>Open the command prompt in the project root directory.</li>
+<li>Use <code>npm start</code> to start the client.</li>
+<li>You can now use the server to access the sample file <code>S4-ADL4.dat</code> from the OPPORTUNITY dataset. For other files you will need to run the server (see Option 1). Set <code>SKIP_SOCKET</code> back to <code>false</code> to connect to the server.</li>
+</ol>
+</li>
+</ul>
+<h2>The <a href="src/components/visualizer-screen/Viewport.js">Viewport</a> component is the 'Human activity visualizer'</h2>
+<ul>
+<li>The viewport's responsibility is to:
+<ol>
+<li>Display the 3D scene containing the model</li>
+<li>Manipulate the model based on the target data</li>
+<li>Display the status of the target data: Whether it is still loading, or waiting on the model to load, or if an error was encountered</li>
+<li>Allow the user to choose the target data by presenting an interface for making an informed decision</li>
+<li>Allow the user to choose which time slice of the target data to display</li>
+<li>Allow the user to navigate to any other part of the site through one or more pages</li>
+</ol>
+</li>
+</ul>
+<p>How does the viewport achieve these goals?</p>
+<p>(1) is handled by the Visualizer object. (2) is handled by the Viewport, Animator, Reset, and SceneInitializer. (3) is handled by NetOps and FileViewer. (4) is handled by Menu. (5) is handled by PlayBar. (6) is handled by Menu.</p>
+<h3>Encyclopedia of Viewport's property set</h3>
+<ul>
+<li>Page layout (Meta-menu) properties: Describe the current status of the menu in the interface, for adjusting components that need to resize themselves both inside and out of the menu.
+<ul>
+<li>menuIsOpen</li>
+<li>menuIsPinned</li>
+<li>selectedPanel</li>
+<li>expandedItems</li>
+</ul>
+</li>
+<li>File selection properties
+<ul>
+<li>selectedFile: An Object with a fileName and displayName property which represents the file currently being viewed. Has default filename &quot;&quot; (empty) and default display name &quot;None&quot;.</li>
+<li>fileStatus: An Object with a status and message property. The status can be one of an enumerated number of types (described in the doc for NetOps), and the message is relevant for errors.</li>
+<li>clickFile: A Function to run when a new file is selected. Right now this is done using the menu.</li>
+<li>files, lastFiles, fileMap: Their purpose isn't clear, but it seems that they hold the currently selected file. 'files' holds it in its 'current' field, while lastFiles and fileMap put the current file in index 0.</li>
+</ul>
+</li>
+</ul>
+<h2>Data format</h2>
+<p>The <code>/files/user-uploads/</code> directory contains all files available to the user. A valid, viewable file contains <code>quaternion_data.dat</code> and <code>metadata.json</code> files.</p>
+<p>The quaternion data file contains (w,x,y,z) quaternions in 4-column groups, sorted in order of time such that the first row is displayed first. The first column is treated as the 'time' column in milliseconds and is displayed on the right of the play bar in the visualizer interface.</p>
+<p>The metadata file carries the following info:</p>
+<ul>
+<li><code>name</code>: The name of the dataset. Not currently used, but was formerly used for assigning one metadata configuration to multiple data files.</li>
+<li><code>displayName</code>: The name that should be shown to the user in the file selection process.</li>
+<li><code>globalTransformQuaternion</code>: A quaternion to pre-multiply to every bone's orientation before the data quaternions are applied.</li>
+<li><code>targets</code>: A list of objects representing the individual sensors (IMUs). Each records the following data:
+<ul>
+<li><code>bone</code>: The name of the bone for which the sensor determines the orientation. This is one of the following enumerated names, sorted topologically below:
+<ul>
+<li>ROOT (rotates the entire model about a point on the ground)
+<ul>
+<li>HIPS
+<ul>
+<li>BACK
+<ul>
+<li>RUA (right upper arm)
+<ul>
+<li>RLA (right lower arm/forearm)</li>
+</ul>
+</li>
+<li>LUA (left upper arm)
+<ul>
+<li>LLA (left lower arm/forearm)</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>LUL (left upper leg)
+<ul>
+<li>LLL (left lower leg/shin)
+<ul>
+<li>LSHOE (left shoe)</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>RUL (right upper leg)
+<ul>
+<li>RLL (right lower leg/shin)
+<ul>
+<li>RSHOE (right shoe)</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><code>type</code>: The type of orientation transformation to apply to the bone. As of 7/22/2021, this is always &quot;Quaternion&quot;.</li>
+<li><code>column</code>: The first column in <code>quaternion_data.dat</code> that contains the actual transformation values. Column indices begin at 0 for the first column.</li>
+<li><code>localTransformationQuaternion</code>: A quaternion that is applied to the sensor's bone after the global transformation and before the data.</li>
+</ul>
+</li>
+</ul>
+<h2>How data is processed</h2>
+<p>The visualizer uses a standardized format of (w,x,y,z) quaternions to determine bone orientation. The following process determines these quaternions from the raw data.</p>
+<p>The user sends the raw quaternion data (usually in the form of the actual dataset file) to the server, alongside some metadata from the upload form describing the column number and data type corresponding to each sensor.</p>
+<p>This takes the form of a POST request to <code>/api/postform</code> carrying a JS FormData object, which is JSON that can have a file as its value. <code>server.js</code> uses the <a href="https://www.npmjs.com/package/formidable">formidable</a> library to separate the form data and the file before passing them to <code>FormFileProcessor.js</code>, which calls <code>multi_sensor_fuser_obj.py</code> and passes in the file data using its <code>stdin</code>. This Python program instantiates the appropriate <code>DatatypeHandler</code> for each sensor. After a <code>DatatypeHandler</code> converts the relevant columns to quaternions, the Python program returns the aggregate data, which is then combined with a JSON metadata file and stored in the <code>/files/user-uploads/</code> directory.</p>
+<h3>Side note: The server-client split</h3>
+<p>There is a server-side and client-side aspect to our data processing. The server processes the raw data into quaternions representing bone orientation, and the client uses these alongside the metadata and the orientations of other bones in order to create the final quaternion orientation for each bone. We could also have done all calculations on the server so that the client just reads out file data, or we could have done all calculations client-side in order to relieve stress on the shared server resource.</p>
+<p>The processing is not more client-centric because we want freedom to use any sort of code for processing incoming data, including python or C libraries. It's not more server-centric because (1) unnecessary server-side activity allows users to more easily slow down the website, and (2) we want the metadata to be easily swappable, since it often changes many times before we have something we like.</p>
+<h2>How processed data is applied to the model</h2>
+<p><code>Animator.js</code> and the Visualizer object (<code>Visualizer.js</code> and <code>Model.js</code>) handle manipulating the model to show data.</p>
+<p><code>Animator.js</code> is a renderless component which checks on each re-render whether the selected time slice <code>timeSliderValue</code> has changed. When a file is loaded and the time slider changes, it parses the floats from the active file data and passes them as a JS Object to <code>Visualizer.acceptData</code>, which then applies them to the model using THREE.js Quaternion objects.</p>
+<p>The Visualizer object, which is owned by the Viewport component, calculates the 'local' and 'global' quaternions associated with the new orientation.
+The 'global' quaternion is the orientation with respect to the global THREE.js coordinate system, such that the identity quaternion (wxyz)=(1,0,0,0) would point the bone in the x direction, with its local up facing in the y direction.
+The 'local' quaternion is the orientation with respect to the bone's parent-the bone whose end it is attached to. A local quaternion of (1,0,0,0) means that the bone points in the same direction as its parent (for the bone ROOT, which has no parent, we expect global and local orientation to match).</p>
+<p>The utility functions <code>getGlobalFromLocal</code> and <code>getLocalFromGlobal</code> transform between the two by multiplying a quaternion by the orientations of its parent, grandparent, etc., or by multiplying by their inverses.</p>
+<h3>Example: Local and Global transformations</h3>
+<p>Suppose an object <em>M</em> has local orientation <em>Q<sub>L</sub></em> with respect to its parent. This parent has orientation <em>Q<sub>n</sub></em> relative to <em>Q<sub>n-1</sub></em> relative to ... relative to the root, <em>Q<sub>1</sub></em>.</p>
+<p>Then the net orientation of <em>M</em> relative to the world is the result of repeatedly left-applying parent rotations to the child rotation until you reach the <strong>world orientation</strong>, <em>Q<sub>W</sub></em>, i.e.:</p>
+<p><em>Q<sub>W</sub></em> = <em>Q<sub>1</sub>Q<sub>2</sub> × ... × Q<sub>n-1</sub>Q<sub>n</sub>Q<sub>L</sub></em>   <em>(converts local orientation to world orientation)</em></p>
+<p>and thus we can also obtain</p>
+<p><em>Q<sub>L</sub></em> = <em>Q<sub>n</sub><sup>-1</sup>Q<sub>n-1</sub><sup>-1</sup></em> × ... × <em>Q<sub>2</sub><sup>-1</sup>Q<sub>1</sub><sup>-1</sup>Q<sub>W</sub></em>   <em>(converts world orientation to local orientation)</em>.</p>
+<h2>How to upload dataset files to the host machine for public access</h2>
+<p>Objective: Place a directory containing correctly formatted <code>metadata.json</code> and <code>quaternion_data.dat</code> files anywhere in the <code>/files/</code> directory on the server machine.</p>
+<p>Assumptions:</p>
+<ul>
+<li>You have a directory containing the relevant data such that you can view it when running the server locally.</li>
+<li>The machine hosting the server is a Duke virtual machine for server hosting</li>
+<li>You have root access to the hosting machine through SSH, either using the command line or through some SSH client like MobaXTerm.</li>
+<li>You have a directory on the machien where you may upload files using SFTP.</li>
+<li>You have a way to send files using SFTP, either using the command line with the <code>scp</code> command or using an FTP app like FileZilla.</li>
+</ul>
+<p>Procedure:</p>
+<ol>
+<li>Connect to the Duke VM using an FTP software (see step 5 of <a href="https://courses.cs.duke.edu//spring19/compsci216/setup/VM/instructions.html">this OIT guide</a>).</li>
+<li>Transfer the target directory to any place on the target machine. I did not have permission to transfer the files to the <code>/files</code> directory, but I was able to transfer them to the directory corresponding to my own NetID.</li>
+<li>Use your SSH program to access the machine (with root access).</li>
+<li>Use the <code>cp &lt;source&gt; &lt;target&gt;</code> command in the Linux shell, where <code>&lt;source&gt;</code> is the filepath of your uploaded directory, and <code>&lt;target&gt;</code> is a filepath within the <code>.../hmv_test/files</code> directory where you want the files to show up.</li>
+<li>Navigate to the HMV website, go to the visualizer, open the file browser on the left menu, and click 'REFRESH FILE LIST' at the top of the menu. After navigating back to the visualizer, your file should be visible and ready for viewing.</li>
+</ol>
+<h2>How to add a new dataset</h2>
+<p>See the <code>/dataset-research</code> folder for some insight on the criterion we use to check whether a dataset is a good fit for the visualizer. This is subject to change as the visualizer expands in functionality.</p>
+<ul>
+<li>Assumptions:
+<ul>
+<li>The dataset represents movement data from an IMU/motion sensor which can be visualized as the actual 3D movement of an object.</li>
+<li>You have not seen the data visualized yet, and you want to visualize before you slap it onto the model.</li>
+</ul>
+</li>
+</ul>
+<ol>
+<li>Acquire the dataset and its documentation. Find the format and meaning of the data.
+<ul>
+<li>How many sensors were used?</li>
+<li>What did the trials consist of? You'll want to look for movement in the app which matches the described movement. Examples include walking or opening/closing doors.</li>
+<li>What kind of data was collected? Examples include accelerometer, gyroscope, magnetometer, Euler angle orientation, quaternion orientation, or a mix between one or more of these.</li>
+<li>What is the format of the data files? Examples include CSV and whitespace-separated values. Some datasets lump all data from a trial into one file, and others separate it out either by timestamps or by which sensor is producing the data.</li>
+<li>Which numbers represent exactly which data for which sensor? Which numbers represent the time (since the start of the trial) at which a reading was taken, or is the time implied by a sampling rate?</li>
+</ul>
+</li>
+<li>Create a sample of the target data in a normalized form.
+<ul>
+<li>The sample should just be one file.</li>
+<li>Each row/line of data should represent the data from all involved sensors at a given time. <em>Note</em>: You don't have to include all the sensors in this sample--focus on one or two that might be relevant.</li>
+<li>The data from each sensor should have the same format, and they should be spaced evenly apart such that the first column associated with sensor 1 is <em>n</em> columns apart from the first column of sensor 2, and so on.</li>
+<li>For datasets in which different sensors have their own files, <code>append-files-horizontally.py</code> can be used to combine them into one file with the columns of a group of files combined.</li>
+</ul>
+</li>
+<li>Use the Python utility programs to visualize the data.
+<ul>
+<li>Make a directory for raw data and for processed data, and use <code>use-datatype-handler-multi.py</code> (use the <code>-h</code> flag for arguments) to process one or more of the sensors to produce an output file with columns of quaternions representing orientation. Here's an example in the Windows terminal with the <a href="https://archive.ics.uci.edu/ml/datasets/daily+and+sports+activities">Daily and Sports Activity Dataset</a>:</li>
+</ul>
+<pre class="prettyprint source"><code>C:\...\hmv-scratchpad\sample-test-data>use-datatype-handler-multi.py data-samples/barshan-altun-dailysports/raw-data/activity10-subj1-sample21.txt acc_gyro_mag 0 9 1 data-samples/barshan-altun-dailysports/processed-data/activity10-subj1-sample21-quats.dat --sep comma
+</code></pre>
+<ul>
+<li>Then, pick a single target sensor and use <code>graph-animate-transf.py</code> (also use <code>-h</code> to see arguments) to visualize it using 3D Matplotlib utilities. Here's an example using the file generated above:</li>
+</ul>
+<pre class="prettyprint source"><code>C:\Users\Sam\human-activity-visualizer\hmv-scratch\sample-test-data>graph-animate-transf.py --offset 0 data-samples/barshan-altun-dailysports/processed-data/activity10-subj1-sample21-quats.dat
+</code></pre>
+<ul>
+<li>If the resulting path on the graph isn't staying perfectly still and isn't tracing a crazy random sphere around the origin, you've probably got reasonable data. You can even try picking a specific sensor at a specific time slice to see if you can predict its general movement.</li>
+</ul>
+</li>
+<li>Plug the data into the human model visualizer locally.
+<ul>
+<li>Use the previous steps to generate a file containing quaternion data for each sensor, and decide which bone on the model corresponds best to which sensor.</li>
+<li>Create a folder with the data labelled as <code>quaternion_data.dat</code> and add a <code>metadata.json</code> file. See any existing metadata file and follow its format. Keep in mind that although the sensors specifically list 'quaternion' as their data type, other types are not currently supported (since we can transform any other complete orientation data into quaternions).</li>
+<li>The result will likely look very painful for our model (his name is Montie, by the way). The movements should be familiar from the Python visualizer.</li>
+</ul>
+</li>
+<li>Configure the transformation quaternions to align the limbs correctly.
+<ul>
+<li>You can use the 'tinker' tool (At the website homepage domain + '/tinker/, example: https://vcm-20389.vm.duke.edu/tinker) to upload a quaternion data file and mess with the limbs in order to get them in a reasonable position where the movements make sense.
+<ul>
+<li>Use the drop down at the top right to select what bone you're modifying transformations for.</li>
+<li>Upload a data file of column-based, whitespace-separated (w,x,y,z) data quaternions using the 'Choose File' button.</li>
+<li>Use the number input to set the column number of the target data for the selected limb. Column numbers are going to be separated by multiples of 4 since the file has columns of quaternions.</li>
+<li>Click 'add quaternion' to add an axis-angle rotation quaternion which you can adjust using an axis selector and slider. You can click the button repeatedly to use multiple, and you can click 'remove' for any of them if you want to simplify things.</li>
+<li>A bone will only be moved by quaternion data if it has at least one transformation quaternion assigned to it--otherwise, it will follow its parent's orientation.</li>
+<li>I recommend doing this one limb at a time, starting with HIPS and proceeding in topological order such that no later limb affects the position of an earlier limb.
+The tutorial screen uses <a href="https://github.com/jpiland16/hmv_test/blob/master/src/components/getting-started-screen/coordsystem.PNG">this image</a> to point out locations of bones in the upper body. The bones are parented in the following topological order (so the position of anything earlier in the list is not affected by the position of anything after it): HIPS, BACK, RUA, RLA, LUA, LLA, RUL, RLL, LUL, LLL.</li>
+</ul>
+</li>
+<li>In THREE.js, the y-axis points up, the z-axis points away (forward) from the camera's default starting position, and the x-axis points right from the camera's starting position. <em>Notice that this differs from the positions in the image linked in the previous bullet point.</em></li>
+</ul>
+</li>
+</ol>
+<h2>How to work with a new orientation data type</h2>
+<p>For any type of data that you expect a file to contain, you should have at least one data type handler so that you can parse the orientation from it. A 'data type handler' is a class extending the simple <code>DatatypeHandler</code> API so that it can take in file data and relevant metadata (such as column number) and output quaternions. Here's how to make a new one.</p>
+<ol>
+<li>Make an algorithm that takes data in the input format and gives output quaternions in (wxyz) format.</li>
+<li>In the (src/server_side/python_programs/datatype_handlers/) directory, add a Python script with a relevant name ending with &quot;Handler&quot;. Put a class with the same name that extends <code>DatatypeHandler</code>.</li>
+<li>Implement the <code>get_quaternions</code> method, using the documentation comments in <a href="src/server_side/python_programs/datatype_handlers/"><code>DatatypeHandler</code></a> as a guide for the parameters and expected output. You should not modify the incoming 2D array, since it is passed by reference and later handlers may need that data (yes, this is a design flaw that adds fragility to the program). This may seem like a &quot;just draw the rest of the owl&quot; kind of step, but the documentation for the <code>get_quaternions</code> method alongside other DatatypeHandlers should serve as a useful guide.</li>
+</ol></article>
+    </section>
 
 
 
 
 
-</div>
 
-<nav>
-    <h2><a href="index.html">Home</a></h2><h3>Tutorials</h3><ul><li><a href="tutorial-https-guide.html">https-guide</a></li><li><a href="tutorial-local-server-https-guide.html">local-server-https-guide</a></li></ul><h3>Global</h3><ul><li><a href="global.html#getDirStructure">getDirStructure</a></li><li><a href="global.html#getFileDisplayName">getFileDisplayName</a></li><li><a href="global.html#getFileList">getFileList</a></li><li><a href="global.html#initializeScene">initializeScene</a></li><li><a href="global.html#isValidDir">isValidDir</a></li><li><a href="global.html#onSelectFileChange">onSelectFileChange</a></li><li><a href="global.html#scanAllFiles">scanAllFiles</a></li><li><a href="global.html#subscribeToFile">subscribeToFile</a></li></ul>
-</nav>
-
-<br class="clear">
-
-<footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.7</a> on Wed Jul 14 2021 15:42:58 GMT-0400 (Eastern Daylight Time)
-</footer>
-
-<script> prettyPrint(); </script>
+            </div>
+            
+            <footer class="footer">
+                <div class="content has-text-centered">
+                    <p>Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.7</a></p>
+                    <p class="sidebar-created-by">
+                        <a href="https://github.com/SoftwareBrothers/better-docs" target="_blank">BetterDocs theme</a> provided with <i class="fas fa-heart"></i> by 
+                        <a href="http://softwarebrothers.co" target="_blank">SoftwareBrothers - JavaScript Development Agency</a>
+                    </p>
+                </div>
+            </footer>
+            
+        </div>
+        <div id="side-nav" class="side-nav">
+        </div>
+    </div>
+<script src="scripts/app.min.js"></script>
+<script>PR.prettyPrint();</script>
 <script src="scripts/linenumber.js"> </script>
+
 </body>
 </html>

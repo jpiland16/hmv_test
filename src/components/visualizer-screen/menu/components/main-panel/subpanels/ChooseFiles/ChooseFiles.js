@@ -89,7 +89,24 @@ const useStyles = makeStyles({
     }
 });
 
-export default function CustomizedTreeView(props) {
+/**
+ * 
+ * @param {Object} props
+ * @param {function} props.clickFile - function that receives file ID and name
+ * @param {boolean} props.display - whether to display this panel (the tree view)
+ * @param {Object} props.selectedFile
+ * @param {string} props.selectedFile.fileName
+ * @param {string} props.selectedFile.displayName
+ * @param {function} props.checkFileName - function to determine whether a given file (or folder?) is valid as input to a visualizer
+ * @param {string} props.searchFileText
+ * @param {Object} props.files
+ * @param {Object} props.files.current
+ * @param {Array} props.expandedItems
+ * @param {function} props.setExpandedItems
+ * 
+ * @component
+ */
+function ChooseFiles(props) {
     const classes = useStyles();
 
     const [anchorEl, setAnchorEl] = React.useState(null); // For download menu
@@ -191,3 +208,5 @@ export default function CustomizedTreeView(props) {
     </div>
   );
 }
+
+export default ChooseFiles

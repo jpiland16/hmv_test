@@ -9,10 +9,20 @@ import UploadScreen from "./components/upload-screen/UploadScreen";
 import DatasetInfoScreen from "./components/dataset-info-screen/DatasetInfoScreen";
 import MetadataTinkerer from "./components/MetadataTinkerer"
 
-export default function App() {
+
+/**
+ * 
+ * The highest-level component of the site. Uses React Router and also keeps
+ * track of whether this is the first load of the page or not.
+ * 
+ * @component
+ * 
+ */
+
+function App() {
 
 
-    const [firstLoad, setFirstLoad]=React.useState(true)
+    const [ firstLoad, setFirstLoad ] = React.useState(true)
 
   return (
   <BrowserRouter>
@@ -45,3 +55,5 @@ export default function App() {
     </BrowserRouter>
   );
 }
+
+export default App;
