@@ -20,6 +20,7 @@
                 - [Form File Processor](subpages/FormFileProcessor.md)
                 - [multi_sensor_fuser_obj.py](subpages/MultiSensorFuserObj.md)
             - [NotFoundScreen](subpages/NotFoundScreen.md)
+            - [MetadataTinkerer](subpages/MetadataTinkerer.md)
     - [Server](subpages/Server.md)
         - [HTTPS for VM](subpages/https-guide.md)
         - [HTTPS for Local Server](subpages/local-server-https-guide.md)
