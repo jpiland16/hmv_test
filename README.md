@@ -54,6 +54,7 @@ It will be helpful to be familiar with the following programming languages, data
 - Check out the [/documentation](documentation/) folder for idea-based documentation of each subpart of the project.
 - See [JSDoc](https://jsdoc.app/) docstring for many of the most important and most portable methods in the code base. 
 - Watch the lengthy [video tutorials](https://www.youtube.com/watch?v=ws-Vckk_YsM) which describe the website layout, how to install and run the development build, how to perform server maintenance, and how to investigate a freshly downloaded dataset. If you have the right browser plugin, you can even watch them at 3x speed.
+- Take a look at the `hmv-scratchpad(https://github.com/jpiland16/hmv-scratchpad)` repo, which is where we put scratch work alongside various useful scripts that don't belong inside the actual product.
 
 ## How to run the app locally
 - Option 1 (Recommended): Run the client in dev mode and server locally
