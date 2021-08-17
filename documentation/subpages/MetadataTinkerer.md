@@ -5,6 +5,9 @@ reasonable on the model. The user can modify the global quaternion and the quate
 by adding, removing, or modifying rotations about the x-, y-, or z-axis. Multiple rotations can be stacked together
 to get more complex transformations.
 
+The tool can only be reached by manually inputting the website domain + '/tinker', as there is currently no button to access it. This is because
+it works with a type of data file that we do not expect users to have.
+
 How to use it:
 1. Scroll down to the 'Choose file' button and upload the whitespace-separated quaternion columns that will be used by the client when displaying the data.
     - The 'Data Quat Index' slider can be used to adjust which row of the file is being displayed on the model.
