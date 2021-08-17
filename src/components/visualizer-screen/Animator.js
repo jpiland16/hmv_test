@@ -8,7 +8,12 @@ const USE_GLOBAL = true;
 const REPEAT = false;
 const FPS = 30;
 
-export default function Animator(props) {
+
+/**
+ * 
+ * @component
+ */
+function Animator(props) {
 
     if (props.data.current.length === 0 && props.selectedFile !== "") {
             
@@ -119,3 +124,5 @@ export default function Animator(props) {
         <div style={{display: "none"}}></div>
     )
 }
+
+export default Animator

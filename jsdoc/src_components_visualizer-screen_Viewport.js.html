@@ -1,0 +1,417 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title> src/components/visualizer-screen/Viewport.js</title>
+
+  <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="./build/entry.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+  <link href="https://fonts.googleapis.com/css?family=Roboto:100,400,700|Inconsolata,700" rel="stylesheet">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+  <link type="text/css" rel="stylesheet" href="https://jmblog.github.io/color-themes-for-google-code-prettify/themes/tomorrow-night.min.css">
+  <link type="text/css" rel="stylesheet" href="styles/app.min.css">
+  <link type="text/css" rel="stylesheet" href="styles/iframe.css">
+  <link type="text/css" rel="stylesheet" href="">
+  <script async defer src="https://buttons.github.io/buttons.js"></script>
+
+  
+</head>
+
+
+
+<body class="layout small-header">
+    <div id="stickyNavbarOverlay"></div>
+    
+
+<div class="top-nav">
+    <div class="inner">
+        <a id="hamburger" role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+        </a>
+        <div class="logo">
+            
+             
+                <a href="index.html">
+                    <h1 class="navbar-item">hmv_test - documentation</h1>
+                </a>
+            
+        </div>
+        <div class="menu">
+            
+            <div class="navigation">
+                <a
+                    href="index.html"
+                    class="link"
+                >
+                    API Documentation
+                </a>
+                
+                <div class="dropdown is-hoverable is-right">
+                    <a class="dropdown-trigger link">
+                        Tutorials
+                        <i class="fas fa-chevron-down fa-xs"></i>
+                    </a>
+                    <div class="dropdown-menu">
+                        <div class="dropdown-content">
+                        
+                            <a class="dropdown-item" href="tutorial-https-guide.html">
+                                https-guide
+                            </a>
+                        
+                            <a class="dropdown-item" href="tutorial-local-server-https-guide.html">
+                                local-server-https-guide
+                            </a>
+                        
+                        </div>
+                    </div>
+                </div>
+                
+                
+                
+            </div>
+        </div>
+    </div>
+</div>
+    <div id="main">
+        <div
+            class="sidebar "
+            id="sidebarNav"
+        >
+            
+            <nav>
+                
+                    <h2><a href="index.html">Documentation</a></h2><div class="category"><h3>Classes</h3><ul><li><a href="BasicVisualizerObject.html">BasicVisualizerObject</a></li><li><a href="MannequinVisualizer.html">MannequinVisualizer</a></li><li><a href="ModelWithBones.html">ModelWithBones</a></li><li><a href="PhoneVisualizer.html">PhoneVisualizer</a></li><li><a href="QuaternionTarget.html">QuaternionTarget</a></li><li><a href="ThreeJSVisualizer.html">ThreeJSVisualizer</a></li></ul><h3>Components</h3><ul><li><a href="Animator.html">Animator</a></li><li><a href="App.html">App</a></li><li><a href="ChooseFiles.html">ChooseFiles</a></li><li><a href="FileViewer.html">FileViewer</a></li><li><a href="FileViewer_FileDisplay.html">FileDisplay</a></li><li><a href="MenuButton.html">MenuButton</a></li><li><a href="PlayBar.html">PlayBar</a></li><li><a href="QSlider2.html">QSlider2</a></li><li><a href="QuaternionEditor.html">QuaternionEditor</a></li><li><a href="TitleBar.html">TitleBar</a></li><li><a href="TopActionBar.html">TopActionBar</a></li><li><a href="Viewport.html">Viewport</a></li></ul></div><div class="category"><h2>Client-side functions</h2><h3>Global</h3><ul><li><a href="global.html#clickFile">clickFile</a></li><li><a href="global.html#downloadFile">downloadFile</a></li><li><a href="global.html#doXHR">doXHR</a></li><li><a href="global.html#getFile">getFile</a></li><li><a href="global.html#getFileList">getFileList</a></li><li><a href="global.html#getTimeStringFromMillis">getTimeStringFromMillis</a></li><li><a href="global.html#isFileNameValid">isFileNameValid</a></li><li><a href="global.html#onSelectFileChange">onSelectFileChange</a></li><li><a href="global.html#subscribeToFile">subscribeToFile</a></li></ul></div><div class="category"><h2>Server-side functions</h2><h3>Global</h3><ul><li><a href="global.html#cleanFilename">cleanFilename</a></li><li><a href="global.html#countItems">countItems</a></li><li><a href="global.html#fileAvailable">fileAvailable</a></li><li><a href="global.html#getDirStructure">getDirStructure</a></li><li><a href="global.html#getFileDisplayName">getFileDisplayName</a></li><li><a href="global.html#isValidDir">isValidDir</a></li><li><a href="global.html#notifySocketListeners">notifySocketListeners</a></li><li><a href="global.html#onProjectUpdate">onProjectUpdate</a></li><li><a href="global.html#scanAllFiles">scanAllFiles</a></li><li><a href="global.html#writeUploadedFile">writeUploadedFile</a></li></ul></div><div class="category"><h2>Server-side functions: Uploading files</h2><h3>Global</h3><ul><li><a href="global.html#handleForm">handleForm</a></li><li><a href="global.html#handleFormUpload">handleFormUpload</a></li><li><a href="global.html#handleUploadedFile">handleUploadedFile</a></li><li><a href="global.html#parseFormFields">parseFormFields</a></li><li><a href="global.html#processDownloadedForm">processDownloadedForm</a></li></ul></div>
+                
+            </nav>
+        </div>
+        <div class="core" id="main-content-wrapper">
+            <div class="content">
+                <header class="page-title">
+                    <p>Source</p>
+                    <h1>src/components/visualizer-screen/Viewport.js</h1>
+                </header>
+                
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import './Viewport.css'
+import Menu from './menu/Menu'
+import React from 'react'
+import HomeButton from './HomeButton'
+import FileViewer from './FileViewer'
+import PlayBar from './PlayBar'
+import TopActionBar from './TopActionBar'
+import CardSet from './cards/CardSet'
+import Animator from './Animator'
+import { MannequinVisualizer, PhoneVisualizer } from '../shared_visualizer_object/Models'
+
+import { getFileList, downloadFile, subscribeToFile } from './viewport-workers/NetOps'
+import { onSelectFileChange, isFileNameValid, clickFile} from './viewport-workers/FileOps'
+
+let outgoingRequest = false;
+const lastFiles = [null]; // Wrapped in an array to be mutable
+
+const VERBOSE_OUTPUT = false
+
+const isReactDevServer = (window.location.href.substring(0, 22) === "http://localhost:3000/")
+const SKIP_SOCKET = false
+const useProxy = !(isReactDevServer &amp;&amp; SKIP_SOCKET)
+
+const mannequinVisualizer = new MannequinVisualizer()
+const phoneVisualizer = new PhoneVisualizer()
+phoneVisualizer.initialize()
+
+/**
+ * 
+ * Contains all the elements visible to the user when viewing the Visualizer
+ * screen. In the future, elements such as the PlayBar and TopActionBar
+ * should be moved into their own object, such as what was done with the
+ * split-screen branch.
+ * 
+ * @component
+ * 
+ * @param {Object} props - Component props
+ * @param {boolean} props.dev - whether we are in the /dev mode (additional
+ * options)
+ * @param {boolean} props.firstLoad - whether the site has been loaded already
+ * @param {function} props.setFirstLoad - function to set whether the site has 
+ * been loaded already 
+ */
+function Viewport(props) {
+
+    if (VERBOSE_OUTPUT) console.log("Re-rendering viewport.")
+    
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+
+    let initialSelectedFile = { fileName: "", displayName: "None" };
+    let initialExpandedItems = ["/"];
+    let initialFileStatus = { status: "Contacting server" };
+
+    if (urlParams.has('file')) {
+        const fpath = urlParams.get('file');
+        initialSelectedFile.fileName = fpath;
+        initialSelectedFile.displayName = "Loading...";
+        if (urlParams.has('name')) { 
+            initialSelectedFile.displayName = urlParams.get('name'); 
+        }
+        let charPos = 1;
+        while (charPos &lt; fpath.length) {
+            if (fpath.charAt(charPos) === '/')
+                initialExpandedItems.push(fpath.substring(0, charPos)) // don't include the slash
+            charPos++;
+        }
+    }
+
+    /*   ------------------------
+     *   STATE (React.useState())
+     *   ------------------------ */  
+
+    const [ selectedPanel, setSelectedPanel ] = React.useState(0);
+    const [ expandedItems, setExpandedItems ] = React.useState(initialExpandedItems);
+    const [ selectedFile, setSelectedFile ] = React.useState(initialSelectedFile);
+    const [ searchFileText, setSearchFileText ] = React.useState("");
+    const [ menuIsOpen, setMenuIsOpen ] = React.useState(urlParams.has('menu'));                 
+    const [ menuIsPinned, setMenuIsPinned ] = React.useState(true);              // Menu is pinned by default
+    const [ useRipple, setUseRipple ] = React.useState(false);                   // Limbs move independently by default
+    const [ timeSliderValue, setTimeSliderValue ] = React.useState(0);           // Initial position is 0
+    const [ playing, setPlaying ] = React.useState(false);                       // Paused by default
+    const [ toolTipOpen, setTipOpen ] = React.useState(false);
+    const [ cardsPos, setCardsPos ] = React.useState(window.localStorage.getItem("cardsPos") || 'right');
+    const [ timeDisplay, setTimeDisplay ] = React.useState(window.localStorage.getItem("timeDisplay") || 'msm')
+    const [ downloadPercent, setDownloadPercent ] = React.useState(0);
+    const [ downloading, setDownloading ] = React.useState(false);
+    const [ openLab, setOpenLab ] = React.useState("");
+    const [ fileStatus, setFileStatus ] = React.useState(initialFileStatus);
+    const [ modelDownloadProgress, setModelProgress ] = React.useState(0);
+    const [ windowDimensions, setWindowDimensions ] = React.useState(getWindowDimensions());
+    const [ visualizer, setVisualizer ] = React.useState(mannequinVisualizer)
+    
+    /*   ---------------------
+     *   REFS (React.useRef())
+     *   --------------------- */  
+
+    const data = React.useRef([]);
+    const FPS = React.useRef(30);
+    const repeat = React.useRef(false);
+    const lastIndex = React.useRef(-1);
+    const playTimerId = React.useRef(0);
+    const lineNumberRef = React.useRef(0); // Start from beginning of file by default
+    const fileMetadata = React.useRef(null)
+    const files = React.useRef([]);
+    const outputTypes = React.useRef([]);
+    const scenePromise = React.useRef(null);
+
+    const propertySet = {
+
+        // -- VISUALIZER --
+            visualizer: visualizer,
+            setVisualizer: setVisualizer,
+            mannequinVisualizer: mannequinVisualizer,
+            phoneVisualizer: phoneVisualizer,
+            awaitScene: scenePromise,
+
+        // -- MENU OPTIONS --
+
+            // META-MENU PROPERTIES
+            menuIsOpen: menuIsOpen,
+            setMenuIsOpen: setMenuIsOpen,
+            menuIsPinned: menuIsPinned,
+            setMenuIsPinned: setMenuIsPinned,
+            selectedPanel: selectedPanel,
+            setSelectedPanel: setSelectedPanel,
+
+            // FILE SELECTION PROPERTIES
+            expandedItems: expandedItems,
+            setExpandedItems: setExpandedItems,
+            selectedFile: selectedFile,
+            setSelectedFile: setSelectedFile,
+
+            fileStatus: fileStatus,
+            setFileStatus: setFileStatus,
+            clickFile: (id, name) => clickFile(propertySet, id, name), 
+            onSelectFileChange: (file, displayName) => onSelectFileChange(propertySet, file, displayName),
+            checkFileName: (fname) => isFileNameValid(propertySet, fname),
+            files: files,
+            lastFiles: lastFiles,
+
+            // FILE SEARCH PROPERTIES
+            searchFileText: searchFileText,
+            setSearchFileText: setSearchFileText,
+
+            // CARD SETTINGS
+            cardsPos: cardsPos,
+            setCardsPos: setCardsPos,
+
+            // TIME-DISPLAY OPTIONS (for the time in bottom right of the screen)
+            timeDisplay: timeDisplay,
+            setTimeDisplay: setTimeDisplay,
+
+            // MODEL OPTIONS
+            useRipple: useRipple,
+            setUseRipple: setUseRipple,
+
+        // -- FILE VIEWING &amp; PLAYBACK --
+
+            // FILE DOWNLOADS
+            downloading: downloading,
+            setDownloading: setDownloading,
+            downloadPercent: downloadPercent,
+            setDownloadPercent: setDownloadPercent,
+            downloadFile: downloadFile,
+            outgoingRequest: outgoingRequest, 
+            subscribeToFile: subscribeToFile,
+            modelDownloadProgress : modelDownloadProgress,
+
+            // DATA
+            data: data,
+            fileMetadata: fileMetadata,
+
+            // PLAYBACK FEATURES
+            outputTypes: outputTypes,
+
+            // PLAYBACK OPTIONS
+            playing: playing,
+            setPlaying: setPlaying,
+            playTimerId: playTimerId, // The ID of the window.setInterval()
+            lineNumberRef: lineNumberRef, // Current line number of `data` to view
+            timeSliderValue: timeSliderValue,
+            setTimeSliderValue: setTimeSliderValue,
+            FPS: FPS,
+            repeat: repeat,
+            lastIndex: lastIndex,   
+            toolTipOpen: toolTipOpen, //tooltip for play button can only be viewed when play button is disabled
+            setTipOpen: setTipOpen,     
+
+        // -- WINDOW PROPERTIES --
+            getWindowDimensions: () => windowDimensions,
+
+        // -- DEVELOPMENT OPTIONS --
+        
+            // LAB OPTIONS
+            openLab: openLab,
+            setOpenLab: setOpenLab,
+
+            // DEV MODE
+            dev: props.dev,
+            baseURL: useProxy ? "" : "https://raw.githubusercontent.com/jpiland16/hmv_test/master/files",
+
+            // console.log
+            verbose: VERBOSE_OUTPUT
+
+    }
+
+    /*   -------------------
+     *   POST-RENDER EFFECTS
+     *   ------------------- */  
+
+    React.useEffect(() => {
+
+        if(props.firstLoad) {
+            // getMap(propertySet).then(() => {
+            // }, () => { });
+            props.setFirstLoad(false);
+        } else {
+            if (files.current &amp;&amp; files.current.length === 0) {
+                files.current = propertySet.lastFiles[0];
+            }
+        }
+
+        if (VERBOSE_OUTPUT) console.log("Running useEffect");
+        scenePromise.current = mannequinVisualizer.initialize((percent) => setModelProgress(percent));
+
+        getFileList(propertySet);
+        
+        function handleResize() {
+            setWindowDimensions(getWindowDimensions());
+        }
+        
+        if (selectedFile.fileName !== '' &amp;&amp; isFileNameValid(propertySet, selectedFile.fileName)) {
+            if (VERBOSE_OUTPUT) console.log("Running onSelectFileChange");
+            onSelectFileChange(propertySet, selectedFile.fileName, selectedFile.displayName);
+        }
+        else {
+            if (VERBOSE_OUTPUT) console.log("Not running onSelectFileChange");
+        }
+        
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+
+
+    }, []); // No dependencies, so it runs only once at first render.
+
+    /*  ---------------------
+     *  WINDOW SIZE RETRIEVAL
+     *  --------------------- */
+
+    // Window resize code: see https://stackoverflow.com/questions/36862334/get-viewport-window-height-in-reactjs
+
+    function getWindowDimensions() {
+        const { innerWidth: width, innerHeight: height } = window;
+        return [
+            width,
+            height
+        ];
+    }      
+
+    /*  ----------------------------------------
+     *  RETURN OF THE RENDER - PROPS -> CHILDREN
+     *  ---------------------------------------- */
+
+    return (
+        &lt;div className="myView">
+            &lt;HomeButton />
+            &lt;Menu {...propertySet} />
+            &lt;TopActionBar {...propertySet} />
+            &lt;FileViewer targetFile={""} {...propertySet}/>
+            &lt;CardSet {...propertySet} />
+            &lt;PlayBar {...propertySet} disabled={(!fileStatus || fileStatus.status !== "Complete" || selectedFile.fileName === "") &amp;&amp; openLab === ""} />
+            &lt;Animator {...propertySet} />
+        &lt;/div>
+    )
+}
+
+export default Viewport;</code></pre>
+        </article>
+    </section>
+
+
+
+
+            </div>
+            
+            <footer class="footer">
+                <div class="content has-text-centered">
+                    <p>Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.7</a></p>
+                    <p class="sidebar-created-by">
+                        <a href="https://github.com/SoftwareBrothers/better-docs" target="_blank">BetterDocs theme</a> provided with <i class="fas fa-heart"></i> by 
+                        <a href="http://softwarebrothers.co" target="_blank">SoftwareBrothers - JavaScript Development Agency</a>
+                    </p>
+                </div>
+            </footer>
+            
+        </div>
+        <div id="side-nav" class="side-nav">
+        </div>
+    </div>
+<script src="scripts/app.min.js"></script>
+<script>PR.prettyPrint();</script>
+<script src="scripts/linenumber.js"> </script>
+
+</body>
+</html>

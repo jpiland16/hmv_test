@@ -10,6 +10,7 @@
     "@testing-library/react": "^11.2.7",
     "@testing-library/user-event": "^13.1.9",
     "babel-preset-react": "^6.24.1",
+    "better-docs": "^2.3.2",
     "express": "^4.17.1",
     "filereader": "^0.10.3",
     "formidable": "^1.2.2",

@@ -9,6 +9,25 @@ import { BasicVisualizerObject } from '../shared_visualizer_object/Visualizer';
 
 import './FileViewer.css';
 
+/**
+ * The output section of the screen; can be used to display progress bars, error messages, and of course the Visualizer.
+ * 
+ * @param {Object} props 
+ * @param {Object} props.selectedFile
+ * @param {string} props.selectedFile.fileName.fileName
+ * @param {Object} props.fileStatus
+ * @param {string} props.fileStatus.status
+ * @param {Number} props.fileStatus.progress
+ * @param {Number} props.modelDownloadProgress
+ * @param {string} props.fileStatus.message
+ * @param props.sceneInfo - TODO: remove this because it is unused
+ * @param {boolean} props.menuIsOpen
+ * @param {BasicVisualizerObject} props.visualizer
+ * @param {Array} props.windowDimensions
+ * @param {boolean} props.dev
+ * 
+ * @component
+ */
 class FileViewer extends React.Component {
     constructor() {
         super();
@@ -79,8 +98,20 @@ class FileViewer extends React.Component {
     // TODO: Split this up into multiple files or use some other method to (1) separate the outer and inner choice and (2) prevent
     // importing 'library'
     /**
-     * @param props {Object}
-     * @param props.visualizer {BasicVisualizerObject}
+     * @param {Object} props 
+     * @param {BasicVisualizerObject} props.visualizer 
+     * @param {boolean} props.fileSelected
+     * @param {string} props.status
+     * @param {Number} props.fileProgress
+     * @param {Number} props.modelProgress
+     * @param {string} props.errorMessage
+     * @param props.sceneInfo - TODO: remove this because it is unused
+     * @param {boolean} props.menuIsOpen
+     * @param {Array} props.windowDimensions
+     * @param {boolean} props.dev
+     * @param {FileViewer} props.library
+     * 
+     * @component
      * 
      */
     FileDisplay(props) {

@@ -45,6 +45,14 @@ function handleForm(err, fields, files, callback, onError) {
     }
 }
 
+/**
+ * 
+ * Converts submitted fields to a metadata object.
+ * 
+ * @param fields
+ * 
+ * @category Server-side functions: Uploading files
+ */
 function parseFormFields(fields) {
     metadata = {
         name: "Opportunity Dataset",

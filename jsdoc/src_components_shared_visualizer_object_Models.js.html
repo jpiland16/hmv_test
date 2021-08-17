@@ -1,0 +1,436 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title> src/components/shared_visualizer_object/Models.js</title>
+
+  <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="./build/entry.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+  <link href="https://fonts.googleapis.com/css?family=Roboto:100,400,700|Inconsolata,700" rel="stylesheet">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+  <link type="text/css" rel="stylesheet" href="https://jmblog.github.io/color-themes-for-google-code-prettify/themes/tomorrow-night.min.css">
+  <link type="text/css" rel="stylesheet" href="styles/app.min.css">
+  <link type="text/css" rel="stylesheet" href="styles/iframe.css">
+  <link type="text/css" rel="stylesheet" href="">
+  <script async defer src="https://buttons.github.io/buttons.js"></script>
+
+  
+</head>
+
+
+
+<body class="layout small-header">
+    <div id="stickyNavbarOverlay"></div>
+    
+
+<div class="top-nav">
+    <div class="inner">
+        <a id="hamburger" role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+        </a>
+        <div class="logo">
+            
+             
+                <a href="index.html">
+                    <h1 class="navbar-item">hmv_test - documentation</h1>
+                </a>
+            
+        </div>
+        <div class="menu">
+            
+            <div class="navigation">
+                <a
+                    href="index.html"
+                    class="link"
+                >
+                    API Documentation
+                </a>
+                
+                <div class="dropdown is-hoverable is-right">
+                    <a class="dropdown-trigger link">
+                        Tutorials
+                        <i class="fas fa-chevron-down fa-xs"></i>
+                    </a>
+                    <div class="dropdown-menu">
+                        <div class="dropdown-content">
+                        
+                            <a class="dropdown-item" href="tutorial-https-guide.html">
+                                https-guide
+                            </a>
+                        
+                            <a class="dropdown-item" href="tutorial-local-server-https-guide.html">
+                                local-server-https-guide
+                            </a>
+                        
+                        </div>
+                    </div>
+                </div>
+                
+                
+                
+            </div>
+        </div>
+    </div>
+</div>
+    <div id="main">
+        <div
+            class="sidebar "
+            id="sidebarNav"
+        >
+            
+            <nav>
+                
+                    <h2><a href="index.html">Documentation</a></h2><div class="category"><h3>Classes</h3><ul><li><a href="BasicVisualizerObject.html">BasicVisualizerObject</a></li><li><a href="MannequinVisualizer.html">MannequinVisualizer</a></li><li><a href="ModelWithBones.html">ModelWithBones</a></li><li><a href="PhoneVisualizer.html">PhoneVisualizer</a></li><li><a href="QuaternionTarget.html">QuaternionTarget</a></li><li><a href="ThreeJSVisualizer.html">ThreeJSVisualizer</a></li></ul><h3>Components</h3><ul><li><a href="Animator.html">Animator</a></li><li><a href="App.html">App</a></li><li><a href="ChooseFiles.html">ChooseFiles</a></li><li><a href="FileViewer.html">FileViewer</a></li><li><a href="FileViewer_FileDisplay.html">FileDisplay</a></li><li><a href="MenuButton.html">MenuButton</a></li><li><a href="PlayBar.html">PlayBar</a></li><li><a href="QSlider2.html">QSlider2</a></li><li><a href="QuaternionEditor.html">QuaternionEditor</a></li><li><a href="TitleBar.html">TitleBar</a></li><li><a href="TopActionBar.html">TopActionBar</a></li><li><a href="Viewport.html">Viewport</a></li></ul></div><div class="category"><h2>Client-side functions</h2><h3>Global</h3><ul><li><a href="global.html#clickFile">clickFile</a></li><li><a href="global.html#downloadFile">downloadFile</a></li><li><a href="global.html#doXHR">doXHR</a></li><li><a href="global.html#getFile">getFile</a></li><li><a href="global.html#getFileList">getFileList</a></li><li><a href="global.html#getTimeStringFromMillis">getTimeStringFromMillis</a></li><li><a href="global.html#isFileNameValid">isFileNameValid</a></li><li><a href="global.html#onSelectFileChange">onSelectFileChange</a></li><li><a href="global.html#subscribeToFile">subscribeToFile</a></li></ul></div><div class="category"><h2>Server-side functions</h2><h3>Global</h3><ul><li><a href="global.html#cleanFilename">cleanFilename</a></li><li><a href="global.html#countItems">countItems</a></li><li><a href="global.html#fileAvailable">fileAvailable</a></li><li><a href="global.html#getDirStructure">getDirStructure</a></li><li><a href="global.html#getFileDisplayName">getFileDisplayName</a></li><li><a href="global.html#isValidDir">isValidDir</a></li><li><a href="global.html#notifySocketListeners">notifySocketListeners</a></li><li><a href="global.html#onProjectUpdate">onProjectUpdate</a></li><li><a href="global.html#scanAllFiles">scanAllFiles</a></li><li><a href="global.html#writeUploadedFile">writeUploadedFile</a></li></ul></div><div class="category"><h2>Server-side functions: Uploading files</h2><h3>Global</h3><ul><li><a href="global.html#handleForm">handleForm</a></li><li><a href="global.html#handleFormUpload">handleFormUpload</a></li><li><a href="global.html#handleUploadedFile">handleUploadedFile</a></li><li><a href="global.html#parseFormFields">parseFormFields</a></li><li><a href="global.html#processDownloadedForm">processDownloadedForm</a></li></ul></div>
+                
+            </nav>
+        </div>
+        <div class="core" id="main-content-wrapper">
+            <div class="content">
+                <header class="page-title">
+                    <p>Source</p>
+                    <h1>src/components/shared_visualizer_object/Models.js</h1>
+                </header>
+                
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import * as THREE from 'three'
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
+import { ThreeJSVisualizer, QuaternionTarget } from "./Visualizer";
+import Button from '@material-ui/core/Button'
+import QuaternionEditor2 from './QuaternionEditor2';
+
+/**
+ * Loads a model with the assumption that it has a tree-like parenting structure.
+ */
+class ModelWithBones extends ThreeJSVisualizer {
+
+    constructor() {
+        super()
+        this.showSliders = false
+        this.initializeSkeleton()
+    }
+
+    initializeSkeleton() {
+
+    }
+
+    /**
+     * Loads a model into the scene, in addition to the cartesian grid.
+     * @override
+     */
+    loadModelFromPath(onProgress, modelPath) {
+
+        
+        return new Promise((myResolve, myReject) => {
+            
+            this.loadGrid(() => { }).then(() => {
+
+                var loader = new GLTFLoader();
+
+                loader.load(modelPath, gltf => {
+
+                            var model = gltf.scene;
+                            model.traverse(function(obj) { obj.frustumCulled = false; });
+                            
+                            this.scene.add( model );
+
+                            /**
+                             * Recursively add bones from the model to this.bones.
+                             * 
+                             * @param {QuaternionTarget} root
+                             */
+                            const addBones = (root) => {
+                                this.bones[root.shortName] = model.getObjectByName(root.boneName)
+                                for (let i = 0; i &lt; root.children.length; i++) {
+                                    addBones(root.children[i])
+                                }
+                            }
+                            
+                            addBones(this.quaternionRoot)
+                            this.attachBones(this.quaternionRoot)
+                            myResolve();
+
+                        }, function ( xhr ) {
+                            onProgress(Math.round(xhr.loaded / xhr.total * 100))
+                        }, function ( error ) {
+                            console.error( error );
+                            myReject(error)
+                        }
+                    );
+
+                }, (error) => myReject(error));
+            });
+    }
+
+    /**
+     * Attaches all the children of the specified bone to that bone.
+     * 
+     * @param {QuaternionTarget} target
+     */
+     attachBones(target) {
+        for (let i = 0; i &lt; target.children.length; i++) {
+            const childTarget = target.children[i]
+            this.bones[target.shortName].attach(this.bones[childTarget.shortName])
+            // Recursively traverse the tree to connect all bones in the THREE.js model.
+            this.attachBones(childTarget)
+        }
+    }
+
+    /**
+     * Uses the incoming data to move the mannequin.
+     * 
+     * @param {Object&lt;string, THREE.Quaternion>} quaternions - quaternion data
+     * @override
+     */
+    acceptData(quaternions) {
+        if (this.modelLoaded) {
+            this.moveBone(this.quaternionRoot, quaternions)
+        } else {
+            console.warn("WARNING: An attempt was made to move the model before it had fully loaded! " + 
+                         "Please check to see that the model-loading promise has been fulfilled first.")
+        }
+    }
+
+    /**
+     * Move a single bone to have a specified global orientation, and 
+     * recursively move each of its children by keeping track of relative
+     * orientations.
+     * 
+     * @param {QuaternionTarget} root
+     * @param {Object&lt;string, THREE.Quaternion>} quaternions
+     * @param {THREE.Quaternion} currentInversionQ
+     */
+    moveBone(root, quaternions, currentInversionQ = new THREE.Quaternion()) {
+        let quaternion = quaternions[root.shortName]
+
+        let nextInversionQ = new THREE.Quaternion().copy(currentInversionQ)
+
+        if (quaternion) { 
+            let newGlobalQ = quaternion;
+            let newLocalQ = new THREE.Quaternion().copy(currentInversionQ).multiply(newGlobalQ)
+            this.bones[root.shortName].quaternion.copy(newLocalQ);
+            nextInversionQ.premultiply(newLocalQ.invert())
+        } else {
+            nextInversionQ.premultiply(new THREE.Quaternion().copy(this.bones[root.shortName].quaternion).invert())
+        }
+
+        // Store the current globalQ (for sliders)
+        if (this.showSliders) root.current.copy(nextInversionQ).invert()
+
+        for (let i = 0; i &lt; root.children.length; i++) {
+            this.moveBone(root.children[i], quaternions, nextInversionQ)
+        }
+    }
+
+    reset() {
+        const resetQs = this.getResetQuaternions(this.quaternionRoot)
+        const resetObj = { }
+        if (this.setQObj) this.setQObj(resetObj)
+        for (let i = 0; i &lt; resetQs.length; i++) {
+            resetObj[resetQs[i].name] = resetQs[i].default
+        }
+        this.acceptData(resetObj)
+    }
+
+    /**
+     * Reset a single bone, and recursively reset all of that bone's children.
+     * 
+     * @param {QuaternionTarget} root
+     */
+    getResetQuaternions(root) {
+        const singleResetObj = {
+            name: root.shortName,
+            default: root.default
+        }
+        let resetQs = [ singleResetObj ]
+        for (let i = 0; i &lt; root.children.length; i++) {
+            resetQs = resetQs.concat(this.getResetQuaternions(root.children[i]))
+        }
+        return resetQs
+    }
+
+    /**
+     * @override
+     */
+    getTools() {
+        return (&lt;div>
+            &lt;Button onClick={() => { if (this.modelLoaded) this.reset()}} style={{opacity: 0.6, margin: "6px"}} color="secondary" size="small" variant="outlined">Reset Model&lt;/Button>
+            {["front", "right", "top"].map((direction) => &lt;Button key={direction} onClick={() => { if (this.modelLoaded) this.setCamera(direction)}}  style={{opacity: 0.6}} size="small">
+                {direction}
+            &lt;/Button>)}
+        &lt;/div>)
+    }
+
+    setCamera(positionDescription) {
+        let x, y, z;
+        switch (positionDescription) {
+            case "top":
+                x = 0; y = 3; z = 0;
+                break;
+            case "bottom":
+                x = 0; y = -3; z = 0;
+                break;
+            case "right":
+                x = 3; y = 0; z = 0;
+                break;
+            case "left":
+                x = -3; y = 0; z = 0;
+                break;
+            case "back":
+                x = 0; y = 0; z = -3;
+                break;
+            case "front":
+            default:
+                x = 0; y = 0; z = 3;
+        }
+
+        this.controls.reset()
+        this.camera.position.set(x, y, z)
+        this.controls.update()
+    }
+
+    /**
+     * @override
+     */
+    getSliders(qVals, setQVals) {
+        if (!this.modelLoaded) return null;
+        return this.getAllQSliders(this.quaternionRoot, qVals, setQVals)
+    }
+
+    /**
+     * @param {QuaternionTarget} root
+     */
+    getAllQSliders(root, qObj, setQObj) {
+
+        this.setQObj = setQObj
+
+        qObj = {...qObj}
+
+        qObj[root.shortName] = root.current
+
+        let sliders = [&lt;QuaternionEditor2 
+            quaternionTarget={root} 
+            qObj={qObj}
+            onChange={newQ => { 
+                if (this.modelLoaded) {
+                    const myObj = {}
+                    myObj[root.shortName] = new THREE.Quaternion(newQ[0], newQ[1], newQ[2], newQ[3])
+                    this.acceptData(myObj)
+                    setQObj(myObj)
+                }
+            }}
+        />]
+
+        for (let i = 0; i &lt; root.children.length; i++) {
+            sliders = sliders.concat(this.getAllQSliders(root.children[i], qObj, setQObj))
+        }
+
+        return sliders
+    }
+
+}
+
+/**
+ * Provides the skeletal structure of our mannequin.
+ */
+class MannequinVisualizer extends ModelWithBones {
+
+
+    /**
+     * @override
+     */
+    initializeSkeleton() {
+        this.quaternionRoot = new QuaternionTarget( "ROOT", "_rootJoint", new THREE.Quaternion(0, 0, 0, 1))
+
+        const hips = this.quaternionRoot.addChild("HIPS", "mixamorig1Hips_01", new THREE.Quaternion(0.7071, 0, 0, -0.7071))
+        // this.quaternionRoot = hip;
+
+        const back = hips.addChild("BACK", "spine_02", new THREE.Quaternion(-0.06, 0, 0, 0.998) )
+
+        const lua = back.addChild("LUA", "upperarm_l", new THREE.Quaternion(-0.472, -0.468, 0.561, -0.494) )
+        lua.addChild("LLA", "lowerarm_l", new THREE.Quaternion(-0.471, -0.466, 0.51, -0.549) )
+
+        const rua = back.addChild("RUA", "upperarm_r", new THREE.Quaternion(0.471, -0.471, 0.561, 0.492) )
+        rua.addChild("RLA", "lowerarm_r", new THREE.Quaternion(0.471, -0.468, 0.509, 0.547) )
+        
+        const lul = hips.addChild("LUL", "left_upper_leg", new THREE.Quaternion(-0.001, -0.032, 0.999, -0.044) )
+        const lll = lul.addChild("LLL", "left_lower_leg", new THREE.Quaternion(-0.001, -0.034, 0.999, -0.04) )
+        lll.addChild("LSHOE", "foot_l", new THREE.Quaternion(-0.006, 0.465, 0.884, -0.043) )
+
+        const rul = hips.addChild("RUL", "right_upper_leg", new THREE.Quaternion(0.001, -0.029, 0.999, 0.044) )
+        const rll = rul.addChild("RLL", "right_lower_leg", new THREE.Quaternion(0.001, -0.035, 0.999, 0.04) )
+        rll.addChild("RSHOE", "foot_r", new THREE.Quaternion(0.006, 0.467, 0.883, 0.043) ) 
+
+    }
+
+    /**
+     * @override
+     */
+    loadModel(onProgress) {
+        return this.loadModelFromPath(onProgress, "/files/figures/mannequin.glb")
+    }
+
+}
+
+/**
+ * Provides the single-bone skeletal structure of our phone
+ */
+class PhoneVisualizer extends ModelWithBones {
+
+    initializeSkeleton() {
+        this.quaternionRoot = new QuaternionTarget("ROOT", "Cube001", new THREE.Quaternion())
+    }
+
+    /**
+     * @override
+     */
+    loadModel(onProgress) {        
+        return this.loadModelFromPath(onProgress, "/files/figures/phone.glb");
+    }
+}
+
+export { MannequinVisualizer, PhoneVisualizer }</code></pre>
+        </article>
+    </section>
+
+
+
+
+            </div>
+            
+            <footer class="footer">
+                <div class="content has-text-centered">
+                    <p>Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.7</a></p>
+                    <p class="sidebar-created-by">
+                        <a href="https://github.com/SoftwareBrothers/better-docs" target="_blank">BetterDocs theme</a> provided with <i class="fas fa-heart"></i> by 
+                        <a href="http://softwarebrothers.co" target="_blank">SoftwareBrothers - JavaScript Development Agency</a>
+                    </p>
+                </div>
+            </footer>
+            
+        </div>
+        <div id="side-nav" class="side-nav">
+        </div>
+    </div>
+<script src="scripts/app.min.js"></script>
+<script>PR.prettyPrint();</script>
+<script src="scripts/linenumber.js"> </script>
+
+</body>
+</html>

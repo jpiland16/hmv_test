@@ -1,25 +1,108 @@
+
+
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="utf-8">
-    <title>JSDoc: Source: server.js</title>
 
-    <script src="scripts/prettify/prettify.js"> </script>
-    <script src="scripts/prettify/lang-css.js"> </script>
-    <!--[if lt IE 9]>
-      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
-    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+<head>
+  
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title> server.js</title>
+
+  <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="./build/entry.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+  <link href="https://fonts.googleapis.com/css?family=Roboto:100,400,700|Inconsolata,700" rel="stylesheet">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+  <link type="text/css" rel="stylesheet" href="https://jmblog.github.io/color-themes-for-google-code-prettify/themes/tomorrow-night.min.css">
+  <link type="text/css" rel="stylesheet" href="styles/app.min.css">
+  <link type="text/css" rel="stylesheet" href="styles/iframe.css">
+  <link type="text/css" rel="stylesheet" href="">
+  <script async defer src="https://buttons.github.io/buttons.js"></script>
+
+  
 </head>
 
-<body>
 
-<div id="main">
 
-    <h1 class="page-title">Source: server.js</h1>
-
+<body class="layout small-header">
+    <div id="stickyNavbarOverlay"></div>
     
+
+<div class="top-nav">
+    <div class="inner">
+        <a id="hamburger" role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+        </a>
+        <div class="logo">
+            
+             
+                <a href="index.html">
+                    <h1 class="navbar-item">hmv_test - documentation</h1>
+                </a>
+            
+        </div>
+        <div class="menu">
+            
+            <div class="navigation">
+                <a
+                    href="index.html"
+                    class="link"
+                >
+                    API Documentation
+                </a>
+                
+                <div class="dropdown is-hoverable is-right">
+                    <a class="dropdown-trigger link">
+                        Tutorials
+                        <i class="fas fa-chevron-down fa-xs"></i>
+                    </a>
+                    <div class="dropdown-menu">
+                        <div class="dropdown-content">
+                        
+                            <a class="dropdown-item" href="tutorial-https-guide.html">
+                                https-guide
+                            </a>
+                        
+                            <a class="dropdown-item" href="tutorial-local-server-https-guide.html">
+                                local-server-https-guide
+                            </a>
+                        
+                        </div>
+                    </div>
+                </div>
+                
+                
+                
+            </div>
+        </div>
+    </div>
+</div>
+    <div id="main">
+        <div
+            class="sidebar "
+            id="sidebarNav"
+        >
+            
+            <nav>
+                
+                    <h2><a href="index.html">Documentation</a></h2><div class="category"><h3>Classes</h3><ul><li><a href="BasicVisualizerObject.html">BasicVisualizerObject</a></li><li><a href="MannequinVisualizer.html">MannequinVisualizer</a></li><li><a href="ModelWithBones.html">ModelWithBones</a></li><li><a href="PhoneVisualizer.html">PhoneVisualizer</a></li><li><a href="QuaternionTarget.html">QuaternionTarget</a></li><li><a href="ThreeJSVisualizer.html">ThreeJSVisualizer</a></li></ul><h3>Components</h3><ul><li><a href="Animator.html">Animator</a></li><li><a href="App.html">App</a></li><li><a href="ChooseFiles.html">ChooseFiles</a></li><li><a href="FileViewer.html">FileViewer</a></li><li><a href="FileViewer_FileDisplay.html">FileDisplay</a></li><li><a href="MenuButton.html">MenuButton</a></li><li><a href="PlayBar.html">PlayBar</a></li><li><a href="QSlider2.html">QSlider2</a></li><li><a href="QuaternionEditor.html">QuaternionEditor</a></li><li><a href="TitleBar.html">TitleBar</a></li><li><a href="TopActionBar.html">TopActionBar</a></li><li><a href="Viewport.html">Viewport</a></li></ul></div><div class="category"><h2>Client-side functions</h2><h3>Global</h3><ul><li><a href="global.html#clickFile">clickFile</a></li><li><a href="global.html#downloadFile">downloadFile</a></li><li><a href="global.html#doXHR">doXHR</a></li><li><a href="global.html#getFile">getFile</a></li><li><a href="global.html#getFileList">getFileList</a></li><li><a href="global.html#getTimeStringFromMillis">getTimeStringFromMillis</a></li><li><a href="global.html#isFileNameValid">isFileNameValid</a></li><li><a href="global.html#onSelectFileChange">onSelectFileChange</a></li><li><a href="global.html#subscribeToFile">subscribeToFile</a></li></ul></div><div class="category"><h2>Server-side functions</h2><h3>Global</h3><ul><li><a href="global.html#cleanFilename">cleanFilename</a></li><li><a href="global.html#countItems">countItems</a></li><li><a href="global.html#fileAvailable">fileAvailable</a></li><li><a href="global.html#getDirStructure">getDirStructure</a></li><li><a href="global.html#getFileDisplayName">getFileDisplayName</a></li><li><a href="global.html#isValidDir">isValidDir</a></li><li><a href="global.html#notifySocketListeners">notifySocketListeners</a></li><li><a href="global.html#onProjectUpdate">onProjectUpdate</a></li><li><a href="global.html#scanAllFiles">scanAllFiles</a></li><li><a href="global.html#writeUploadedFile">writeUploadedFile</a></li></ul></div><div class="category"><h2>Server-side functions: Uploading files</h2><h3>Global</h3><ul><li><a href="global.html#handleForm">handleForm</a></li><li><a href="global.html#handleFormUpload">handleFormUpload</a></li><li><a href="global.html#handleUploadedFile">handleUploadedFile</a></li><li><a href="global.html#parseFormFields">parseFormFields</a></li><li><a href="global.html#processDownloadedForm">processDownloadedForm</a></li></ul></div>
+                
+            </nav>
+        </div>
+        <div class="core" id="main-content-wrapper">
+            <div class="content">
+                <header class="page-title">
+                    <p>Source</p>
+                    <h1>server.js</h1>
+                </header>
+                
 
 
 
@@ -38,7 +121,7 @@ const { Server } = require('socket.io');
 var onContactUs = null;
 let contactModulePath = __dirname+'/sendEmail.js';
 if (fs.existsSync(contactModulePath)) {
-    const { contactUsFunction } = require('./sendEmail')
+    const { onContactUs: contactUsFunction } = require('./sendEmail')
     onContactUs = contactUsFunction;
 }
 
@@ -55,13 +138,15 @@ const io = new Server(httpsServer);
 
 const formProcessor = require('./src/server_side/FormFileProcessor');
 
-const VERBOSE_OUTPUT = false
+const VERBOSE_OUTPUT = process.argv[2] &amp;&amp; process.argv[2] === 'verbose';
 
 /**
  * Asynchronously and returns the display name from the metadata file at the given filepath.
  * @param {String} filepath The directory containing the metadata file which has the desired display name.
  * @returns A Promise that resolves to the display name for the data file. Resolves to 'null' for directories and
  * rejects if the associated metadata.json file can't be parsed.
+ * 
+ * @category Server-side functions
  */
 function getFileDisplayName(filepath) {
     return new Promise((myResolve, myReject) => {
@@ -88,6 +173,8 @@ function getFileDisplayName(filepath) {
  * @param {String} dir The filepath from the project root of the target directory.
  * @returns A Promise that resolves to true if the filepath leads to a directory that should
  * be shown to the client, and resolves to false otherwise.
+ * 
+ * @category Server-side functions
  */
 function isValidDir(dir) {
     return new Promise((myResolve, myReject) => {
@@ -130,6 +217,8 @@ function isValidDir(dir) {
  * @param {String} dir The name of the directory to encode.
  * @param {String} displayDirname The prefix to the filename in the ID field for each subdirectory.
  * @returns Returns JS object matching the directory structure of dir.
+ * 
+ * @category Server-side functions
  */
  function getDirStructure(dir, displayDirname) {
     return new Promise((myResolve, myReject) => {
@@ -173,6 +262,8 @@ function isValidDir(dir) {
  * Writes a nested list of all current directories in ./files/ to ./fileList.json. Writes relevant info
  * for displaying possible dataset selections and their display names.
  * @returns A Promise that resolves when the file is written and rejects in the case of a file writing error.
+ * 
+ * @category Server-side functions
  */
 async function scanAllFiles() {
     return new Promise(async function (myResolve, myReject) {
@@ -194,6 +285,11 @@ async function scanAllFiles() {
     });
 }
 
+/**
+ * Recursively counts the number of items in a file tree.
+ * 
+ * @category Server-side functions
+ */
 function countItems(root) {
     if (!root.children) return [1, 1]; // [ Total items, files ]
     let allItemCount = 1; // Including self
@@ -206,6 +302,11 @@ function countItems(root) {
     return [allItemCount, leafCount]
 }
 
+/**
+ * Runs `git pull` and `npm run build`.
+ * 
+ * @category Server-side functions
+ */
 function onProjectUpdate() {
     if (VERBOSE_OUTPUT) console.log("Pull operation requested at " + new Date().toUTCString());
     exec("git pull > git.log &amp;&amp; npm run build > build.log")
@@ -223,6 +324,14 @@ function writeFilePromise(filePath, data) {
     });
 }
 
+/**
+ * The first helper method that is called after an uploaded file is received.
+ * 
+ * @param req - POST request
+ * @param res - Server response
+ * 
+ * @category Server-side functions: Uploading files
+ */
 function handleFormUpload(req, res) {
     const storagePath = './files/user-uploads/';
 
@@ -242,22 +351,53 @@ function handleFormUpload(req, res) {
         }
         if (VERBOSE_OUTPUT) console.log("Finished grabbing the files from the user upload.");
         res.json({ status: "File received", fileName: directoryName });
-        formProcessor.processDownloadedForm(fields, files).then(({ data: data, metadata: metadata}) => {
+        formProcessor.processDownloadedForm(fields, files)
+        .then(({ data: data, metadata: metadata}) => {
             if (VERBOSE_OUTPUT) console.log(`Completely done processing ${fullPath}. Now we just have to write the resulting data.`);
             writeUploadedFile(data, metadata, fullPath)
             .then(() => {
-                let mappedPath = fullPath.substr('./files'.length);
-                if (app.locals.fileListeners.has(mappedPath)) {
-                    app.locals.fileListeners.get(mappedPath).forEach((socket) => socket.emit('File ready'));
-                }
+                notifySocketListeners(fullPath, 'File ready');
             })
             .catch((err) => {
                 if (VERBOSE_OUTPUT) console.log("Some kind of error happened that we need to communicate to the client: " + err);
+                app.locals.currentFiles.delete(fullPath.substr('./files'.length));
+                notifySocketListeners(fullPath, 'File missing'); // TODO: Make another signal for when the file isn't "missing" but had an error
             });
-        });
+        })
+        .catch((errMessage) => {
+            if (VERBOSE_OUTPUT) console.log("Received error from form processor: ")
+            if (VERBOSE_OUTPUT) console.log(errMessage);
+            app.locals.currentFiles.delete(fullPath.substr('./files'.length));
+            notifySocketListeners(fullPath, 'File missing'); // TODO: Make another signal for when the file isn't "missing" but had an error
+        })
     });
 }
 
+/**
+ * Sends a message to socket listeners that the status of a file has changed.
+ * 
+ * @param {string} fullPath - the path to the given file
+ * @param {message} message - the message to send the listeners
+ * 
+ * @category Server-side functions
+ */
+function notifySocketListeners(fullPath, message) {
+    let mappedPath = fullPath.substr('./files'.length);
+    if (app.locals.fileListeners.has(mappedPath)) {
+        app.locals.fileListeners.get(mappedPath).forEach((socket) => socket.emit(message));
+    }
+}
+
+
+/**
+ * Saves a converted file to disk.
+ * 
+ * @param {string} data - quaternion data
+ * @param {Object} metadata - the metadata such as local transformation quaternions
+ * @param {string} filepath - where to place the files
+ * 
+ * @category Server-side functions
+ */
 function writeUploadedFile(data, metadata, filepath) {
     return new Promise((myResolve, myReject) => {
         fs.mkdir(filepath, {recursive: true}, (err) => {
@@ -267,7 +407,7 @@ function writeUploadedFile(data, metadata, filepath) {
                 return;
             }
             let dataPromise = writeFilePromise(filepath + "/quaternion_data.dat", data);
-            let metaPromise = writeFilePromise(filepath + "/metadata.json", JSON.stringify(metadata));
+            let metaPromise = writeFilePromise(filepath + "/metadata.json", JSON.stringify(metadata, null, 2));
             if (VERBOSE_OUTPUT) console.log("About to print fileListeners:");
             if (VERBOSE_OUTPUT) console.log(app.locals.fileListeners);
             Promise.all([dataPromise, metaPromise]).then(() => {
@@ -299,15 +439,32 @@ app.post('/api/send-message', (req, res) => {
         } else {
             message = fields.message
             email = fields.email
-            onContactUs(email, message)
-            res.status(200).send('message received')
+            onContactUs(email, message).then(
+                (response) => {
+                    if (response.status == 200) {
+                        res.status(200).send('message sent')
+                    } else {
+                        res.status(500).send('sending unsuccessful')
+                    }
+                },
+                (error) => {
+                    res.status(500).send(error.message)
+                }
+            )
         }
     })
 });
 
-// Deals with the strange arrangement Sam needs to fix with the way
-// file IDs are assigned by the getDirStructure function, where every
-// file ID starts with "./files/". Should be removed soon.
+/** 
+ * 
+ * Deals with the strange arrangement Sam needs to fix with the way
+ * file IDs are assigned by the getDirStructure function, where every
+ * file ID starts with "./files/". Should be removed soon.
+ * 
+ * @param {string} targetFile - the uncleaned file ID
+ * 
+ * @category Server-side functions
+ */ 
 function cleanFilename(targetFile) {
     if (targetFile.substr(0,8) === './files/') {
         return targetFile.substr(8);
@@ -315,6 +472,13 @@ function cleanFilename(targetFile) {
     return targetFile;
 }
 
+/**
+ * Checks if `targetFile` is available on disk.
+ * 
+ * @param {string} targetFile
+ * 
+ * @category Server-side functions
+ */
 function fileAvailable(targetFile) {
     targetFile = cleanFilename(targetFile);
     let fileRoot = `${__dirname}/files`;
@@ -456,6 +620,26 @@ app.get('/files/*', (req, res) => {
     }
 });
 
+app.get('/jsdoc/*', (req, res) => {
+    let path = decodeURI(req.url.substr(7));
+    let fileRoot = `${__dirname}/jsdoc`;
+    if (fs.existsSync(fileRoot + "/" + path)) {
+        res.sendFile(path, {root: fileRoot});
+    } else {
+        res.send(`File or directory "${path}" not found!`);
+    }
+});
+
+app.get('/.well-known/*', (req, res) => {
+    let path = req.url;
+    let fileRoot = `${__dirname}/public`;
+    if (fs.existsSync(fileRoot + "/" + path)) {
+        res.sendFile(path, {root: fileRoot});
+    } else {
+        res.send(`File or directory "${path}" not found!`);
+    }
+});
+
 app.use(express.static(`${__dirname}/build`));
 
 app.get('/*',  (req, res)=> {
@@ -480,6 +664,8 @@ app.get('/*',  (req, res)=> {
                   &lt;/html>`)
     }
 });
+
+
 
 io.use((socket, next) => {
     if (VERBOSE_OUTPUT) console.log("A new socket connection is going through middleware: " + socket)
@@ -563,19 +749,25 @@ http.createServer(function (req, res) {
 
 
 
-</div>
-
-<nav>
-    <h2><a href="index.html">Home</a></h2><h3>Tutorials</h3><ul><li><a href="tutorial-https-guide.html">https-guide</a></li><li><a href="tutorial-local-server-https-guide.html">local-server-https-guide</a></li></ul><h3>Global</h3><ul><li><a href="global.html#getDirStructure">getDirStructure</a></li><li><a href="global.html#getFileDisplayName">getFileDisplayName</a></li><li><a href="global.html#getFileList">getFileList</a></li><li><a href="global.html#initializeScene">initializeScene</a></li><li><a href="global.html#isValidDir">isValidDir</a></li><li><a href="global.html#onSelectFileChange">onSelectFileChange</a></li><li><a href="global.html#scanAllFiles">scanAllFiles</a></li><li><a href="global.html#subscribeToFile">subscribeToFile</a></li></ul>
-</nav>
-
-<br class="clear">
-
-<footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.7</a> on Wed Jul 14 2021 15:42:58 GMT-0400 (Eastern Daylight Time)
-</footer>
-
-<script> prettyPrint(); </script>
+            </div>
+            
+            <footer class="footer">
+                <div class="content has-text-centered">
+                    <p>Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.7</a></p>
+                    <p class="sidebar-created-by">
+                        <a href="https://github.com/SoftwareBrothers/better-docs" target="_blank">BetterDocs theme</a> provided with <i class="fas fa-heart"></i> by 
+                        <a href="http://softwarebrothers.co" target="_blank">SoftwareBrothers - JavaScript Development Agency</a>
+                    </p>
+                </div>
+            </footer>
+            
+        </div>
+        <div id="side-nav" class="side-nav">
+        </div>
+    </div>
+<script src="scripts/app.min.js"></script>
+<script>PR.prettyPrint();</script>
 <script src="scripts/linenumber.js"> </script>
+
 </body>
 </html>

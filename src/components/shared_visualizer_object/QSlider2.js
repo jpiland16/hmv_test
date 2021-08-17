@@ -1,7 +1,17 @@
 import { Typography } from '@material-ui/core'
 import Slider from '@material-ui/core/Slider'
 
-export default function QSlider2(props) {
+/**
+ * A slider to modify a single part of the quaternion (example: the X-component).
+ * 
+ * @param {Object} props
+ * @param {Number} props.index
+ * @param {Number} props.sliderValue
+ * @param {function} props.onChange
+ * 
+ * @component
+ */
+function QSlider2(props) {
 
     return (
         <div>
@@ -14,3 +24,5 @@ export default function QSlider2(props) {
     )
 
 }
+
+export default QSlider2

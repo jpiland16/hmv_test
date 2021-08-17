@@ -4,6 +4,9 @@ import { ThreeJSVisualizer, QuaternionTarget } from "./Visualizer";
 import Button from '@material-ui/core/Button'
 import QuaternionEditor2 from './QuaternionEditor2';
 
+/**
+ * Loads a model with the assumption that it has a tree-like parenting structure.
+ */
 class ModelWithBones extends ThreeJSVisualizer {
 
     constructor() {
@@ -232,6 +235,9 @@ class ModelWithBones extends ThreeJSVisualizer {
 
 }
 
+/**
+ * Provides the skeletal structure of our mannequin.
+ */
 class MannequinVisualizer extends ModelWithBones {
 
 
@@ -271,7 +277,9 @@ class MannequinVisualizer extends ModelWithBones {
 
 }
 
-
+/**
+ * Provides the single-bone skeletal structure of our phone
+ */
 class PhoneVisualizer extends ModelWithBones {
 
     initializeSkeleton() {
