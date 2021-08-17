@@ -185,8 +185,12 @@ export function subscribeToFile(props, mySelectedFile) {
             //When we get the files, we should use the original code to assign them as quaternions (after decoding from metadata)
             let inputArray = responses[0].split("\n");
             let linesArray = [];
-    
-            for (let i = 2; i < inputArray.length - 1; i++) {
+
+            const COMMENT_DELIMITER = '#';
+            const MIN_ITEMS_PER_LINE = 4;
+            for (let i = 0; i < inputArray.length - 1; i++) {
+                const lineItems = inputArray[i].split(" ").filter(item => item !== '\r');
+                if (lineItems.length < MIN_ITEMS_PER_LINE || lineItems[0] === COMMENT_DELIMITER) { continue; }
                 linesArray.push(inputArray[i].split(" ").filter(item => item !== '\r'));
             }
     
