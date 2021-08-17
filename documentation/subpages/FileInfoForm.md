@@ -1,3 +1,4 @@
+[(Back to To TOC)](../TOC.md)
 # File Info Form [(view code)](https://github.com/jpiland16/hmv_test/blob/master/src/components/upload-screen/FileInfoForm.js)
 This is the first view in the online file upload process. It allows the user to select the target file. It then allows
 the user to identify the relevant data columns, the type of data contained there, and the part of the body that data

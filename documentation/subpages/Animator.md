@@ -1,4 +1,4 @@
-[(Back to To TOC)](https://github.com/jpiland16/hmv_test/blob/master/documentation/TOC.md)
+[(Back to To TOC)](../TOC.md)
 # Animator [(view code)](https://github.com/jpiland16/hmv_test/blob/master/src/components/visualizer-screen/Animator.js)
 
 This component is purely for computation, so it returns a non-displaying div so that it doesn't show up during rendering.

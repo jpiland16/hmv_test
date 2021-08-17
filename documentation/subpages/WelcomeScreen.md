@@ -1,4 +1,4 @@
-[(Back to To TOC)](https://github.com/jpiland16/hmv_test/blob/master/documentation/TOC.md)
+[(Back to To TOC)](../TOC.md)
 # Welcome Screen [(view code)](https://github.com/jpiland16/hmv_test/blob/master/src/components/home-screen/WelcomeScreen.js)
 
 Most of the code at the top of the WelcomeScreen.js file is for a fun little Easter egg hidden in the welcome screen and isn't relevent to the rest of the application.

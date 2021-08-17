@@ -1,3 +1,4 @@
+[(Back to To TOC)](../TOC.md)
 # TitleBar [(view code)](https://github.com/jpiland16/hmv_test/blob/master/src/components/TitleBar.js)
 
 The TitleBar consists of the [outline of the HMV logo](https://github.com/jpiland16/hmv_test/blob/master/public/hmv-outline-512.png)

@@ -1,4 +1,4 @@
-[(Back to To TOC)](https://github.com/jpiland16/hmv_test/blob/master/documentation/TOC.md)
+[(Back to To TOC)](../TOC.md)
 # Upload Screen 
 
 The upload screen is where users can upload datasets to the virtual machine. It consists of the following components:

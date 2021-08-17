@@ -1,3 +1,4 @@
+[(Back to To TOC)](../TOC.md)
 # Top Action Bar [(view code)](https://github.com/jpiland16/hmv_test/blob/master/src/components/visualizer-screen/TopActionBar.js)
 The top action bar handles displaying any information and actions that should be available at all times without having to
 open the Menu. As of [this commit](https://github.com/jpiland16/hmv_test/commit/6782b2c8e27f35666bdaa3e23742f20b41a96cfe), it has

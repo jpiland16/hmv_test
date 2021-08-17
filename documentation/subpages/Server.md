@@ -1,3 +1,4 @@
+[(Back to To TOC)](../TOC.md)
 # Server [(view code)](https://github.com/jpiland16/hmv_test/blob/master/server.js)
 Server.js is a Node Express server that controls all server side functionaltiy. It has the following roles:
 - Serve the production build of the React app to clients, automatically updating whenever the production build changes.
