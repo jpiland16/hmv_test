@@ -5,6 +5,7 @@
         - App - Contains the browser router for the the main pages of the website most importantly:
             - [WelcomeScreen](subpages/WelcomeScreen.md)
                 - [TitleBar](subpages/TitleBar.md)
+                - [DialogSelect](subpages/DialogSelect.md)
             - [Viewport](subpages/Viewport.md)
                 - [HomeButton](subpages/HomeButton.md)
                 - [Menu](subpages/Menu.md)
@@ -17,6 +18,7 @@
                     - [BasicVisualizerObject](subpages/VisualizerObject.md)
             - [UploadScreen](subpages/UploadScreen.md)
                 - [TitleBar](subpages/TitleBar.md)
+                - [FileInfoForm](subpages/FileInfoForm.md)
                 - [Form File Processor](subpages/FormFileProcessor.md)
                 - [multi_sensor_fuser_obj.py](subpages/MultiSensorFuserObj.md)
             - [NotFoundScreen](subpages/NotFoundScreen.md)
