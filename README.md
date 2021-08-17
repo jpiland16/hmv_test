@@ -13,6 +13,7 @@ Human model visualizer project, 2021
 ### Getting started:
  - `git clone`
  - `npm install`
+ - `npm run build`
  - `node server` or `pm2 start server.js`
 
 ### Other credits
