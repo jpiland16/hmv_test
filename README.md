@@ -185,6 +185,11 @@ Procedure:
 4. Use the `cp <source> <target>` command in the Linux shell, where `<source>` is the filepath of your uploaded directory, and `<target>` is a filepath within the `.../hmv_test/files` directory where you want the files to show up.
 5. Navigate to the HMV website, go to the visualizer, open the file browser on the left menu, and click 'REFRESH FILE LIST' at the top of the menu. After navigating back to the visualizer, your file should be visible and ready for viewing.
 
+> If you like Visual Studio Code, you can use an [SSH plugin](https://code.visualstudio.com/docs/remote/ssh) to connect to the host machine and use the integrated
+> VSC terminal to carry out any command line operations. This comes with a built-in file browser (like with any VSC project) which lets you carry out quick SFTP.
+> 
+> If you use `sudo su` to switch to the `root` user in the integrated terminal, the plugin lets you edit files directly in the `webs` folder and save the changes directly to the remote machine. Make sure to switch back to your own user using `su <user-name>` when you don't need to do this.
+
 ## How to add a new dataset
 See the `/dataset-research` folder for some insight on the criterion we use to check whether a dataset is a good fit for the visualizer. This is subject to change as the visualizer expands in functionality.
 - Assumptions:
