@@ -25,6 +25,4 @@
         - [HTTPS for VM](subpages/https-guide.md)
         - [HTTPS for Local Server](subpages/local-server-https-guide.md)
 - [Side Branches](subpages/Branches.md)
-- [Current Bugs](subpages/CurrentBugs.md)
 - [Ideas for Improvement](subpages/ImprovementIdeas.md)
-- [Quaternion Concepts](subpages/Quaternions.md)
