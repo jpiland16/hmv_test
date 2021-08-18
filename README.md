@@ -183,7 +183,8 @@ Procedure:
 2. Transfer the target directory to any place on the target machine. I did not have permission to transfer the files to the `/files` directory, but I was able to transfer them to the directory corresponding to my own NetID.
 3. Use your SSH program to access the machine (with root access).
 4. Use the `cp <source> <target>` command in the Linux shell, where `<source>` is the filepath of your uploaded directory, and `<target>` is a filepath within the `.../hmv_test/files` directory where you want the files to show up.
-5. Navigate to the HMV website, go to the visualizer, open the file browser on the left menu, and click 'REFRESH FILE LIST' at the top of the menu. After navigating back to the visualizer, your file should be visible and ready for viewing.
+ - Side note: If you want to delete a data file from the server, use `sudo rm` on the target file in `webs/`. If you want to remove files from public access but keep a copy of them in case you need it later, upload them to the (hmv_files)[https://github.com/samuel-thompsonn/hmv_files] repo with a timestamp.
+6. Navigate to the HMV website, go to the visualizer, open the file browser on the left menu, and click 'REFRESH FILE LIST' at the top of the menu. After navigating back to the visualizer, your file should be visible and ready for viewing.
 
 > If you like Visual Studio Code, you can use an [SSH plugin](https://code.visualstudio.com/docs/remote/ssh) to connect to the host machine and use the integrated
 > VSC terminal to carry out any command line operations. This comes with a built-in file browser (like with any VSC project) which lets you carry out quick SFTP.
