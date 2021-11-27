@@ -106,7 +106,7 @@ export default function ServerSideProcessing(props) {
     return (
         <div>
             <button onClick={(e) => postRequest(props)}>POST request</button>
-            <a href="https://github.com/jpiland16/hmv_test/blob/master/src/components/menu/components/main-panel/subpanels/Labs/Sam20210521/GeneratedData.js" target="_blank" rel="noreferrer">View relevant code</a>
+            <a href="https://github.com/jpiland16/hmv_test/blob/master/src/components/visualizer-screen/menu/components/main-panel/subpanels/Labs/Sam20210611/ServerSideProcessing.js" target="_blank" rel="noreferrer">View relevant code</a>
             <input type="file" id="myFile"/>
         </div>
     )

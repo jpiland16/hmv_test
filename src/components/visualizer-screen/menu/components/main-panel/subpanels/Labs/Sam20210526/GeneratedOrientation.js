@@ -113,7 +113,7 @@ export default function GeneratedOrientation(props) {
 
     return (
         <div>
-            <a href="https://github.com/jpiland16/hmv_test/blob/master/src/components/menu/components/main-panel/subpanels/Labs/" target="_blank" rel="noreferrer">View relevant code</a>
+            <a href="https://github.com/jpiland16/hmv_test/blob/master/src/components/visualizer-screen/menu/components/main-panel/subpanels/Labs/Sam20210526/GeneratedOrientation.js" target="_blank" rel="noreferrer">View relevant code</a>
         </div>
     )
 }
